@@ -4,4 +4,7 @@ app:
 
 app_admin:
     resource: '@AppBundle/Controller/Admin/'
-    prefix: "/admin"
+    prefix: '/admin'
+
+logout:
+    path: '/admin/logout'
