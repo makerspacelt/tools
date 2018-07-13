@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Table(name="tools_users")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ * @ORM\Entity
  */
 class User implements UserInterface, \Serializable {
 
@@ -34,8 +34,6 @@ class User implements UserInterface, \Serializable {
      */
     private $role;
     #=====================================================
-
-
     /**
      * String representation of object
      */
@@ -121,4 +119,26 @@ class User implements UserInterface, \Serializable {
     public function eraseCredentials() {
         // tuščia, mmk
     }
+    #=====================================================
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username) {
+        $this->username = $username;
+    }
+
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+
+    /**
+     * @param mixed $role
+     */
+    public function setRole($role) {
+        $this->role = $role;
+    }
+    #=====================================================
 }

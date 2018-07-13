@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AdminController extends Controller {
 
