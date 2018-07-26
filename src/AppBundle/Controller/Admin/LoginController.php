@@ -16,7 +16,7 @@ class LoginController extends Controller {
      */
     public function login(Request $request, AuthenticationUtils $authenticationUtils) {
         if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            // TODO: išsiaiškinti, kodėl neveikia šitas, ir matchina routą / vietoje nukreipimo į admin page
+            // TODO: išsiaiškinti, kodėl kartais neveikia šitas, ir matchina routą / vietoje nukreipimo į admin page
             return $this->redirectToRoute('admin_homepage');
         }
         $error = $authenticationUtils->getLastAuthenticationError();

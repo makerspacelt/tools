@@ -1,12 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <title>{% block title %}Makerspace tools manager{% endblock %}</title>
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
 </head>
+
 <body>
-    {% block body %}
-    {% endblock %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a href="#">
+                <div class="navbar-brand">{% block navbar_title %}Makerspace TIM{% endblock %}</div>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        {% if app.user %}
+                            <a class="nav-link" href="/admin">Admin panelė</a>
+                        {% elseif not app.user %}
+                            <a class="nav-link" href="/admin/login">Prisijungti</a>
+                        {% endif %}
+                    </li>
+                    {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/logout">Atsijungti</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+
+                <!-- Paieška -->
+                <div class="card my-4">
+                    <h5 class="card-header">Paieška</h5>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Ieškoti ko..." autofocus="1">
+                            <div class="input-group-append">
+                                <input type="submit" name="submit" id="submit" value="Ieškoti" class="btn btn-secondary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card my-4">
+                    <h5 class="card-header">Kategorijos</h5>
+                    <div class="my-2 mx-3">
+                        {% for i in 1..4 %}
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="fgfdgfdfgfd" value="fgfdgfdfgfd" />
+                            <label class="custom-control-label" for="fgfdgfdfgfd">
+                                <a href="#"><nobr>#fgfdgfdfgfd</nobr></a>
+                            </label>
+                        </div>
+                        {% endfor %}
+                        <br/>
+                        <input type="submit" name="submit"  id="submit" value="Filtruoti" class="btn btn-sm btn-block btn-secondary"/>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <!-- /.col-lg-3 -->
+
+            <div class="col-lg-9">
+                <div class="row my-4">
+                    {% block tool_summary %}{% endblock %}
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.col-lg-9 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 </body>
-</html>
+</html>>
