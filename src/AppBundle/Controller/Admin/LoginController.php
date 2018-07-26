@@ -15,8 +15,8 @@ class LoginController extends Controller {
      * @Route("/login", name="login")
      */
     public function login(Request $request, AuthenticationUtils $authenticationUtils) {
-        // TODO: reiktų sugalvoti, kaip šitą kodą vykdyti konstruktoriuje ar kažkur
         if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // TODO: išsiaiškinti, kodėl neveikia šitas, ir matchina routą / vietoje nukreipimo į admin page
             return $this->redirectToRoute('admin_homepage');
         }
         $error = $authenticationUtils->getLastAuthenticationError();

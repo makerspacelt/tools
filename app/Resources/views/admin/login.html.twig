@@ -1,33 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Makerspace tools manager - prisijungimas</title>
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-</head>
+{% extends 'base.html.twig' %}
 
-<body>
-    <div class="container">
-        <div class="row justify-content-center my-5">
-            <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-header">Please login</div>
-                    <div class="card-body">
-                        <form method="post" action="{{ path('login') }}" class="my-3">
-                            <input class="form-control" name="_username" type="text" placeholder="Username">
-                            <input class="form-control my-1" name="_password" type="password" placeholder="Password">
-                            <button type="submit" class="btn btn-dark my-4 offset-md-4">Login</button>
-                        </form>
+{% block title %}{{ parent() }} - login{% endblock %}
 
-                        {% if error %}
-                            <div class="alert alert-danger">
-                                {{ error.messageKey|trans(error.messageData, 'security') }}
-                            </div>
-                        {% endif %}
-                    </div>
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center my-5">
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header">Please login</div>
+                <div class="card-body">
+                    <form method="post" action="{{ path('login') }}" class="my-3">
+                        <input class="form-control" name="_username" type="text" placeholder="Username">
+                        <input class="form-control my-1" name="_password" type="password" placeholder="Password">
+                        <button type="submit" class="btn btn-dark my-4 offset-md-4">Login</button>
+                    </form>
+
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
