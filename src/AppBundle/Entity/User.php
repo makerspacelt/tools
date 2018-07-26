@@ -75,7 +75,7 @@ class User implements UserInterface, \Serializable {
      * @return (Role|string)[] The user roles
      */
     public function getRoles() {
-        return $this->role;
+        return array($this->role);
     }
 
     /**
