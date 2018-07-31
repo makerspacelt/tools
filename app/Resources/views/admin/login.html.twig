@@ -1,27 +1,45 @@
 {% extends 'admin/base.html.twig' %}
 
-{% block title %}{{ parent() }} - login{% endblock %}
+{% block title %}{{ parent() }} - Login{% endblock %}
+
+{% block body_attribs %}class="bg-dark"{% endblock %}
 
 {% block body %}
 <div class="container">
-    <div class="row justify-content-center my-5">
-        <div class="col-lg-5">
-            <div class="card">
-                <div class="card-header">Please login</div>
-                <div class="card-body">
-                    <form method="post" action="{{ path('login') }}" class="my-3">
-                        <input class="form-control" name="_username" type="text" placeholder="Username">
-                        <input class="form-control my-1" name="_password" type="password" placeholder="Password">
-                        <button type="submit" class="btn btn-dark my-4 offset-md-4">Login</button>
-                    </form>
-
-                    {% if error %}
-                        <div class="alert alert-danger">
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
-                        </div>
-                    {% endif %}
+    <div class="card card-login mx-auto mt-5">
+        <div class="card-header">Login</div>
+        <div class="card-body">
+            <form method="post" action="{{ path('login') }}">
+                <div class="form-group">
+                    <div class="form-label-group">
+                        <input type="text" id="inputUsername" name="_username" class="form-control" placeholder="Username" required="required" autofocus="autofocus">
+                        <label for="inputUsername">Username</label>
+                    </div>
                 </div>
+                <div class="form-group">
+                    <div class="form-label-group">
+                        <input type="password" id="inputPassword" name="_password" class="form-control" placeholder="Password" required="required">
+                        <label for="inputPassword">Password</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="remember-me" disabled>
+                            Remember Me
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            <div class="text-center my-3">
+                <a class="d-block small" href="#">Forgot Password?</a>
             </div>
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
