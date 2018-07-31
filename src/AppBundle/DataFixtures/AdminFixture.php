@@ -20,6 +20,8 @@ class AdminFixture extends Fixture {
         $admin->setUsername('admin');
         $admin->setPassword($this->encoder->encodePassword($admin, 'test'));
         $admin->setRole('ROLE_SUPERADMIN');
+        $admin->setFullname('Adminas Adminiauskas');
+        $admin->setEmail('admin@asdf.com');
         $manager->persist($admin);
         $manager->flush();
     }

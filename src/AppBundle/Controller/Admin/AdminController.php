@@ -24,7 +24,9 @@ class AdminController extends Controller {
      * @Security("has_role('ROLE_SUPERADMIN')")
      */
     public function users() {
-        return new Response('users()');
+        $repo = $this->getDoctrine()->getRepository(User::class);
+        $users = $repo->findAll();
+        return $this->render('admin/users.html.twig', array('users' => $users));
     }
 
 }

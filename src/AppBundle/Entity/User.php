@@ -32,6 +32,16 @@ class User implements UserInterface, \Serializable {
     /**
      * @ORM\Column(type="string")
      */
+    private $fullname;
+
+    /**
+     * @ORM\Column(type="string", length=254, unique=true)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="string")
+     */
     private $role;
     #=====================================================
     /**
@@ -42,7 +52,9 @@ class User implements UserInterface, \Serializable {
             $this->id,
             $this->username,
             $this->password,
-            $this->role
+            $this->role,
+            $this->fullname,
+            $this->email
         ));
     }
 
@@ -54,7 +66,9 @@ class User implements UserInterface, \Serializable {
             $this->id,
             $this->username,
             $this->password,
-             $this->role
+             $this->role,
+            $this->fullname,
+            $this->email
             ) = unserialize($serialized, array('allowed_classes' => false));
     }
 
@@ -119,6 +133,22 @@ class User implements UserInterface, \Serializable {
     public function eraseCredentials() {
         // tuščia, mmk
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFullname() {
+        return $this->fullname;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail() {
+        return $this->email;
+    }
+
+
     #=====================================================
     /**
      * @param mixed $username
@@ -139,6 +169,20 @@ class User implements UserInterface, \Serializable {
      */
     public function setRole($role) {
         $this->role = $role;
+    }
+
+    /**
+     * @param mixed $fullname
+     */
+    public function setFullname($fullname) {
+        $this->fullname = $fullname;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email) {
+        $this->email = $email;
     }
     #=====================================================
 }
