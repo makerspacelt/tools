@@ -27,7 +27,10 @@
                             <td>{{ user.username }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.roles|join(', ') }}</td>
-                            <td><button class="btn btn-danger btn-sm">Delete</button></td>
+                            <td>
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                                <button class="btn btn-warning btn-sm">Edit</button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
