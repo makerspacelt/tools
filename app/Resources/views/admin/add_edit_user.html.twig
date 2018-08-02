@@ -13,16 +13,30 @@
                 <form action="{{ path('admin_add_user') }}" method="post">
                     <div class="row">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="First name" name="firstname" required>
+                            <input type="text" class="form-control" placeholder="First name" name="firstname" value="{{ firstname | default('') }}" required>
                         </div>
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Last name" name="lastname" required>
+                            <input type="text" class="form-control" placeholder="Last name" name="lastname" value="{{ lastname | default('') }}" required>
                         </div>
                     </div>
-                    <input type="text" class="form-control mt-3" placeholder="Username" name="username" required>
-                    <input type="password" class="form-control mt-3" placeholder="Password" name="password" required>
-                    <input type="email" class="form-control mt-3" placeholder="Email" name="email" required>
-                    <input type="submit" class="btn btn-primary mt-3" value="Create">
+                    <input type="text" class="form-control mt-3" placeholder="Username" name="username" value="{{ username | default('') }}" required>
+                    <input type="password" class="form-control mt-3" placeholder="Password" name="password" value="{{ password | default('') }}" required>
+                    <input type="email" class="form-control mt-3" placeholder="Email" name="email" value="{{ email | default('') }}" required>
+                    <select class="custom-select mr-sm-2 mt-3" title="role" name="role">
+                        <option selected value="ROLE_SUPERADMIN">ROLE_SUPERADMIN</option>
+                    </select>
+                    <div class="row mt-3">
+                        <div class="col-2">
+                            <input type="submit" class="btn btn-primary" value="Create">
+                        </div>
+                        {% for msg in app.session.flashBag.get('error') %}
+                        <div class="col-7">
+                            <div class="alert alert-danger py-2" role="alert">
+                                {{ msg }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </form>
             </div>
         </div>
