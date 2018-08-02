@@ -61,7 +61,7 @@ class AdminController extends Controller {
                 $postArr = $request->request->all();
                 $user = new User();
                 $user->setFullname($postArr['fullname']);
-                $user->setUsername($postArr['username']);
+                $user->setUsername(preg_replace('#\\s#', '', $postArr['username']));
                 $user->setEmail($postArr['email']);
                 $user->setPassword($this->encoder->encodePassword($user, $postArr['password']));
                 $user->setRole($postArr['role']);
