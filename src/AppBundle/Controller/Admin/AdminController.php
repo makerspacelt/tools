@@ -83,4 +83,11 @@ class AdminController extends Controller {
         return $this->render('admin/edit_user.html.twig', $request->request->all());
     }
 
+    /**
+     * @Route("/users/delUser", name="admin_del_user")
+     */
+    public function deleteUser(Request $request) {
+        return $this->redirectToRoute('admin_users');
+    }
+
 }

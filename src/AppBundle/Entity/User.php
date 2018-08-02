@@ -73,6 +73,13 @@ class User implements UserInterface, \Serializable {
     }
 
     /**
+     * @return mixed
+     */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
      * Returns the roles granted to the user.
      *
      * <code>
