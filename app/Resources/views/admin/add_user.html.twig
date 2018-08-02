@@ -1,25 +1,18 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ parent() }} - Users{% endblock %}
+{% block title %}{{ parent() }} - Add user{% endblock %}
 
 {% block page_content %}
     <div class="card mb-3">
         <div class="card-header">
-            <i class="fas fa-user-plus"></i>
-            Add new user
+            <i class="fas {% block icon %}fa-user-plus{% endblock %}"></i>
+            {% block card_title %}Add new user{% endblock %}
         </div>
         <div class="card-body">
             <div class="col-5">
-                <form action="{{ path('admin_add_user') }}" method="post">
-                    <div class="row">
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="First name" name="firstname" value="{{ firstname | default('') }}" required>
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="Last name" name="lastname" value="{{ lastname | default('') }}" required>
-                        </div>
-                    </div>
-                    <input type="text" class="form-control mt-3" placeholder="Username" name="username" value="{{ username | default('') }}" required>
+                <form action="{% block form_action %}{{ path('admin_add_user') }}{% endblock %}" method="post">
+                    <input type="text" class="form-control" placeholder="Full name" name="fullname" value="{{ fullname | default('') }}" required>
+                    <input type="text" class="form-control mt-3" placeholder="Username" name="username" value="{{ username | default('') }}" {% block username_attrib %}required{% endblock %}>
                     <input type="password" class="form-control mt-3" placeholder="Password" name="password" value="{{ password | default('') }}" required>
                     <input type="email" class="form-control mt-3" placeholder="Email" name="email" value="{{ email | default('') }}" required>
                     <select class="custom-select mr-sm-2 mt-3" title="role" name="role">
@@ -27,7 +20,7 @@
                     </select>
                     <div class="row mt-3">
                         <div class="col-2">
-                            <input type="submit" class="btn btn-primary" value="Create">
+                            <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">
                         </div>
                         {% for msg in app.session.flashBag.get('error') %}
                         <div class="col-7">
