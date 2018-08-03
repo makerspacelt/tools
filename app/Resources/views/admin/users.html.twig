@@ -29,7 +29,7 @@
                         <th>Username</th>
                         <th>Email</th>
                         <th class="col-2">Role</th>
-                        <th>Action</th>
+                        <th class="col-1">Action</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,14 +43,14 @@
                                 <div class="btn-group" role="group">
                                     <form action="{{ path('admin_del_user') }}" method="post">
                                         <input type="hidden" name="userid" value="{{ user.id }}">
-                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete" {% if user.username == app.user.username %}disabled{% endif %}>
                                     </form>
                                     <form action="{{ path('admin_edit_user') }}" method="post">
                                         <input type="hidden" name="fullname" value="{{ user.fullname }}">
                                         <input type="hidden" name="username" value="{{ user.username }}">
                                         <input type="hidden" name="email" value="{{ user.email }}">
                                         <input type="hidden" name="roles" value="{{ user.roles | join(', ') }}">
-                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit" {% if user.username == app.user.username %}disabled{% endif %}>
                                     </form>
                                 </div>
                             </td>

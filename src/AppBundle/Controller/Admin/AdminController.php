@@ -80,6 +80,9 @@ class AdminController extends Controller {
      * @Route("/users/editUser", name="admin_edit_user")
      */
     public function editUser(Request $request) {
+        if ($request->request->count() != 4) {
+            return $this->redirectToRoute('admin_users');
+        }
         return $this->render('admin/edit_user.html.twig', $request->request->all());
     }
 
