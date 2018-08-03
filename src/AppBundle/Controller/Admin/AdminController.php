@@ -80,7 +80,18 @@ class AdminController extends Controller {
      * @Route("/users/editUser", name="admin_edit_user")
      */
     public function editUser(Request $request) {
-        if ($request->request->count() != 4) {
+        if ($request->request->count() == 5) {
+            $repo = $this->getDoctrine()->getRepository(User::class);
+            $user = $repo->findOneBy(array('username' => $request->request->get('username')));
+            if ($request->request->get('fullname')) $user->setFullname($request->request->get('fullname'));
+            if ($request->request->get('email')) $user->setEmail($request->request->get('email'));
+            $passwd = trim($request->request->get('password'));
+            if ($passwd && ($passwd != '')) {
+                /** @noinspection PhpParamsInspection */
+                $user->setPassword($this->encoder->encodePassword($user, $request->request->get('password')));
+            }
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'User modified!');
             return $this->redirectToRoute('admin_users');
         }
         return $this->render('admin/edit_user.html.twig', $request->request->all());
