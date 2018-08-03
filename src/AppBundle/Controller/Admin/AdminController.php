@@ -90,6 +90,15 @@ class AdminController extends Controller {
      * @Route("/users/delUser", name="admin_del_user")
      */
     public function deleteUser(Request $request) {
+        $userid = $request->request->get('userid');
+        if ($userid != null) {
+            $repo = $this->getDoctrine()->getRepository(User::class);
+            $user = $repo->findOneBy(array('id' => $userid));
+            $repo = $this->getDoctrine()->getManager();
+            $repo->remove($user);
+            $repo->flush();
+            $this->addFlash('success', sprintf('User "%s" removed!', $user->getUsername()));
+        }
         return $this->redirectToRoute('admin_users');
     }
 
