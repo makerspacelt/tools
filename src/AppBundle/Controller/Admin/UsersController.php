@@ -28,7 +28,7 @@ class UsersController extends Controller {
     public function users() {
         $repo = $this->getDoctrine()->getRepository(User::class);
         $users = $repo->findAll();
-        return $this->render('admin/users.html.twig', array('users' => $users));
+        return $this->render('admin/users/users.html.twig', array('users' => $users));
     }
 
     /**
@@ -69,7 +69,7 @@ class UsersController extends Controller {
                 return $this->redirectToRoute('admin_users');
             }
         }
-        return $this->render('admin/add_user.html.twig');
+        return $this->render('admin/users/add_user.html.twig');
     }
 
     /**
@@ -96,12 +96,12 @@ class UsersController extends Controller {
                 } else {
                     $this->addFlash('error', 'Error updating user!');
                 }
-                return $this->render('admin/edit_user.html.twig', $request->request->all());
+                return $this->render('admin/users/edit_user.html.twig', $request->request->all());
             }
             $this->addFlash('success', 'User modified!');
             return $this->redirectToRoute('admin_users');
         } else if ($request->request->count() == 4) { // čia ateina, kai paspaudžia mygtuką Edit
-            return $this->render('admin/edit_user.html.twig', $request->request->all());
+            return $this->render('admin/users/edit_user.html.twig', $request->request->all());
         }
         return $this->redirectToRoute('admin_users');
     }

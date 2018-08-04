@@ -14,7 +14,7 @@
                     <a href="{{ path('admin_add_user') }}" class="btn btn-primary mb-2 mr-2">Add user</a>
                 </div>
                 {% for msg in app.session.flashBag.get('success') %}
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="alert alert-success py-2" role="alert">
                         {{ msg }}
                     </div>

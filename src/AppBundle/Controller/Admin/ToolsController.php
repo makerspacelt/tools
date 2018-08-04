@@ -14,7 +14,7 @@ class ToolsController extends Controller {
      * @Route("/", name="admin_tools")
      */
     public function tools() {
-        return $this->render('admin/tools.html.twig');
+        return $this->render('admin/tools/tools.html.twig');
     }
 
 }
