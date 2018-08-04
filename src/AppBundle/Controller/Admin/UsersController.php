@@ -11,6 +11,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+/**
+ * @Route("/users")
+ */
 class UsersController extends Controller {
 
     private $encoder;
@@ -20,7 +23,7 @@ class UsersController extends Controller {
     }
 
     /**
-     * @Route("/users", name="admin_users")
+     * @Route("/", name="admin_users")
      */
     public function users() {
         $repo = $this->getDoctrine()->getRepository(User::class);
@@ -29,7 +32,7 @@ class UsersController extends Controller {
     }
 
     /**
-     * @Route("/users/addUser", name="admin_add_user")
+     * @Route("/addUser", name="admin_add_user")
      */
     public function addUser(Request $request) {
         if ($request->request->count() == 5) {
@@ -70,7 +73,7 @@ class UsersController extends Controller {
     }
 
     /**
-     * @Route("/users/editUser", name="admin_edit_user")
+     * @Route("/editUser", name="admin_edit_user")
      */
     public function editUser(Request $request) {
         if ($request->request->count() == 5) { // čia ateina, kai submitina formą pakeitimų
@@ -104,7 +107,7 @@ class UsersController extends Controller {
     }
 
     /**
-     * @Route("/users/delUser", name="admin_del_user")
+     * @Route("/delUser", name="admin_del_user")
      */
     public function deleteUser(Request $request) {
         $userid = $request->request->get('userid');
