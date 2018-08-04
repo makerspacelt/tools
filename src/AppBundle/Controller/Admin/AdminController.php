@@ -80,7 +80,7 @@ class AdminController extends Controller {
      * @Route("/users/editUser", name="admin_edit_user")
      */
     public function editUser(Request $request) {
-        if ($request->request->count() == 5) {
+        if ($request->request->count() == 5) { // čia ateina, kai submitina formą pakeitimų
             $repo = $this->getDoctrine()->getRepository(User::class);
             $user = $repo->findOneBy(array('username' => $request->request->get('username')));
             if ($request->request->get('fullname')) $user->setFullname($request->request->get('fullname'));
@@ -90,11 +90,24 @@ class AdminController extends Controller {
                 /** @noinspection PhpParamsInspection */
                 $user->setPassword($this->encoder->encodePassword($user, $request->request->get('password')));
             }
-            $this->getDoctrine()->getManager()->flush();
+            try {
+                $this->getDoctrine()->getManager()->flush();
+            } catch (\Exception $e) {
+                // Integrity constraint violation, emailas jau naudojamas :/
+                // username keisti neleidžiam, tai tikrinam tik dėl email
+                if (strpos($e->getMessage(), '1062 Duplicate entry') !== false) {
+                    $this->addFlash('error', 'Email already exists!');
+                } else {
+                    $this->addFlash('error', 'Error updating user!');
+                }
+                return $this->render('admin/edit_user.html.twig', $request->request->all());
+            }
             $this->addFlash('success', 'User modified!');
             return $this->redirectToRoute('admin_users');
+        } else if ($request->request->count() == 4) { // čia ateina, kai paspaudžia mygtuką Edit
+            return $this->render('admin/edit_user.html.twig', $request->request->all());
         }
-        return $this->render('admin/edit_user.html.twig', $request->request->all());
+        return $this->redirectToRoute('admin_users');
     }
 
     /**
