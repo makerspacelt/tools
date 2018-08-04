@@ -11,19 +11,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class AdminController extends Controller {
+class UsersController extends Controller {
 
     private $encoder;
 
     public function __construct(UserPasswordEncoderInterface $encoder) {
         $this->encoder = $encoder;
-    }
-
-    /**
-     * @Route("/", name="admin_homepage")
-     */
-    public function index() {
-        return $this->render('admin/index.html.twig');
     }
 
     /**
