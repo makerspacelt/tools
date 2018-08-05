@@ -3,5 +3,39 @@
 {% block title %}{{ parent() }} - Tools{% endblock %}
 
 {% block page_content %}
-    asdf
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fas fa-toolbox"></i>
+            Tools
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-1">
+                    <a href="{{ path('admin_add_tool') }}" class="btn btn-primary mb-2 mr-2">Add tool</a>
+                </div>
+                {% for msg in app.session.flashBag.get('success') %}
+                    <div class="col-md-3">
+                        <div class="alert alert-success py-2" role="alert">
+                            {{ msg }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered display" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name and Model</th>
+                            <th>Code</th>
+                            <th class="col-1">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

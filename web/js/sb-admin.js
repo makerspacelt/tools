@@ -37,4 +37,29 @@
     event.preventDefault();
   });
 
+  //======================= dynamic tool params =======================
+    var addFormGroup = function(event) {
+        event.preventDefault();
+        var $formGroup = $(this).closest('.form-group');
+        var $formGroupClone = $formGroup.clone();
+        $(this)
+            .toggleClass('btn-success btn-add btn-danger btn-remove')
+            .html('<i class="fas fa-minus"></i>');
+        $formGroupClone.find('input').val('');
+        var $n = $('div.tool_param_group').length;
+        $formGroupClone.find('#tool_name').attr('name', 'tool_param['+$n+'][\'name\']');
+        $formGroupClone.find('#tool_value').attr('name', 'tool_param['+$n+'][\'value\']');
+        $formGroupClone.insertAfter($formGroup);
+    };
+
+    var removeFormGroup = function(event) {
+        event.preventDefault();
+        var $formGroup = $(this).closest('.form-group');
+        $formGroup.remove();
+    };
+
+    $(document).on('click', '.btn-add', addFormGroup);
+    $(document).on('click', '.btn-remove', removeFormGroup);
+    //====================== /dynamic tool params =======================
+
 })(jQuery); // End of use strict
