@@ -37,6 +37,10 @@
     event.preventDefault();
   });
 
+    $(document).ready( function () {
+        $('#toolsDataTable').DataTable();
+    } );
+
   //======================= dynamic tool params =======================
     var addParamGroup = function(event) {
         event.preventDefault();
