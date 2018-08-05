@@ -67,7 +67,7 @@
                                 <input type="text" class="form-control" id="tool_name" name="tool_param[0]['name']" placeholder="Parameter">
                                 <input type="text" class="form-control" id="tool_value" name="tool_param[0]['value']" placeholder="Value">
                                 <div class="input-group-append">
-                                    <button class="btn btn-success btn-add" type="button" name="add_param"><i class="fas fa-plus"></i></button>
+                                    <button class="btn btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -80,7 +80,12 @@
                             Repair log
                         </h5>
                         <div class="col-md-7">
-                            <textarea name="tool_repair_log" class="form-control mt-3" placeholder="Tool repair log"></textarea>
+                            <div class="input-group form-group tool_log">
+                                <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log"></textarea>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-success btn-add-log"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

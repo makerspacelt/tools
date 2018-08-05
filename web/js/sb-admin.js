@@ -38,12 +38,12 @@
   });
 
   //======================= dynamic tool params =======================
-    var addFormGroup = function(event) {
+    var addParamGroup = function(event) {
         event.preventDefault();
-        var $formGroup = $(this).closest('.form-group');
+        var $formGroup = $(this).closest('.tool_param_group');
         var $formGroupClone = $formGroup.clone();
         $(this)
-            .toggleClass('btn-success btn-add btn-danger btn-remove')
+            .toggleClass('btn-success btn-add-param btn-danger btn-remove-param')
             .html('<i class="fas fa-minus"></i>');
         $formGroupClone.find('input').val('');
         var $n = $('div.tool_param_group').length;
@@ -52,14 +52,36 @@
         $formGroupClone.insertAfter($formGroup);
     };
 
-    var removeFormGroup = function(event) {
+    var removeParamGroup = function(event) {
         event.preventDefault();
-        var $formGroup = $(this).closest('.form-group');
+        var $formGroup = $(this).closest('.tool_param_group');
         $formGroup.remove();
     };
 
-    $(document).on('click', '.btn-add', addFormGroup);
-    $(document).on('click', '.btn-remove', removeFormGroup);
+    $(document).on('click', '.btn-add-param', addParamGroup);
+    $(document).on('click', '.btn-remove-param', removeParamGroup);
     //====================== /dynamic tool params =======================
+
+    //======================= dynamic tool logs =========================
+    var addLog = function(event) {
+        event.preventDefault();
+        var $formGroup = $(this).closest('.tool_log');
+        var $formGroupClone = $formGroup.clone();
+        $(this)
+            .toggleClass('btn-success btn-add-log btn-danger btn-remove-log')
+            .html('<i class="fas fa-minus"></i>');
+        $formGroupClone.find('textarea').val('');
+        $formGroupClone.insertAfter($formGroup);
+    };
+
+    var removeLog = function(event) {
+        event.preventDefault();
+        var $formGroup = $(this).closest('.tool_log');
+        $formGroup.remove();
+    };
+
+    $(document).on('click', '.btn-add-log', addLog);
+    $(document).on('click', '.btn-remove-log', removeLog);
+    //======================= /dynamic tool logs ========================
 
 })(jQuery); // End of use strict
