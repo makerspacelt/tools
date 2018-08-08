@@ -39,12 +39,15 @@
 
     $(document).ready( function () {
         $('#toolsDataTable').DataTable();
+
+        // https://github.com/underovsky/jquery-tagsinput-revisited
         $('.tagsinput#tool_tagsinput').tagsInput({
             placeholder: 'Tool tags',
             minChars: 3,
             delimiter: [',', ';', '|'],
             unique: true,
-            removeWithBackspace: true
+            removeWithBackspace: true,
+            validationPattern: new RegExp('^[a-zA-Z]+$')
         });
     } );
 
