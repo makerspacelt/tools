@@ -2,6 +2,18 @@
 
 {% block title %}{{ parent() }} - Add tool{% endblock %}
 
+{% block style_links %}
+    {{ parent() }}
+    <!-- jQuery Tags Input Revisited Plugin -->
+    <link href="/vendor/tagsinput-revisited/jquery.tagsinput-revisited.css" rel="stylesheet">
+{% endblock %}
+
+{% block script_links %}
+    {{ parent() }}
+    <!-- jQuery Tags Input Revisited Plugin -->
+    <script src="/vendor/tagsinput-revisited/jquery.tagsinput-revisited.js"></script>
+{% endblock %}
+
 {% block page_content %}
     <div class="card mb-3">
         <div class="card-header">
@@ -28,7 +40,9 @@
                             <input type="text" class="form-control mt-3" name="tool_code" placeholder="Tool code">
                             <textarea name="tool_description" class="form-control mt-3" placeholder="Tool description"></textarea>
                             <input type="file" name="tool_photos" class="form-control mt-3" placeholder="Tool photo">
-                            <input type="text" class="form-control mt-3" name="tool_tags" placeholder="Tool tags">
+                            <div class="mt-3">
+                                <input class="form-control tagsinput" id="tool_tagsinput" name="tool_tags" placeholder="Tool tags">
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -39,6 +39,13 @@
 
     $(document).ready( function () {
         $('#toolsDataTable').DataTable();
+        $('.tagsinput#tool_tagsinput').tagsInput({
+            placeholder: 'Tool tags',
+            minChars: 3,
+            delimiter: [',', ';', '|'],
+            unique: true,
+            removeWithBackspace: true
+        });
     } );
 
   //======================= dynamic tool params =======================
