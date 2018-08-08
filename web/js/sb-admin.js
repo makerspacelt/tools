@@ -39,6 +39,7 @@
 
     $(document).ready( function () {
         $('#toolsDataTable').DataTable();
+        $('#tagsDataTable').DataTable();
 
         // https://github.com/underovsky/jquery-tagsinput-revisited
         $('.tagsinput#tool_tagsinput').tagsInput({

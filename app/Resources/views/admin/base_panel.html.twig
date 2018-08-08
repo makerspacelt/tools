@@ -63,8 +63,8 @@
                     <i class="fas fa-fw fa-toolbox"></i>
                     <span>Tools</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
+            <li class="nav-item{% if app.request.attributes.get("_route") in ['admin_tags'] %} active{% endif %}">
+                <a class="nav-link" href="{{ path('admin_tags') }}">
                     <i class="fas fa-fw fa-tags"></i>
                     <span>Tags</span></a>
             </li>
