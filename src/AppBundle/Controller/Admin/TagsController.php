@@ -9,6 +9,7 @@
 namespace AppBundle\Controller\Admin;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -22,6 +23,16 @@ class TagsController extends Controller {
      */
     public function tags() {
         return $this->render('admin/tags/tags.html.twig');
+    }
+
+    /**
+     * @Route("/tags-autocomplete", name="admin_tags_autocomplete")
+     */
+    public function tagsAutocomplete() {
+        $dataArray = array('graztas', 'plaktukas', 'stakles', 'kaltas');
+        $respObj = new Response(json_encode($dataArray));
+        $respObj->headers->set('Content-Type', 'text/json');
+        return $respObj;
     }
 
 }
