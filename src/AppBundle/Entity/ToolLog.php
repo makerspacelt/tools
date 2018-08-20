@@ -65,5 +65,5 @@ class ToolLog implements \Serializable {
     public function setLog($log) {
         $this->log = $log;
     }
-    
+
 }
