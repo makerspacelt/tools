@@ -25,14 +25,24 @@
                 <table class="table table-bordered display" id="toolsDataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Image</th>
+                            <th class="col-1">Image</th>
                             <th>Name and Model</th>
                             <th>Code</th>
                             <th class="col-1">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-
+                        {% for tool in tools %}
+                            <tr>
+                                <td><img src="https://via.placeholder.com/50x50"></td>
+                                <td>{{ tool.name }} {{ tool.model }}</td>
+                                <td>{{ tool.code }}</td>
+                                <td>
+                                    <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
+                                    <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
