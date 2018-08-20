@@ -14,7 +14,7 @@
                     <a href="{{ path('admin_add_tool') }}" class="btn btn-primary mb-2 mr-2">Add tool</a>
                 </div>
                 {% for msg in app.session.flashBag.get('success') %}
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="alert alert-success py-2" role="alert">
                             {{ msg }}
                         </div>
@@ -38,8 +38,15 @@
                                 <td>{{ tool.name }} {{ tool.model }}</td>
                                 <td>{{ tool.code }}</td>
                                 <td>
-                                    <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
-                                    <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                    <div class="btn-group" role="group">
+                                        <form action="{{ path('admin_del_tool') }}" method="post">
+                                            <input type="hidden" name="toolid" value="{{ tool.id }}">
+                                            <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
+                                        </form>
+                                        <form action="{{ path('admin_edit_tool') }}" method="post">
+                                            <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}

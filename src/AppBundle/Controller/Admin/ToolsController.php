@@ -52,4 +52,27 @@ class ToolsController extends Controller {
         return $this->render('admin/tools/add_tool.html.twig');
     }
 
+    /**
+     * @Route("/editTool", name="admin_edit_tool")
+     */
+    public function editTool() {
+        return $this->render('admin/tools/add_tool.html.twig');
+    }
+
+    /**
+     * @Route("/delTool", name="admin_del_tool")
+     */
+    public function deleteTool(Request $request) {
+        $toolid = $request->request->get('toolid');
+        if ($toolid != null) {
+            $repo = $this->getDoctrine()->getRepository(Tool::class);
+            $tool = $repo->findOneBy(array('id' => $toolid));
+            $repo = $this->getDoctrine()->getManager();
+            $repo->remove($tool);
+            $repo->flush();
+            $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName().' '.$tool->getModel()));
+        }
+        return $this->redirectToRoute('admin_tools');
+    }
+
 }
