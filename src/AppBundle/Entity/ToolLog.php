@@ -1,14 +1,20 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Kulverstukas
+ * Date: 2018-08-20
+ * Time: 22:42
+ */
 
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="tools_parameters")
+ * @ORM\Table(name="tools_logs")
  * @ORM\Entity
  */
-class ToolParameter implements \Serializable {
+class ToolLog implements \Serializable {
 
     #=====================================================
     /**
@@ -21,12 +27,7 @@ class ToolParameter implements \Serializable {
     /**
      * @ORM\Column
      */
-    private $name;
-
-    /**
-     * @ORM\Column
-     */
-    private $value;
+    private $log;
     #=====================================================
 
     /**
@@ -35,8 +36,7 @@ class ToolParameter implements \Serializable {
     public function serialize() {
         return serialize(array(
             $this->id,
-            $this->name,
-            $this->value
+            $this->log
         ));
     }
 
@@ -46,8 +46,7 @@ class ToolParameter implements \Serializable {
     public function unserialize($serialized) {
         list(
             $this->id,
-            $this->name,
-            $this->value
+            $this->log
             ) = unserialize($serialized, array('allowed_classes' => false));
     }
 
@@ -56,29 +55,15 @@ class ToolParameter implements \Serializable {
     /**
      * @return mixed
      */
-    public function getName() {
-        return $this->name;
+    public function getLog() {
+        return $this->log;
     }
 
     /**
-     * @param mixed $name
+     * @param mixed $log
      */
-    public function setName($name) {
-        $this->name = $name;
+    public function setLog($log) {
+        $this->log = $log;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getValue() {
-        return $this->value;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value) {
-        $this->value = $value;
-    }
-
+    
 }
