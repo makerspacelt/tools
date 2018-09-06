@@ -48,10 +48,11 @@ class ToolsController extends Controller {
                 foreach ($paramArr['tool_repair_log'] as $entry) {
                     $toolLog = new ToolLog();
                     $toolLog->setLog($entry);
-                    $tool->setLogEntry($toolLog);
+                    $tool->addLog($toolLog);
                     $entityManager->persist($toolLog);
                 }
 
+                $entityManager->persist($tool);
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Tool created!');

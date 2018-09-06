@@ -26,10 +26,9 @@ class ToolLog {
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Tool", inversedBy="logEntry")
-     * @ORM\JoinColumn(name="tool_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Tool", inversedBy="logs")
      */
-    private $toolId;
+    private $tool;
 
     /**
      * @ORM\Column
@@ -51,5 +50,18 @@ class ToolLog {
         $this->log = $log;
     }
 
+    /**
+     * @param Tool $tool
+     */
+    public function setTool($tool) {
+        $this->tool = $tool;
+    }
 
+    /**
+     * return Tool
+     */
+    public function getTool() {
+       return $this->tool;
+    }
 }
+
