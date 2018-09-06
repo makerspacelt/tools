@@ -49,7 +49,7 @@ class UsersController extends Controller {
                 $obj = $repo->findOneBy(array('email' => $email));
                 if ($obj != null) {
                     $this->addFlash('error', 'Email already exists!');
-                    return $this->render('admin/add_user.html.twig', $request->request->all());
+                    return $this->render('admin/users/add_user.html.twig', $request->request->all());
                 }
                 // neegzistuoja, tai sukuriam
                 $entityManager = $this->getDoctrine()->getManager();

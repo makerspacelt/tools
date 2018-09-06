@@ -2,13 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="tools_tool")
  * @ORM\Entity
  */
-class Tool implements \Serializable {
+class Tool {
 
     #=====================================================
     /**
@@ -52,40 +53,15 @@ class Tool implements \Serializable {
      * @ORM\Column(name="acquisition_date")
      */
     private $acquisitionDate;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="toolId", cascade={"persist"})
+     */
+    private $logEntry;
     #=====================================================
-
-    /**
-     * String representation of object
-     */
-    public function serialize() {
-        return serialize(array(
-            $this->id,
-            $this->name,
-            $this->model,
-            $this->code,
-            $this->description,
-            $this->shopLinks,
-            $this->originalPrice,
-            $this->acquisitionDate
-        ));
+    public function __construct() {
+        $this->logEntry = new ArrayCollection();
     }
-
-    /**
-     * Constructs the object
-     */
-    public function unserialize($serialized) {
-        list(
-            $this->id,
-            $this->name,
-            $this->model,
-            $this->code,
-            $this->description,
-            $this->shopLinks,
-            $this->originalPrice,
-            $this->acquisitionDate
-            ) = unserialize($serialized, array('allowed_classes' => false));
-    }
-
     #=====================================================
 
     /**
@@ -144,6 +120,13 @@ class Tool implements \Serializable {
         return $this->acquisitionDate;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getLogEntries() {
+        return $this->logEntry->toArray();
+    }
+
     #=====================================================
 
     /**
@@ -193,6 +176,13 @@ class Tool implements \Serializable {
      */
     public function setAcquisitionDate($acquisitionDate) {
         $this->acquisitionDate = $acquisitionDate;
+    }
+
+    /**
+     * @param mixed $logEntry
+     */
+    public function setLogEntry($logEntry) {
+        $this->logEntry->add($logEntry);
     }
 
     #=====================================================

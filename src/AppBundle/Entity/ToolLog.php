@@ -8,13 +8,14 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="tools_logs")
  * @ORM\Entity
  */
-class ToolLog implements \Serializable {
+class ToolLog {
 
     #=====================================================
     /**
@@ -25,31 +26,15 @@ class ToolLog implements \Serializable {
     private $id;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Tool", inversedBy="logEntry")
+     * @ORM\JoinColumn(name="tool_id", referencedColumnName="id")
+     */
+    private $toolId;
+
+    /**
      * @ORM\Column
      */
     private $log;
-    #=====================================================
-
-    /**
-     * String representation of object
-     */
-    public function serialize() {
-        return serialize(array(
-            $this->id,
-            $this->log
-        ));
-    }
-
-    /**
-     * Constructs the object
-     */
-    public function unserialize($serialized) {
-        list(
-            $this->id,
-            $this->log
-            ) = unserialize($serialized, array('allowed_classes' => false));
-    }
-
     #=====================================================
 
     /**
@@ -65,5 +50,6 @@ class ToolLog implements \Serializable {
     public function setLog($log) {
         $this->log = $log;
     }
+
 
 }

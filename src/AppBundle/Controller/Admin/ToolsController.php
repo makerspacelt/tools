@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Tool;
+use AppBundle\Entity\ToolLog;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -26,6 +27,7 @@ class ToolsController extends Controller {
      */
     public function addTool(Request $request) {
         $paramArr = $request->request->all();
+//        echo '<pre>'; print_r($paramArr); die();
         if (count($paramArr) > 8) {
             $name = $request->request->get('tool_name');
             $model = $request->request->get('tool_model');
@@ -42,6 +44,13 @@ class ToolsController extends Controller {
                 $tool->setOriginalPrice($paramArr['tool_price']);
                 $tool->setAcquisitionDate($paramArr['tool_date']);
 
+                foreach ($paramArr['tool_repair_log'] as $entry) {
+                    $toolLog = new ToolLog();
+                    $toolLog->setLog($entry);
+                    $tool->setLogEntry($toolLog);
+                }
+
+                $entityManager->persist($toolLog);
                 $entityManager->persist($tool);
                 $entityManager->flush();
 
@@ -56,6 +65,8 @@ class ToolsController extends Controller {
      * @Route("/editTool", name="admin_edit_tool")
      */
     public function editTool() {
+        $arr = $this->getDoctrine()->getRepository(Tool::class)->find(13);
+        echo '<pre>'; print_r($arr->getLogEntries()); die();
         return $this->render('admin/tools/add_tool.html.twig');
     }
 
