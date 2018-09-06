@@ -43,15 +43,15 @@ class ToolsController extends Controller {
                 $tool->setShopLinks($paramArr['tool_links']);
                 $tool->setOriginalPrice($paramArr['tool_price']);
                 $tool->setAcquisitionDate($paramArr['tool_date']);
+                $entityManager->persist($tool);
 
                 foreach ($paramArr['tool_repair_log'] as $entry) {
                     $toolLog = new ToolLog();
                     $toolLog->setLog($entry);
                     $tool->setLogEntry($toolLog);
+                    $entityManager->persist($toolLog);
                 }
 
-                $entityManager->persist($toolLog);
-                $entityManager->persist($tool);
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Tool created!');

@@ -55,7 +55,7 @@ class Tool {
     private $acquisitionDate;
 
     /**
-     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="toolId", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="toolId")
      */
     private $logEntry;
     #=====================================================
