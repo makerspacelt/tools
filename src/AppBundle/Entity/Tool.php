@@ -55,12 +55,12 @@ class Tool {
     private $acquisitionDate;
 
     /**
-     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="toolId", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="tool", cascade={"persist"})
      */
-    private $logEntry;
+    private $logs;
     #=====================================================
     public function __construct() {
-        $this->logEntry = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
     #=====================================================
 
@@ -123,8 +123,8 @@ class Tool {
     /**
      * @return mixed
      */
-    public function getLogEntries() {
-        return $this->logEntry->toArray();
+    public function getLogs() {
+        return $this->logs;
     }
 
     #=====================================================
@@ -181,9 +181,11 @@ class Tool {
     /**
      * @param mixed $logEntry
      */
-    public function setLogEntry($logEntry) {
-        $this->logEntry->add($logEntry);
+    public function addLog($logEntry) {
+        $logEntry->setTool($this);
+        $this->logs->add($logEntry);
     }
 
     #=====================================================
 }
+
