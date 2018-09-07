@@ -43,7 +43,6 @@ class ToolsController extends Controller {
                 $tool->setShopLinks($paramArr['tool_links']);
                 $tool->setOriginalPrice($paramArr['tool_price']);
                 $tool->setAcquisitionDate($paramArr['tool_date']);
-                $entityManager->persist($tool);
 
                 foreach ($paramArr['tool_repair_log'] as $entry) {
                     $toolLog = new ToolLog();
@@ -65,10 +64,19 @@ class ToolsController extends Controller {
     /**
      * @Route("/editTool", name="admin_edit_tool")
      */
-    public function editTool() {
-        $arr = $this->getDoctrine()->getRepository(Tool::class)->find(13);
-        echo '<pre>'; print_r($arr->getLogEntries()); die();
-        return $this->render('admin/tools/add_tool.html.twig');
+    public function editTool(Request $request) {
+        $toolid = $request->request->get('tool_id');
+        if ($toolid && $request->request->has('edit_token')) { // čia ateina redaguoti info
+            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
+            $rtnArr = array('tool' => $tool);
+            if ($tool) {
+                $rtnArr['logs'] = $tool->getLogs();
+            }
+            return $this->render('admin/tools/edit_tool.html.twig', $rtnArr);
+        } else { // pakeista info buvo submitinta
+            $this->addFlash('success', 'Tool modified!');
+        }
+        return $this->redirectToRoute('admin_tools');
     }
 
     /**
@@ -77,12 +85,15 @@ class ToolsController extends Controller {
     public function deleteTool(Request $request) {
         $toolid = $request->request->get('toolid');
         if ($toolid != null) {
-            $repo = $this->getDoctrine()->getRepository(Tool::class);
-            $tool = $repo->findOneBy(array('id' => $toolid));
-            $repo = $this->getDoctrine()->getManager();
-            $repo->remove($tool);
-            $repo->flush();
-            $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName().' '.$tool->getModel()));
+            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
+            if ($tool) {
+                $repo = $this->getDoctrine()->getManager();
+                $repo->remove($tool);
+                $repo->flush();
+                $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName().' '.$tool->getModel()));
+            } else {
+                $this->addFlash('error', 'Tool doesn\'t exist!');
+            }
         }
         return $this->redirectToRoute('admin_tools');
     }

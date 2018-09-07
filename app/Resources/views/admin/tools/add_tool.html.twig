@@ -19,11 +19,11 @@
     <div class="card mb-3">
         <div class="card-header">
             <i class="fas fa-toolbox"></i>
-            <i class="far fa-plus-square"></i>
-            Add new tool
+            <i class="far {% block icon %}fa-plus-square{% endblock %}"></i>
+            {% block card_title %}Add new tool{% endblock %}
         </div>
         <div class="card-body">
-            <form action="{{ path('admin_add_tool') }}" method="post">
+            <form action="{% block form_action %}{{ path('admin_add_tool') }}{% endblock %}" method="post">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
@@ -32,14 +32,14 @@
                         <div class="col-md-7">
                             <div class="row">
                                 <div class="col">
-                                    <input type="text" class="form-control" name="tool_name" placeholder="Tool name" required>
+                                    <input type="text" class="form-control" name="tool_name" placeholder="Tool name" value="{{ tool.getName() | default('') }}" required>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" name="tool_model" placeholder="Tool model" required>
+                                    <input type="text" class="form-control" name="tool_model" placeholder="Tool model" value="{{ tool.getModel() | default('') }}" required>
                                 </div>
                             </div>
-                            <input type="text" class="form-control mt-3" name="tool_code" placeholder="Tool code" required>
-                            <textarea name="tool_description" class="form-control mt-3" placeholder="Tool description" required></textarea>
+                            <input type="text" class="form-control mt-3" name="tool_code" placeholder="Tool code" value="{{ tool.getCode() | default('') }}" required>
+                            <textarea name="tool_description" class="form-control mt-3" placeholder="Tool description" required>{{ tool.getDescription() | default('') }}</textarea>
                             <input type="file" name="tool_photos" class="form-control mt-3" placeholder="Tool photo">
                             <div class="mt-3">
                                 <input class="form-control tagsinput" id="tool_tagsinput" name="tool_tags" placeholder="Tool tags">
@@ -54,18 +54,18 @@
                             Additional information
                         </h5>
                         <div class="col-md-7">
-                            <textarea name="tool_links" class="form-control mt-3" placeholder="Where to buy?"></textarea>
+                            <textarea name="tool_links" class="form-control mt-3" placeholder="Where to buy?">{{ tool.getShopLinks() | default('') }}</textarea>
                             <div class="row mt-3">
                                 <div class="col">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" name="tool_price" placeholder="Original price">
+                                        <input type="text" class="form-control" name="tool_price" value="{{ tool.getOriginalPrice() | default('') }}" placeholder="Original price">
                                         <div class="input-group-append">
                                             <div class="input-group-text">&euro;</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <input type="date" class="form-control" name="tool_date" placeholder="Bought when?">
+                                    <input type="date" class="form-control" name="tool_date" value="{{ tool.getAcquisitionDate() | default('') }}" placeholder="Bought when?">
                                 </div>
                             </div>
                         </div>
@@ -95,8 +95,16 @@
                             Repair log
                         </h5>
                         <div class="col-md-7">
+                            {% for log in logs %}
+                                <div class="input-group form-group tool_log">
+                                    <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log">{{ log.getLog() | default('') }}</textarea>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>
+                                    </div>
+                                </div>
+                            {% endfor %}
                             <div class="input-group form-group tool_log">
-                                <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log"></textarea>
+                                <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log">{{ log.getLog() | default('') }}</textarea>
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-success btn-add-log"><i class="fas fa-plus"></i></button>
                                 </div>
@@ -108,7 +116,7 @@
                 <div class="row">
                     <div class="col mt-2">
                         <a href="{{ path('admin_tools') }}" class="btn btn-secondary">Back</a>
-                        <input type="submit" class="btn btn-primary" value="Create">
+                        <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">
                     </div>
                 </div>
             </form>

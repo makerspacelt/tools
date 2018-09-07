@@ -55,9 +55,10 @@ class Tool {
     private $acquisitionDate;
 
     /**
-     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="tool", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="tool")
      */
     private $logs;
+
     #=====================================================
     public function __construct() {
         $this->logs = new ArrayCollection();

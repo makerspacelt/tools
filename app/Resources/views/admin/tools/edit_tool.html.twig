@@ -1,0 +1,8 @@
+{% extends 'admin/tools/add_tool.html.twig' %}
+
+{% block title %}{{ parent() }} - Edit tool{% endblock %}
+
+{% block icon %}fa-edit{% endblock %}
+{% block card_title %}Edit tool{% endblock %}
+{% block submit_btn_name %}Submit{% endblock %}
+{% block form_action %}{{ path('admin_edit_tool') }}{% endblock %}
