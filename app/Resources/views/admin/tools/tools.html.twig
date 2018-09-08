@@ -40,7 +40,7 @@
                                 <td>
                                     <div class="btn-group" role="group">
                                         <form action="{{ path('admin_del_tool') }}" method="post">
-                                            <input type="hidden" name="toolid" value="{{ tool.id }}">
+                                            <input type="hidden" name="tool_id" value="{{ tool.id }}">
                                             <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
                                         </form>
                                         <form action="{{ path('admin_edit_tool') }}" method="post">

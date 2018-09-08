@@ -111,11 +111,14 @@ class ToolsController extends Controller {
      * @Route("/delTool", name="admin_del_tool")
      */
     public function deleteTool(Request $request) {
-        $toolid = $request->request->get('toolid');
+        $toolid = $request->request->get('tool_id');
         if ($toolid != null) {
             $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
             if ($tool) {
                 $repo = $this->getDoctrine()->getManager();
+                foreach ($tool->getLogs() as $log) {
+                    $repo->remove($log);
+                }
                 $repo->remove($tool);
                 $repo->flush();
                 $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName().' '.$tool->getModel()));
