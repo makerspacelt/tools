@@ -6,3 +6,4 @@
 {% block card_title %}Edit tool{% endblock %}
 {% block submit_btn_name %}Submit{% endblock %}
 {% block form_action %}{{ path('admin_edit_tool') }}{% endblock %}
+{% block input_params %}<input type="hidden" name="tool_id" value="{{ tool.id }}">{% endblock %}

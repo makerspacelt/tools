@@ -73,8 +73,36 @@ class ToolsController extends Controller {
                 $rtnArr['logs'] = $tool->getLogs();
             }
             return $this->render('admin/tools/edit_tool.html.twig', $rtnArr);
-        } else { // pakeista info buvo submitinta
-            $this->addFlash('success', 'Tool modified!');
+        } else if ($request->request->count() >= 4) { // pakeista info buvo submitinta
+            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
+            if ($tool) {
+                $name = $request->request->get('tool_name');
+                $model = $request->request->get('tool_model');
+                $code = $request->request->get('tool_code');
+                $descr = $request->request->get('tool_description');
+                if ($name && $model && $code && $descr) {
+                    $paramArr = $request->request->all();
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $tool->setName($paramArr['tool_name']);
+                    $tool->setModel($paramArr['tool_model']);
+                    $tool->setCode($paramArr['tool_code']);
+                    $tool->setDescription($paramArr['tool_description']);
+                    $tool->setShopLinks($paramArr['tool_links']);
+                    $tool->setOriginalPrice($paramArr['tool_price']);
+                    $tool->setAcquisitionDate($paramArr['tool_date']);
+
+                    // TODO: padaryti log'ų atnaujinimą ir naujų įrašų išsaugojimą nekuriant dublikatų
+                    foreach ($paramArr['tool_repair_log'] as $entry) {
+                        $toolLog = new ToolLog();
+                        $toolLog->setLog($entry);
+                        $tool->addLog($toolLog);
+                        $entityManager->persist($toolLog);
+                    }
+
+                    $entityManager->flush();
+                }
+                $this->addFlash('success', 'Tool modified!');
+            }
         }
         return $this->redirectToRoute('admin_tools');
     }

@@ -116,6 +116,7 @@
                 <div class="row">
                     <div class="col mt-2">
                         <a href="{{ path('admin_tools') }}" class="btn btn-secondary">Back</a>
+                        {% block input_params %}{% endblock %}
                         <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">
                     </div>
                 </div>
