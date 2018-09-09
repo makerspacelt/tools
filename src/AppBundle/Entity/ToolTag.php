@@ -2,13 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="tools_parameters")
+ * @ORM\Table(name="tools_tags")
  * @ORM\Entity
  */
-class ToolParameter {
+class ToolTag {
 
     #=====================================================
     /**
@@ -21,45 +22,30 @@ class ToolParameter {
     /**
      * @ORM\Column
      */
-    private $name;
+    private $tag;
 
     /**
-     * @ORM\Column
-     */
-    private $value;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Tool", inversedBy="params")
+     * @ORM\ManyToMany(targetEntity="Tool", inversedBy="tags")
      */
     private $tool;
+    #=====================================================
+    public function __construct() {
+        $this->tool = new ArrayCollection();
+    }
     #=====================================================
 
     /**
      * @return mixed
      */
-    public function getName() {
-        return $this->name;
+    public function getTag() {
+        return $this->tag;
     }
 
     /**
-     * @param mixed $name
+     * @param mixed $tag
      */
-    public function setName($name) {
-        $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue() {
-        return $this->value;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value) {
-        $this->value = $value;
+    public function setTag($tag) {
+        $this->tag = $tag;
     }
 
     /**
@@ -72,8 +58,8 @@ class ToolParameter {
     /**
      * @param mixed $tool
      */
-    public function setTool($tool) {
-        $this->tool = $tool;
+    public function setTool(Tool $tool) {
+        $this->tool->add($tool);
     }
 
 }

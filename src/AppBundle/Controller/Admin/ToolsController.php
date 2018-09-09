@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Admin;
 use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
+use AppBundle\Entity\ToolTag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -44,6 +45,13 @@ class ToolsController extends Controller {
                 $tool->setShopLinks($paramArr['tool_links']);
                 $tool->setOriginalPrice($paramArr['tool_price']);
                 $tool->setAcquisitionDate($paramArr['tool_date']);
+
+                foreach (explode(',', $paramArr['tool_tags']) as $tag) {
+                    $toolTag = new ToolTag();
+                    $toolTag->setTag(trim($tag));
+                    $tool->addTag($toolTag);
+                    $entityManager->persist($toolTag);
+                }
 
                 foreach ($paramArr['tool_param'] as $param) {
                     $toolParam = new ToolParameter();
@@ -100,13 +108,15 @@ class ToolsController extends Controller {
                     $tool->setOriginalPrice($paramArr['tool_price']);
                     $tool->setAcquisitionDate($paramArr['tool_date']);
 
+                    // TODO: [insert tool param edit code block here]
+
                     // TODO: padaryti log'ų atnaujinimą ir naujų įrašų išsaugojimą nekuriant dublikatų
-                    foreach ($paramArr['tool_repair_log'] as $entry) {
-                        $toolLog = new ToolLog();
-                        $toolLog->setLog($entry);
-                        $tool->addLog($toolLog);
-                        $entityManager->persist($toolLog);
-                    }
+//                    foreach ($paramArr['tool_repair_log'] as $entry) {
+//                        $toolLog = new ToolLog();
+//                        $toolLog->setLog($entry);
+//                        $tool->addLog($toolLog);
+//                        $entityManager->persist($toolLog);
+//                    }
 
                     $entityManager->flush();
                 }
@@ -125,6 +135,10 @@ class ToolsController extends Controller {
             $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
             if ($tool) {
                 $repo = $this->getDoctrine()->getManager();
+
+                foreach ($tool->getTags() as $tag) {
+                    $repo->remove($tag);
+                }
 
                 foreach ($tool->getParams() as $param) {
                     $repo->remove($param);

@@ -55,6 +55,11 @@ class Tool {
     private $acquisitionDate;
 
     /**
+     * @ORM\ManyToMany(targetEntity="ToolTag", mappedBy="tool")
+     */
+    private $tags;
+
+    /**
      * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="tool")
      */
     private $logs;
@@ -65,6 +70,7 @@ class Tool {
     private $params;
     #=====================================================
     public function __construct() {
+        $this->tags = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->params = new ArrayCollection();
     }
@@ -124,6 +130,13 @@ class Tool {
      */
     public function getAcquisitionDate() {
         return $this->acquisitionDate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTags() {
+        return $this->tags;
     }
 
     /**
@@ -191,9 +204,17 @@ class Tool {
     }
 
     /**
+     * @param mixed $tags
+     */
+    public function addTag(ToolTag $tagEntry) {
+        $tagEntry->setTool($this);
+        $this->tags->add($tagEntry);
+    }
+
+    /**
      * @param mixed $logEntry
      */
-    public function addLog($logEntry) {
+    public function addLog(ToolLog $logEntry) {
         $logEntry->setTool($this);
         $this->logs->add($logEntry);
     }
@@ -201,7 +222,7 @@ class Tool {
     /**
      * @param mixed $params
      */
-    public function addParam($paramEntry) {
+    public function addParam(ToolParameter $paramEntry) {
         $paramEntry->setTool($this);
         $this->params->add($paramEntry);
     }
