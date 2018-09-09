@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tools_parameters")
  * @ORM\Entity
  */
-class ToolParameter implements \Serializable {
+class ToolParameter {
 
     #=====================================================
     /**
@@ -27,29 +27,11 @@ class ToolParameter implements \Serializable {
      * @ORM\Column
      */
     private $value;
-    #=====================================================
 
     /**
-     * String representation of object
+     * @ORM\ManyToOne(targetEntity="Tool", inversedBy="params")
      */
-    public function serialize() {
-        return serialize(array(
-            $this->id,
-            $this->name,
-            $this->value
-        ));
-    }
-
-    /**
-     * Constructs the object
-     */
-    public function unserialize($serialized) {
-        list(
-            $this->id,
-            $this->name,
-            $this->value
-            ) = unserialize($serialized, array('allowed_classes' => false));
-    }
+    private $tool;
 
     #=====================================================
 
@@ -79,6 +61,20 @@ class ToolParameter implements \Serializable {
      */
     public function setValue($value) {
         $this->value = $value;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTool() {
+        return $this->tool;
+    }
+
+    /**
+     * @param mixed $tool
+     */
+    public function setTool($tool) {
+        $this->tool = $tool;
     }
 
 }

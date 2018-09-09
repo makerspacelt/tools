@@ -59,9 +59,14 @@ class Tool {
      */
     private $logs;
 
+    /**
+     * @ORM\OneToMany(targetEntity="ToolParameter", mappedBy="tool")
+     */
+    private $params;
     #=====================================================
     public function __construct() {
         $this->logs = new ArrayCollection();
+        $this->params = new ArrayCollection();
     }
     #=====================================================
 
@@ -128,6 +133,12 @@ class Tool {
         return $this->logs;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getParams() {
+        return $this->params;
+    }
     #=====================================================
 
     /**
@@ -187,6 +198,13 @@ class Tool {
         $this->logs->add($logEntry);
     }
 
+    /**
+     * @param mixed $params
+     */
+    public function addParam($paramEntry) {
+        $paramEntry->setTool($this);
+        $this->params->add($paramEntry);
+    }
     #=====================================================
 }
 

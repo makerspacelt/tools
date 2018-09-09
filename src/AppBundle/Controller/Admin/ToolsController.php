@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolLog;
+use AppBundle\Entity\ToolParameter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,6 +44,14 @@ class ToolsController extends Controller {
                 $tool->setShopLinks($paramArr['tool_links']);
                 $tool->setOriginalPrice($paramArr['tool_price']);
                 $tool->setAcquisitionDate($paramArr['tool_date']);
+
+                foreach ($paramArr['tool_param'] as $param) {
+                    $toolParam = new ToolParameter();
+                    $toolParam->setName($param['name']);
+                    $toolParam->setValue($param['value']);
+                    $tool->addParam($toolParam);
+                    $entityManager->persist($toolParam);
+                }
 
                 foreach ($paramArr['tool_repair_log'] as $entry) {
                     $toolLog = new ToolLog();
