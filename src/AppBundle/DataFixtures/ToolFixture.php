@@ -15,7 +15,7 @@ use AppBundle\Entity\ToolTag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class ToolFixture extends Fixture{
+class ToolFixture extends Fixture {
 
     public function load(ObjectManager $manager) {
         for ($j = 0; $j < 5; $j++) {
@@ -29,6 +29,7 @@ class ToolFixture extends Fixture{
             $tool->setAcquisitionDate('2018-' . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . '-' . str_pad(rand(1, 30), 2, '0', STR_PAD_LEFT));
 
             $tags = array('drill', 'drillbit', 'zeimeris', 'druzba', 'pjuklas', 'diskas', 'slifarke', 'oblius', 'atsuktuvas-kryzminis', 'atsuktuvas-minusas', 'rulete');
+            // TODO: kažkaip fetch'inti iš DB kad užtikrinti unikalumą
             for ($i = 0; $i < 4; $i++) {
                 $tag = new ToolTag();
                 $tag->setTag($tags[rand(0, count($tags) - 1)]);

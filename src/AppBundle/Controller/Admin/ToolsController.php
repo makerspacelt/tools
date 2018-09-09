@@ -46,11 +46,18 @@ class ToolsController extends Controller {
                 $tool->setOriginalPrice($paramArr['tool_price']);
                 $tool->setAcquisitionDate($paramArr['tool_date']);
 
+                // tag'ai turi būti unikalūs
+                $repo = $this->getDoctrine()->getRepository(ToolTag::class);
                 foreach (explode(',', $paramArr['tool_tags']) as $tag) {
-                    $toolTag = new ToolTag();
-                    $toolTag->setTag(trim($tag));
-                    $tool->addTag($toolTag);
-                    $entityManager->persist($toolTag);
+                    $dbTag = $repo->findOneBy(array('tag' => $tag));
+                    if ($dbTag) {
+                        $tool->addTag($dbTag);
+                    } else {
+                        $toolTag = new ToolTag();
+                        $tool->addTag($toolTag);
+                        $toolTag->setTag(trim($tag));
+                        $entityManager->persist($toolTag);
+                    }
                 }
 
                 foreach ($paramArr['tool_param'] as $param) {
