@@ -37,7 +37,7 @@
     event.preventDefault();
   });
 
-    $(document).ready( function () {
+  $(document).ready( function () {
         $('#toolsDataTable').DataTable();
         $('#tagsDataTable').DataTable();
 
@@ -47,7 +47,7 @@
             delimiter: [',', ';', '|'],
             unique: true,
             removeWithBackspace: true,
-            validationPattern: new RegExp('^[a-zA-Z]+$')
+            validationPattern: new RegExp('^[a-zA-Z\-]+$')
         });
     } );
 
