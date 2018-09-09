@@ -87,6 +87,8 @@ class ToolsController extends Controller {
             $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
             $rtnArr = array('tool' => $tool);
             if ($tool) {
+                $rtnArr['tags'] = $tool->getTagsArray();
+                $rtnArr['params'] = $tool->getParams();
                 $rtnArr['logs'] = $tool->getLogs();
             }
             return $this->render('admin/tools/edit_tool.html.twig', $rtnArr);
@@ -107,6 +109,8 @@ class ToolsController extends Controller {
                     $tool->setShopLinks($paramArr['tool_links']);
                     $tool->setOriginalPrice($paramArr['tool_price']);
                     $tool->setAcquisitionDate($paramArr['tool_date']);
+
+                    // TODO: [insert tool tag edit code block here]
 
                     // TODO: [insert tool param edit code block here]
 

@@ -140,6 +140,17 @@ class Tool {
     }
 
     /**
+     * @return array
+     */
+    public function getTagsArray() {
+        $tagsArr = array();
+        foreach ($this->tags as $tag) {
+            $tagsArr[] = $tag->getTag();
+        }
+        return $tagsArr;
+    }
+
+    /**
      * @return mixed
      */
     public function getLogs() {
