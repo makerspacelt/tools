@@ -54,18 +54,22 @@ class ToolsController extends Controller {
                 }
 
                 foreach ($paramArr['tool_param'] as $param) {
-                    $toolParam = new ToolParameter();
-                    $toolParam->setName($param['name']);
-                    $toolParam->setValue($param['value']);
-                    $tool->addParam($toolParam);
-                    $entityManager->persist($toolParam);
+                    if (!empty(trim($param['name'])) && !empty(trim($param['value']))) {
+                        $toolParam = new ToolParameter();
+                        $toolParam->setName(trim($param['name']));
+                        $toolParam->setValue(trim($param['value']));
+                        $tool->addParam($toolParam);
+                        $entityManager->persist($toolParam);
+                    }
                 }
 
                 foreach ($paramArr['tool_repair_log'] as $entry) {
-                    $toolLog = new ToolLog();
-                    $toolLog->setLog($entry);
-                    $tool->addLog($toolLog);
-                    $entityManager->persist($toolLog);
+                    if (!empty(($entry))) {
+                        $toolLog = new ToolLog();
+                        $toolLog->setLog(trim($entry));
+                        $tool->addLog($toolLog);
+                        $entityManager->persist($toolLog);
+                    }
                 }
 
                 $entityManager->persist($tool);

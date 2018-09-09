@@ -42,7 +42,7 @@
                             <textarea name="tool_description" class="form-control mt-3" placeholder="Tool description" required>{{ tool.getDescription() | default('') }}</textarea>
                             <input type="file" name="tool_photos" class="form-control mt-3" placeholder="Tool photo">
                             <div class="mt-3">
-                                <input class="form-control tagsinput" id="tool_tagsinput" name="tool_tags" value="{{ tags | join(",") }}" placeholder="Tool tags">
+                                <input class="form-control tagsinput" id="tool_tagsinput" name="tool_tags" value="{{ tags | default('') | join(",")}}" placeholder="Tool tags">
                             </div>
                         </div>
                     </div>
@@ -78,8 +78,8 @@
                             Tool parameters
                         </h5>
                         <div class="col-md-7">
+                            {% set n = 0 %}
                             {% if params is defined %}
-                                {% set n = 0 %}
                                 {% for param in params %}
                                     <div class="input-group form-group tool_param_group">
                                         <input type="text" class="form-control" id="tool_name" name="tool_param[{{ n }}][name]" value="{{ param.getName() }}" placeholder="Parameter">
@@ -90,8 +90,8 @@
                                     </div>
                                     {% set n = n + 1 %}
                                 {% endfor %}
+                                {% set n = n + 1 %}
                             {% endif %}
-                            {% set n = n + 1 %}
                             <div class="input-group form-group tool_param_group">
                                 <input type="text" class="form-control" id="tool_name" name="tool_param[{{ n }}][name]" placeholder="Parameter">
                                 <input type="text" class="form-control" id="tool_value" name="tool_param[{{ n }}][value]" placeholder="Value">
