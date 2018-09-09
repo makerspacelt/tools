@@ -125,9 +125,15 @@ class ToolsController extends Controller {
             $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
             if ($tool) {
                 $repo = $this->getDoctrine()->getManager();
+
+                foreach ($tool->getParams() as $param) {
+                    $repo->remove($param);
+                }
+
                 foreach ($tool->getLogs() as $log) {
                     $repo->remove($log);
                 }
+
                 $repo->remove($tool);
                 $repo->flush();
                 $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName().' '.$tool->getModel()));
