@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Kulverstukas
- * Date: 2018-08-08
- * Time: 13:21
- */
 
 namespace AppBundle\Controller\Admin;
 
@@ -29,9 +23,14 @@ class TagsController extends Controller {
     /**
      * @Route("/tags-autocomplete", name="admin_tags_autocomplete")
      */
-    public function tagsAutocomplete() {
+    public function tagsAutocomplete(Request $request) {
+        $term = $request->query->get('term', null);
         $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-        $tags = $repo->findAll();
+        if ($term) {
+            $tags = $repo->searchTags($term);
+        } else {
+            $tags = $repo->findAll();
+        }
         $tagsArr = array();
         foreach ($tags as $tag) {
             $tagsArr[] = $tag->getTag();

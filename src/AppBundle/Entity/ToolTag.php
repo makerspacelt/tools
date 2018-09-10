@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="tools_tags")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TagsRepository")
  */
 class ToolTag {
 

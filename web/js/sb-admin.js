@@ -37,20 +37,22 @@
     event.preventDefault();
   });
 
+  // https://github.com/underovsky/jquery-tagsinput-revisited
   $(document).ready( function () {
         $('#toolsDataTable').DataTable();
         $('#tagsDataTable').DataTable();
-        
+
         $('.tagsinput#tool_tagsinput').tagsInput({
             placeholder: 'Tool tags',
             minChars: 3,
             delimiter: [',', ';', '|'],
             unique: true,
             removeWithBackspace: true,
-            validationPattern: new RegExp('^[a-zA-Z\-]+$'),
+            validationPattern: new RegExp('^[a-z\-]+$', 'i'),
             autocomplete: {
                 source: '/admin/tags/tags-autocomplete',
-                minLength: 3
+                minLength: 2,
+                delay: 0
             }
         });
 
