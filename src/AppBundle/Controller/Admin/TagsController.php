@@ -17,7 +17,17 @@ class TagsController extends Controller {
      * @Route("/", name="admin_tags")
      */
     public function tags() {
-        return $this->render('admin/tags/tags.html.twig');
+        $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+        $tags = $repo->findAll();
+        $tagArr = array();
+        foreach ($tags as $tag) {
+            $tagArr[] = array(
+                'id' => $tag->getId(),
+                'tag' => $tag->getTag(),
+                'usageCount' => $tag->getTools()->count()
+            );
+        }
+        return $this->render('admin/tags/tags.html.twig', array('tags' => $tagArr));
     }
 
     /**

@@ -37,6 +37,13 @@ class ToolTag {
     /**
      * @return mixed
      */
+    public function getId() {
+        return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getTag() {
         return $this->tag;
     }
@@ -51,7 +58,7 @@ class ToolTag {
     /**
      * @return mixed
      */
-    public function getTool() {
+    public function getTools() {
         return $this->tool;
     }
 
