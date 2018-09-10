@@ -50,4 +50,11 @@ class TagsController extends Controller {
         return $respObj;
     }
 
+    /**
+     * @Route("/editTag", name="admin_edit_tag")
+     */
+    public function editTag(Request $request) {
+        $reqArr = $request->request->all();
+        return $this->render('admin/tags/edit_tag.html.twig', $reqArr);
+    }
 }
