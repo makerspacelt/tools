@@ -14,7 +14,7 @@ class TagsRepository extends EntityRepository {
                 $qb->expr()->like('t.tag', ':tag')
             )
             ->setMaxResults(5)
-            ->setParameter('tag', $q.'%')
+            ->setParameter('tag', strtolower($q).'%')
             ->getQuery()
             ->getResult();
     }

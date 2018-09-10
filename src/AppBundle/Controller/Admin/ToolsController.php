@@ -55,7 +55,7 @@ class ToolsController extends Controller {
                     } else {
                         $toolTag = new ToolTag();
                         $tool->addTag($toolTag);
-                        $toolTag->setTag(trim($tag));
+                        $toolTag->setTag(trim(strtolower($tag)));
                         $entityManager->persist($toolTag);
                     }
                 }
