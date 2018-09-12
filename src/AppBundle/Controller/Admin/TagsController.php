@@ -54,7 +54,20 @@ class TagsController extends Controller {
      * @Route("/editTag", name="admin_edit_tag")
      */
     public function editTag(Request $request) {
-        $reqArr = $request->request->all();
-        return $this->render('admin/tags/edit_tag.html.twig', $reqArr);
+        if ($request->request->has('edit_token')) {
+            $reqArr = $request->request->all();
+            return $this->render('admin/tags/edit_tag.html.twig', $reqArr);
+        } else {
+            $reqArr = $request->request->all();
+            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+            $tag = $repo->find($reqArr['tag_id']);
+            if ($tag) {
+                $tag->setTag(trim(strtolower($reqArr['tag'])));
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $this->addFlash('success', 'Tag edited!');
+            }
+            return $this->redirectToRoute('admin_tags');
+        }
     }
 }
