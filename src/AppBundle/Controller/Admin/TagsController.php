@@ -70,4 +70,22 @@ class TagsController extends Controller {
             return $this->redirectToRoute('admin_tags');
         }
     }
+
+    /**
+     * @Route("/deleteTag", name="admin_delete_tag")
+     */
+    public function deleteTag(Request $request) {
+        if ($request->request->has('tag_id')) {
+            $tag = $this->getDoctrine()->getRepository(ToolTag::class)->find(
+                $request->request->get('tag_id')
+            );
+            if ($tag) {
+                $repo = $this->getDoctrine()->getManager();
+                $repo->remove($tag);
+                $repo->flush();
+                $this->addFlash('success', 'Tag removed!');
+            }
+            return $this->redirectToRoute('admin_tags');
+        }
+    }
 }
