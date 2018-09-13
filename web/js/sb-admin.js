@@ -37,11 +37,21 @@
     event.preventDefault();
   });
 
-  // https://github.com/underovsky/jquery-tagsinput-revisited
   $(document).ready( function () {
-        $('#toolsDataTable').DataTable();
-        $('#tagsDataTable').DataTable();
+        $('#toolsDataTable').DataTable({
+            "columnDefs": [
+                {"orderable": false, "targets": [0, -1]}
+            ],
+        });
 
+        $('#tagsDataTable').DataTable({
+            "columnDefs": [
+                {"orderable": false, "targets": -1}
+            ],
+            "order": [[ 1, "desc" ]]
+        });
+
+      // https://github.com/underovsky/jquery-tagsinput-revisited
         $('.tagsinput#tool_tagsinput').tagsInput({
             placeholder: 'Tool tags',
             minChars: 3,
