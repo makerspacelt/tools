@@ -7,3 +7,9 @@ body {
       padding-top: 56px;
   }
 }
+
+.tag-section {
+    min-height: 50px;
+    max-height: 200px;
+    overflow-y: scroll;
+}

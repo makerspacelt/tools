@@ -51,7 +51,7 @@
                     <h5 class="card-header">Paieška</h5>
                     <div class="card-body">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Ieškoti ko..." autofocus="1">
+                            <input type="text" class="form-control" placeholder="Ieškoti ko..." autofocus>
                             <div class="input-group-append">
                                 <input type="submit" name="submit" id="submit" value="Ieškoti" class="btn btn-secondary" />
                             </div>
@@ -60,18 +60,24 @@
                 </div>
 
                 <div class="card my-4">
-                    <h5 class="card-header">Kategorijos</h5>
+                    <h5 class="card-header">Etiketės</h5>
                     <div class="my-2 mx-3">
-                        {% for i in 1..4 %}
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="fgfdgfdfgfd" value="fgfdgfdfgfd" />
-                            <label class="custom-control-label" for="fgfdgfdfgfd">
-                                <a href="#"><nobr>#fgfdgfdfgfd</nobr></a>
-                            </label>
-                        </div>
-                        {% endfor %}
-                        <br/>
-                        <input type="submit" name="submit"  id="submit" value="Filtruoti" class="btn btn-sm btn-block btn-secondary"/>
+                        {% if tags is not empty %}
+                            <div class="container tag-section">
+                                {% for tag in tags %}
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="{{ tag.getId() }}" value="{{ tag.getTag() }}" />
+                                        <label class="custom-control-label" for="{{ tag.getId() }}">
+                                            <a href="#"><nobr>#{{ tag.getTag() }}</nobr></a>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <br/>
+                            <input type="submit" name="submit" id="submit" value="Filtruoti" class="btn btn-sm btn-block btn-secondary"/>
+                        {% else %}
+                            Etikečių kol kas nėra
+                        {% endif %}
                     </div>
                 </div>
 
