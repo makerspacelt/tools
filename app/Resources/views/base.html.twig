@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{% block title %}Makerspace tools manager{% endblock %}</title>
+    <title>{% block title %}{{ include('admin/base_name.twig') }}{% endblock %}</title>
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -13,8 +13,11 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a href="#">
-                <div class="navbar-brand">{% block navbar_title %}Makerspace TIM{% endblock %}</div>
+            <a href="{{ path('index_page') }}">
+                <div class="navbar-brand">
+                    <img src="/res/ms-logo.png" width="30" height="30">
+                    {% block navbar_title %}{{ include('admin/base_name.twig') }}{% endblock %}
+                </div>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

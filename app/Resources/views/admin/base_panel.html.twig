@@ -20,7 +20,10 @@
 {% block body %}
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-        <a class="navbar-brand mr-1" href="{{ path('index_page') }}">{% block navbar_title %}{{ include('admin/base_name.twig') }}{% endblock %}</a>
+        <a class="navbar-brand mr-1" href="{{ path('index_page') }}">
+            <img src="/res/ms-logo.png" width="30" height="30">
+            {% block navbar_title %}{{ include('admin/base_name.twig') }}{% endblock %}
+        </a>
 
         <button class="btn btn-link btn-sm text-white order-sm-0" id="sidebarToggle" href="#">
             <i class="fas fa-bars"></i>
