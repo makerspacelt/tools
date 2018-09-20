@@ -151,8 +151,11 @@ class ToolsController extends Controller {
             if ($tool) {
                 $repo = $this->getDoctrine()->getManager();
 
+                // pašalinam tag'ą tik jeigu jis nenaudojamas niekur kitur
                 foreach ($tool->getTags() as $tag) {
-                    $repo->remove($tag);
+                    if ($tag->getTools()->count() <= 1) {
+                        $repo->remove($tag);
+                    }
                 }
 
                 foreach ($tool->getParams() as $param) {
