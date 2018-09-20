@@ -13,3 +13,10 @@ body {
     max-height: 200px;
     overflow-y: scroll;
 }
+
+img.tool-def-img {
+    width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
