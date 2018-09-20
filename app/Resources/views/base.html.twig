@@ -3,7 +3,7 @@
 <head>
     <title>{% block title %}{{ include('admin/base_name.twig') }}{% endblock %}</title>
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/main.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
@@ -59,13 +59,14 @@
                     </div>
                 </div>
 
+                {% block tags %}
                 <div class="card my-4">
                     <h5 class="card-header">Etiketės</h5>
                     <div class="my-2 mx-3">
-                        {% if tags is not empty %}
+                        {% if tags is defined and tags is not empty %}
                             <div class="container tag-section">
                                 {% for tag in tags %}
-                                    <div class="custom-control custom-checkbox">
+                                    <div class="custom-control custom-checkbox pl-3">
                                         <input type="checkbox" class="custom-control-input" id="{{ tag.getId() }}" value="{{ tag.getTag() }}" />
                                         <label class="custom-control-label" for="{{ tag.getId() }}">
                                             <a href="#"><nobr>#{{ tag.getTag() }}</nobr></a>
@@ -80,15 +81,13 @@
                         {% endif %}
                     </div>
                 </div>
-
-
-
+                {% endblock %}
             </div>
             <!-- /.col-lg-3 -->
 
             <div class="col-lg-9">
                 <div class="row my-4">
-                    {% block tool_summary %}{% endblock %}
+                    {% block main_block %}{% endblock %}
                 </div>
                 <!-- /.row -->
             </div>
