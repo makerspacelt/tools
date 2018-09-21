@@ -17,7 +17,7 @@
                         {% set toolTags = tool.getTags() %}
                         {% if toolTags is not empty %}
                             {% for tag in toolTags %}
-                                <a href="#"><small class="text-muted"><nobr>#{{ tag.getTag() }}</nobr></small></a>
+                                <a href="{{ path('filter_by_single_tag') }}?tag={{ tag.getTag() }}"><small class="text-muted"><nobr>#{{ tag.getTag() }}</nobr></small></a>
                             {% endfor %}
                         {% else %}
                             <small class="text-muted">Etiketės nepriskirtos</small>
@@ -27,7 +27,7 @@
             </div>
         {% endfor %}
     {% else %}
-        <h2><b>Įrankių kol kas nėra :(</b></h2>
+        <h2><b>Jokių įrankių nerasta :(</b></h2>
     {% endif %}
 
 {% endblock %}

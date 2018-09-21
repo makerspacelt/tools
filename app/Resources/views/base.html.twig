@@ -69,7 +69,7 @@
                                     <div class="custom-control custom-checkbox pl-3">
                                         <input type="checkbox" class="custom-control-input" id="{{ tag.getId() }}" value="{{ tag.getTag() }}" />
                                         <label class="custom-control-label" for="{{ tag.getId() }}">
-                                            <a href="#"><nobr>#{{ tag.getTag() }}</nobr></a>
+                                            <a href="{{ path('filter_by_single_tag') }}?tag={{ tag.getTag() }}"><nobr>#{{ tag.getTag() }}</nobr></a>
                                         </label>
                                     </div>
                                 {% endfor %}
@@ -103,4 +103,4 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
-</html>>
+</html>
