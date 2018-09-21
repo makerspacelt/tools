@@ -34,7 +34,20 @@ class IndexController extends Controller {
      * @Route("/search", name="filter_by_tags", methods={"POST"})
      */
     public function filterByTags(Request $request) {
-
+        if ($request->request->has('tags')) {
+            $tags = $request->request->get('tags', array());
+            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+            // TODO: pamastyti, gal galima panaudoti Repository klasę...?
+            $tools = array();
+            foreach ($tags as $tag) {
+                $tagObj = $repo->findOneBy(array('tag' => $tag));
+                if ($tagObj) {
+                    $tools = array_merge($tools, $tagObj->getTools()->toArray());
+                }
+            }
+            return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => array_unique($tools, SORT_REGULAR)));
+        }
+        return $this->redirectToRoute('index_page');
     }
 
     /**
