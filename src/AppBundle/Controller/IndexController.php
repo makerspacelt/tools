@@ -73,8 +73,15 @@ class IndexController extends Controller {
     public function search(Request $request) {
         if ($request->request->has('search_str')) {
             $searchStr = $request->request->get('search_str', '');
+            // pirma patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
+            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+            $tag = $repo->findOneBy(array('tag' => $searchStr));
+            if ($tag) {
+                return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tag->getTools()));
+            }
             $repo = $this->getDoctrine()->getRepository(Tool::class);
             $tools = $repo->searchTools($searchStr);
+//            var_dump($tools); die();
             return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tools));
         }
         return $this->redirectToRoute('index_page');
