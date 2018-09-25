@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="tools_tool")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ToolsRepository")
  */
 class Tool {
 

@@ -31,7 +31,7 @@ class IndexController extends Controller {
     }
 
     /**
-     * @Route("/search", name="filter_by_tags", methods={"POST"})
+     * @Route("/filter", name="filter_by_tags", methods={"POST"})
      */
     public function filterByTags(Request $request) {
         if ($request->request->has('tags')) {
@@ -51,7 +51,7 @@ class IndexController extends Controller {
     }
 
     /**
-     * @Route("/search", name="filter_by_single_tag", methods={"GET"})
+     * @Route("/filter", name="filter_by_single_tag", methods={"GET"})
      */
     public function filterBySingleTag(Request $request) {
         if ($request->query->has('tag')) {
@@ -62,6 +62,19 @@ class IndexController extends Controller {
             if ($tagObj) {
                 $tools = $tagObj->getTools();
             }
+            return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tools));
+        }
+        return $this->redirectToRoute('index_page');
+    }
+
+    /**
+     * @Route("/search", name="search_tools")
+     */
+    public function search(Request $request) {
+        if ($request->request->has('search_str')) {
+            $searchStr = $request->request->get('search_str', '');
+            $repo = $this->getDoctrine()->getRepository(Tool::class);
+            $tools = $repo->searchTools($searchStr);
             return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tools));
         }
         return $this->redirectToRoute('index_page');
