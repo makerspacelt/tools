@@ -52,7 +52,7 @@
                     <div class="card-body">
                         <form method="post" action="{{ path('search_tools') }}">
                             <div class="input-group">
-                                <input type="text" name="search_str" class="form-control" placeholder="Ieškoti ko..." autofocus>
+                                <input type="text" name="search_str" class="form-control" placeholder="Ieškoti ko..." value="{{ search_str | default('') }}" autofocus>
                                 <div class="input-group-append">
                                     <input type="submit" value="Ieškoti" class="btn btn-secondary" />
                                 </div>
