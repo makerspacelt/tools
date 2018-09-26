@@ -69,4 +69,7 @@ class ToolTag {
         $this->tool->add($tool);
     }
 
+    public function countTools() {
+        return $this->tool->count();
+    }
 }

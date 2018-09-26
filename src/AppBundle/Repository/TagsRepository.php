@@ -9,14 +9,13 @@ class TagsRepository extends EntityRepository {
 
     public function searchTags($q) {
         $qb = $this->createQueryBuilder('t');
-        return $qb
-            ->where(
+        return $qb->
+            where(
                 $qb->expr()->like('t.tag', ':tag')
-            )
-            ->setMaxResults(5)
-            ->setParameter('tag', strtolower($q).'%')
-            ->getQuery()
-            ->getResult();
+            )->
+            setMaxResults(5)->
+            setParameter('tag', strtolower($q).'%')->
+            getQuery()->getResult();
     }
 
 }

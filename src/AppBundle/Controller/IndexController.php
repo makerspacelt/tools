@@ -76,12 +76,11 @@ class IndexController extends Controller {
             // pirma patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
             $repo = $this->getDoctrine()->getRepository(ToolTag::class);
             $tag = $repo->findOneBy(array('tag' => $searchStr));
-            if ($tag) {
+            if ($tag && ($tag->countTools() > 0)) {
                 return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tag->getTools()));
             }
             $repo = $this->getDoctrine()->getRepository(Tool::class);
             $tools = $repo->searchTools($searchStr);
-//            var_dump($tools); die();
             return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tools));
         }
         return $this->redirectToRoute('index_page');
