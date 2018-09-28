@@ -72,7 +72,7 @@
                                         <div class="custom-control custom-checkbox pl-3">
                                             <input type="checkbox" class="custom-control-input" name="tags[]" id="{{ tag.getId() }}" value="{{ tag.getTag() }}" />
                                             <label class="custom-control-label" for="{{ tag.getId() }}">
-                                                <a href="{{ path('filter_by_single_tag') }}?tag={{ tag.getTag() }}"><nobr>#{{ tag.getTag() }}</nobr></a>
+                                                <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}"><nobr>#{{ tag.getTag() }}</nobr></a>
                                             </label>
                                         </div>
                                     {% endfor %}
@@ -89,10 +89,8 @@
             </div>
             <!-- /.col-lg-3 -->
 
-            <div class="col-lg-9">
-                <div class="row my-4">
-                    {% block main_block %}{% endblock %}
-                </div>
+            <div class="col-lg-9 my-4">
+                {% block main_block %}{% endblock %}
                 <!-- /.row -->
             </div>
             <!-- /.col-lg-9 -->
