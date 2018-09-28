@@ -12,7 +12,7 @@
                 <div class="card-text">
                     <b>Kur galima įsigyti?</b><br/>
                     <p class="tool-links">
-                        {{ tool.getShopLinks() | nl2br }}
+                        {{ tool.getShopLinks(true) | raw | nl2br }}
                     </p>
                 </div>
             {% endif %}
