@@ -25,6 +25,17 @@ class ToolsController extends Controller {
     }
 
     /**
+     * Generuojamas 11 skaitmenų kodas, atsitiktiniai skaičiai
+     */
+    private function generateToolCode() {
+        $repo = $this->getDoctrine()->getRepository(Tool::class);
+        do {
+            $code = str_pad(intval(rand(1, 10000000000)), '11', '0', STR_PAD_LEFT);
+        } while ($repo->findOneBy(array('code' => $code)));
+        return $code;
+    }
+
+    /**
      * @Route("/addTool", name="admin_add_tool")
      */
     public function addTool(Request $request) {
@@ -86,7 +97,7 @@ class ToolsController extends Controller {
                 return $this->redirectToRoute('admin_tools');
             }
         }
-        return $this->render('admin/tools/add_tool.html.twig');
+        return $this->render('admin/tools/add_tool.html.twig', array('code' => $this->generateToolCode()));
     }
 
     /**

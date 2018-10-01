@@ -38,7 +38,10 @@
                                     <input type="text" class="form-control" name="tool_model" placeholder="Tool model" value="{{ tool.getModel() | default('') }}" required>
                                 </div>
                             </div>
-                            <input type="text" class="form-control mt-3" name="tool_code" placeholder="Tool code" value="{{ tool.getCode() | default('') }}" required>
+                            {% if code is not defined %}
+                                {% set code = tool.getCode() %}
+                            {% endif %}
+                            <input type="text" class="form-control mt-3" name="tool_code" placeholder="Tool code" value="{{ code | default('') }}" required>
                             <textarea name="tool_description" class="form-control mt-3" placeholder="Tool description" required>{{ tool.getDescription() | default('') }}</textarea>
                             <input type="file" name="tool_photos" class="form-control mt-3" placeholder="Tool photo">
                             <div class="mt-3">
