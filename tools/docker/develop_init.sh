@@ -29,6 +29,7 @@ time composer --no-interaction install
 
 # init database
 bin/console doctrine:schema:update --force
+bin/console doctrine:fixtures:load -n
 
 
 # reminder to edit this file

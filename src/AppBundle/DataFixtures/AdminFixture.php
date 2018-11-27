@@ -18,7 +18,7 @@ class AdminFixture extends Fixture {
     public function load(ObjectManager $manager) {
         $admin = new User();
         $admin->setUsername('admin');
-        $admin->setPassword($this->encoder->encodePassword($admin, 'test'));
+        $admin->setPassword($this->encoder->encodePassword($admin, 'admin'));
         $admin->setRole('ROLE_SUPERADMIN');
         $admin->setFullname('Adminas Adminiauskas');
         $admin->setEmail('admin@asdf.com');
