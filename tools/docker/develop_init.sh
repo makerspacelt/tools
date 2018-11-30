@@ -26,6 +26,12 @@ composer --no-interaction config -g optimize-autoloader true
 
 time composer --no-interaction install
 
+
+# init database
+bin/console doctrine:schema:update --force
+bin/console doctrine:fixtures:load -n
+
+
 # reminder to edit this file
 cowsay -f sheep "Please change develop_init.sh script"
 
