@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 
 use Picqer\Barcode\BarcodeGeneratorPNG;
+use Picqer\Barcode\Exceptions\BarcodeException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,7 +48,7 @@ class LabelController extends Controller {
             } else {
                 $title = 'testtest';
                 $model = 'asdfg';
-                $code = '45s5a4s5s4a';
+                $code = '54875564564';
                 $url = 'http://9v.lt';
                 $params = array(
                     'derp' => 'qqqqqq',
@@ -84,15 +85,18 @@ class LabelController extends Controller {
 
                 // įkeliam barkodą
                 // info dėl built-in fontų dydžio: https://docstore.mik.ua/orelly/webprog/pcook/ch15_06.htm
-//                $generator = new BarcodeGeneratorPNG();
-//                $barcode = imagecreatefromstring($generator->getBarcode($code, $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
-//                imagecopy(
-//                    $baseImg, $barcode,
-//                    self::MARGIN, (imagesy($baseImg)-imagesy($barcode))-self::MARGIN-10,
-//                    0, 0,
-//                    imagesx($barcode), imagesy($barcode)
-//                );
-//                imagestring($baseImg, 5, self::MARGIN, (imagesy($baseImg)-15)-imagesy($barcode)-self::MARGIN-12, $code, $black);
+                $generator = new BarcodeGeneratorPNG();
+                try {
+                    $barcode = imagecreatefromstring($generator->getBarcode($code, $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
+                } catch (BarcodeException $e) {
+                }
+                imagecopy(
+                    $baseImg, $barcode,
+                    self::MARGIN, (imagesy($baseImg)-imagesy($barcode))-self::MARGIN-10,
+                    0, 0,
+                    imagesx($barcode), imagesy($barcode)
+                );
+                imagestring($baseImg, 5, self::MARGIN, (imagesy($baseImg)-15)-imagesy($barcode)-self::MARGIN-12, $code, $black);
 
                 // pridedame įrankio parametrus
                 $y = 160;
