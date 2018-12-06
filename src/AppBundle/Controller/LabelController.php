@@ -17,6 +17,25 @@ class LabelController extends Controller {
     const TITLE_LEN = 14;
     const MODEL_LEN = 24;
 
+    function generateErrorLabel($errorText) {
+        $baseImg = imagecreate(416, 320);
+        imagecolorallocate($baseImg, 255, 255, 255);
+        $black = imagecolorallocate($baseImg, 0, 0, 0);
+        $yCoord = 50;
+        imagestring($baseImg, 5, 50, $yCoord, 'Nu... negerai!', $black);
+        $strArr = explode('\n', $errorText);
+        foreach ($strArr as $str) {
+            $yCoord += 20;
+            imagestring($baseImg, 5, 50, $yCoord, $str, $black);
+        }
+        ob_start();
+        imagepng($baseImg);
+        $pngImg = ob_get_contents();
+        ob_end_clean();
+        imagedestroy($baseImg);
+        return new Response($pngImg, 200, array('Content-Type' => 'image/png'));
+    }
+
     /**
      * @Route("/label/{code}", name="tool_label_generator")
      */
@@ -24,8 +43,7 @@ class LabelController extends Controller {
         if ($code) {
             // reiktų patikrinti ar yra mums taip reikalingas font'as
             if (!file_exists(self::FONT_FILE)) {
-//                generateErrorImg('Nerastas srifto failas:\n  \''.FONT_FILE.'\'');
-                die('Font not found :(');
+                return self::generateErrorLabel('Nerastas srifto failas:\n  \''.self::FONT_FILE.'\'');
             } else {
                 $title = 'testtest';
                 $model = 'asdfg';
@@ -46,7 +64,7 @@ class LabelController extends Controller {
                 // tai 416x320 pilnai padengtas be marginų
                 $baseImg = imagecreate(416, 320);
 
-                $bg = imagecolorallocate($baseImg, 255, 255, 255); // background'as balta spalva
+                imagecolorallocate($baseImg, 255, 255, 255); // background'as balta spalva
                 $black = imagecolorallocate($baseImg, 0, 0, 0); // tekstas juoda
 
                 // pavadinimas ir modelis
