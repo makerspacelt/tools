@@ -2,14 +2,15 @@
 
 namespace AppBundle\Controller;
 
-
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
+use QR_Code\Types\QR_Url;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Makerspacelt\EsimLabelGernerator\Esim;
+
 
 class LabelController extends Controller {
 
@@ -74,14 +75,20 @@ class LabelController extends Controller {
                 imageline($baseImg, self::MARGIN, 120, imagesx($baseImg)-self::MARGIN, 120, $black);
 
                 // įkeliam QR kodą
-//                $qrSize = 170;
-//                $qr = QRCode::getMinimumQRCode($url, QR_ERROR_CORRECT_LEVEL_L)->createImage(8, 4);
-//                imagecopyresized(
-//                    $baseImg, $qr,
-//                    (imagesx($baseImg)-$qrSize)-MARGIN,
-//                    (imagesy($baseImg)-$qrSize)-MARGIN-10,
-//                    0, 0, $qrSize, $qrSize, imagesx($qr), imagesy($qr)
-//                );
+                $qrUrl = new QR_Url($url);
+                $qrUrl->setMargin(0);
+                ob_start();
+                $qrUrl->png();
+                $qrCode = ob_get_contents();
+                ob_end_clean();
+                $qrCode = imagecreatefromstring($qrCode);
+                $qrSize = 170;
+                imagecopyresized(
+                    $baseImg, $qrCode,
+                    (imagesx($baseImg)-$qrSize)-self::MARGIN,
+                    (imagesy($baseImg)-$qrSize)-self::MARGIN-10,
+                    0, 0, $qrSize, $qrSize, imagesx($qrCode), imagesy($qrCode)
+                );
 
                 // įkeliam barkodą
                 // info dėl built-in fontų dydžio: https://docstore.mik.ua/orelly/webprog/pcook/ch15_06.htm
@@ -89,6 +96,7 @@ class LabelController extends Controller {
                 try {
                     $barcode = imagecreatefromstring($generator->getBarcode($code, $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
                 } catch (BarcodeException $e) {
+                    return self::generateErrorLabel('Klaida generuojant barkodą:\n  '.$e->getMessage());
                 }
                 imagecopy(
                     $baseImg, $barcode,
