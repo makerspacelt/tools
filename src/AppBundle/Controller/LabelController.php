@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Tool;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
 use QR_Code\Types\QR_Url;
@@ -43,6 +44,12 @@ class LabelController extends Controller {
      */
     function generateLabel($code = null) {
         if ($code) {
+            // patikriname pirma ar yra toks įrankis pagal nurodytą kodą
+            $repo = $this->getDoctrine()->getRepository(Tool::class);
+            $tool = $repo->findOneBy(array('code' => $code));
+            if (!$tool) {
+                return self::generateErrorLabel('Nerastas irankis pagal nurodyta koda:\n  \''.$code.'\'');
+            }
             // reiktų patikrinti ar yra mums taip reikalingas font'as
             if (!file_exists(self::FONT_FILE)) {
                 return self::generateErrorLabel('Nerastas srifto failas:\n  \''.self::FONT_FILE.'\'');
