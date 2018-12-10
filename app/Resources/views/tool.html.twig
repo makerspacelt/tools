@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ parent() }} | {{ tool.getName() }} {{ tool.getModel() }}{% endblock %}
+
 {% block main_block %}
     <div class="card">
         <img class="card-img-top img-fluid" src="/res/img/default-tool-pic.png">
