@@ -39,16 +39,34 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
-                        <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.getCode()}) }}">
+                        <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.getCode()}) }}" alt="label-preview">
                     </div>
                     <div class="col-md-6 mt-3">
-                        <button class="btn btn-info">Peržiūrėti</button>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#label-preview-modal">Peržiūrėti</button>
                         <button class="btn btn-danger">Spausdinti</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- modal langas lipduko peržūrai -->
+    <div class="modal fade" id="label-preview-modal" tabindex="-1" role="dialog" aria-labelledby="label-preview-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="label-preview-modal-label">Lipduko peržiūra</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: block; margin: auto">
+                    <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.getCode()}) }}" alt="label-preview">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /modal langas lipduko peržūrai -->
 
     <div class="card mt-4">
         <div class="card-header">Parametrai</div>
