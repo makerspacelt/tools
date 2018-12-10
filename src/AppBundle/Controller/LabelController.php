@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Tool;
+use AppBundle\Entity\ToolParameter;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
 use QR_Code\Types\QR_Url;
@@ -42,7 +43,7 @@ class LabelController extends Controller {
     /**
      * @Route("/label/{code}", name="tool_label_generator")
      */
-    function generateLabel($code = null) {
+    function generateLabel(Request $request, $code = null) {
         if ($code) {
             // patikriname pirma ar yra toks įrankis pagal nurodytą kodą
             $repo = $this->getDoctrine()->getRepository(Tool::class);
@@ -54,19 +55,9 @@ class LabelController extends Controller {
             if (!file_exists(self::FONT_FILE)) {
                 return self::generateErrorLabel('Nerastas srifto failas:\n  \''.self::FONT_FILE.'\'');
             } else {
-                $title = 'testtest';
-                $model = 'asdfg';
-                $code = '54875564564';
-                $url = 'http://9v.lt';
-                $params = array(
-                    'derp' => 'qqqqqq',
-                    'herp' => 'wwwwwww',
-                    'ish' => 'ssasasasa'
-                );
-
                 // apkarpome pavadinimą ir modelį, kad nebūtų per ilgas, ribojam iki 24 simbolių
-                $title = mb_strtoupper(mb_substr($title, 0, self::TITLE_LEN - 1)) . (mb_strlen($title) > self::TITLE_LEN - 1 ? '~' : '');
-                $model = mb_substr($model, 0, self::MODEL_LEN - 1) . (mb_strlen($model) > self::MODEL_LEN - 1 ? '~' : '');
+                $title = mb_strtoupper(mb_substr($tool->getName(), 0, self::TITLE_LEN - 1)) . (mb_strlen($tool->getName()) > self::TITLE_LEN - 1 ? '~' : '');
+                $model = mb_substr($tool->getModel(), 0, self::MODEL_LEN - 1) . (mb_strlen($tool->getModel()) > self::MODEL_LEN - 1 ? '~' : '');
 
                 // pradedam generuoti etiketę
                 // etiketės matmenys 52x40mm, printeris palaiko 8 pikselius per milimetrą,
@@ -82,7 +73,7 @@ class LabelController extends Controller {
                 imageline($baseImg, self::MARGIN, 120, imagesx($baseImg)-self::MARGIN, 120, $black);
 
                 // įkeliam QR kodą
-                $qrUrl = new QR_Url($url);
+                $qrUrl = new QR_Url($request->getUri());
                 $qrUrl->setMargin(0);
                 ob_start();
                 $qrUrl->png();
@@ -101,7 +92,7 @@ class LabelController extends Controller {
                 // info dėl built-in fontų dydžio: https://docstore.mik.ua/orelly/webprog/pcook/ch15_06.htm
                 $generator = new BarcodeGeneratorPNG();
                 try {
-                    $barcode = imagecreatefromstring($generator->getBarcode($code, $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
+                    $barcode = imagecreatefromstring($generator->getBarcode($tool->getCode(), $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
                 } catch (BarcodeException $e) {
                     return self::generateErrorLabel('Klaida generuojant barkodą:\n  '.$e->getMessage());
                 }
@@ -111,15 +102,16 @@ class LabelController extends Controller {
                     0, 0,
                     imagesx($barcode), imagesy($barcode)
                 );
-                imagestring($baseImg, 5, self::MARGIN, (imagesy($baseImg)-15)-imagesy($barcode)-self::MARGIN-12, $code, $black);
+                imagestring($baseImg, 5, self::MARGIN, (imagesy($baseImg)-15)-imagesy($barcode)-self::MARGIN-12, $tool->getCode(), $black);
 
                 // pridedame įrankio parametrus
                 $y = 160;
                 $fontSize = 15;
                 $lineLen = 15;
-                if ($params && (count($params) > 0) && (!isset($params[0]))) {
-                    foreach ($params as $key => $param) {
-                        $line = $key.': '.$param;
+                $toolParams = $tool->getParams();
+                if (count($toolParams) > 0) {
+                    foreach ($toolParams as $param) {
+                        $line = $param->getName().': '.$param->getValue();
                         imagettftext($baseImg, $fontSize, 0, self::MARGIN, $y, $black, self::FONT_FILE,
                             mb_substr($line, 0, $lineLen).(mb_strlen($line) > $lineLen ? '~' : '')
                         );

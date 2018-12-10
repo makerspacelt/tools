@@ -22,7 +22,7 @@ class ToolFixture extends Fixture {
             $tool = new Tool();
             $tool->setName(substr(md5(microtime()), rand(0, 26), 6));
             $tool->setModel(substr(md5(microtime()), rand(0, 26), 4));
-            $tool->setCode(substr(md5(microtime()), rand(0, 26), 5));
+            $tool->setCode(rand(100000, 999999));
             $tool->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
             $tool->setShopLinks("http://9v.lt\nhttps://google.com\nir senukai ar kažkur");
             $tool->setOriginalPrice(rand(1, 100));
