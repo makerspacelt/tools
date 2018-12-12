@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Kulverstukas
- * Date: 2018-09-09
- * Time: 19:41
- */
 
 namespace AppBundle\DataFixtures;
 
@@ -13,11 +7,14 @@ use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
 
-class ToolFixture extends Fixture {
+class ToolFixture extends Fixture implements DependentFixtureInterface {
 
     public function load(ObjectManager $manager) {
+        $tags = $manager->getRepository(ToolTag::class)->findAll();
         for ($j = 0; $j < 5; $j++) {
             $tool = new Tool();
             $tool->setName(substr(md5(microtime()), rand(0, 26), 6));
@@ -28,13 +25,13 @@ class ToolFixture extends Fixture {
             $tool->setOriginalPrice(rand(1, 100));
             $tool->setAcquisitionDate('2018-' . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . '-' . str_pad(rand(1, 30), 2, '0', STR_PAD_LEFT));
 
-            $tags = array('drill', 'drillbit', 'zeimeris', 'druzba', 'pjuklas', 'diskas', 'slifarke', 'oblius', 'atsuktuvas-kryzminis', 'atsuktuvas-minusas', 'rulete');
-            // TODO: kažkaip fetch'inti iš DB kad užtikrinti unikalumą
-            for ($i = 0; $i < 4; $i++) {
-                $tag = new ToolTag();
-                $tag->setTag($tags[rand(0, count($tags) - 1)]);
+            $usedTags = array();
+            for ($i = 0; $i < rand(3, 8); $i++) {
+                do {
+                    $tag = $tags[rand(0, count($tags) - 1)];
+                } while (in_array($tag->getTag(), $usedTags));
+                $usedTags[] = $tag->getTag();
                 $tool->addTag($tag);
-                $manager->persist($tag);
             }
 
             for ($i = 0; $i < 3; $i++) {
@@ -57,5 +54,15 @@ class ToolFixture extends Fixture {
         }
 
         $manager->flush();
+    }
+
+    /**
+     * This method must return an array of fixtures classes
+     * on which the implementing class depends on
+     *
+     * @return array
+     */
+    public function getDependencies() {
+        return array(TagFixture::class);
     }
 }
