@@ -2,14 +2,14 @@
 
 {% block main_block %}
     {% if tools is not empty %}
-        <div class="row">
+        <div class="row" id="content">
             {% for tool in tools %}
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100">
                         <img class="card-img-top tool-def-img" src="/res/img/default-tool-pic-listing.png">
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="{{ path('tool_page', {'code': tool.getCode()}) }}">{{ tool.getName() }} {{ tool.getModel() }}</a>
+                                <a href="{{ path('tool_page', {'code': tool.getCode()}) }}{% if is_mobile() %}#content{% endif %}">{{ tool.getName() }} {{ tool.getModel() }}</a>
                             </h4>
                             <h5 class="text-muted">{{ tool.getCode() }}</h5>
                             <p class="card-text">{{ tool.getDescription() }}</p>
