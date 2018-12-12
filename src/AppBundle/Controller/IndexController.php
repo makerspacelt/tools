@@ -51,20 +51,20 @@ class IndexController extends Controller {
     }
 
     /**
-     * @Route("/filter", name="filter_by_single_tag", methods={"GET"})
+     * @Route("/filter/{tag}", name="filter_by_single_tag", methods={"GET"})
      */
-    public function filterBySingleTag(Request $request) {
-        if ($request->query->has('tag')) {
-            $tags = $request->query->get('tag', '');
+    public function filterBySingleTag(Request $request, $tag = null) {
+        if ($tag) {
             $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-            $tagObj = $repo->findOneBy(array('tag' => $tags));
+            $tagObj = $repo->findOneBy(array('tag' => $tag));
             $tools = array();
             if ($tagObj) {
                 $tools = $tagObj->getTools();
             }
             return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tools));
+        } else {
+            return $this->redirectToRoute('index_page');
         }
-        return $this->redirectToRoute('index_page');
     }
 
     /**
