@@ -136,4 +136,15 @@ class LabelController extends Controller {
         }
     }
 
+    /**
+     * @Route("/print", name="tool_label_printer")
+     */
+    function printLabel(Request $request) {
+        if ($request->request->has('tool_code')) {
+            return new Response(json_encode(array('response' => true)));
+        } else {
+            return new Response(json_encode(array('response' => false)));
+        }
+    }
+
 }

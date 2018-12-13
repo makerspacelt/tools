@@ -53,7 +53,7 @@ class IndexController extends Controller {
     /**
      * @Route("/filter/{tag}", name="filter_by_single_tag", methods={"GET"})
      */
-    public function filterBySingleTag(Request $request, $tag = null) {
+    public function filterBySingleTag($tag = null) {
         if ($tag) {
             $repo = $this->getDoctrine()->getRepository(ToolTag::class);
             $tagObj = $repo->findOneBy(array('tag' => $tag));
