@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Makerspacelt\EsimLabelGernerator\Esim;
+use Makerspacelt\EsimLabelGernerator\EsimPrint;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 class LabelController extends Controller {
@@ -43,7 +45,7 @@ class LabelController extends Controller {
     /**
      * @Route("/label/{code}", name="tool_label_generator")
      */
-    function generateLabel(Request $request, $code = null) {
+    function generateLabel($code = null, $rtn = false) {
         if ($code) {
             // patikriname pirma ar yra toks įrankis pagal nurodytą kodą
             $repo = $this->getDoctrine()->getRepository(Tool::class);
@@ -73,7 +75,13 @@ class LabelController extends Controller {
                 imageline($baseImg, self::MARGIN, 120, imagesx($baseImg)-self::MARGIN, 120, $black);
 
                 // įkeliam QR kodą
-                $qrUrl = new QR_Url($request->getUri());
+                $qrUrl = new QR_Url(
+                    $this->generateUrl(
+                        'tool_page',
+                        array('code' => $code),
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    )
+                );
                 $qrUrl->setMargin(0);
                 ob_start();
                 $qrUrl->png();
@@ -121,15 +129,16 @@ class LabelController extends Controller {
                     imagettftext($baseImg, $fontSize, 0, self::MARGIN, $y, $black, self::FONT_FILE, 'Parametrų nėra');
                 }
 
-                ob_start();
-                imagepng($baseImg);
-                $pngImg = ob_get_contents();
-                ob_end_clean();
-                imagedestroy($baseImg);
-                return new Response($pngImg, 200, array('Content-Type' => 'image/png'));
-
-//                $e = new Esim();
-//                $e->printLabel();
+                if ($rtn) {
+                    return $baseImg;
+                } else {
+                    ob_start();
+                    imagepng($baseImg);
+                    $pngImg = ob_get_contents();
+                    ob_end_clean();
+                    imagedestroy($baseImg);
+                    return new Response($pngImg, 200, array('Content-Type' => 'image/png'));
+                }
             }
         } else {
             return $this->redirectToRoute('index_page');
@@ -140,11 +149,23 @@ class LabelController extends Controller {
      * @Route("/print", name="tool_label_printer")
      */
     function printLabel(Request $request) {
+        $resp = array('response' => false);
         if ($request->request->has('tool_code')) {
-            return new Response(json_encode(array('response' => true)));
-        } else {
-            return new Response(json_encode(array('response' => false)));
+            $tCode = $request->request->get('tool_code', '0');
+            $esimPrint = new EsimPrint();
+            $labelData = $esimPrint->printGd($this->generateLabel($tCode, true));
+            // TODO: perkelti hostname'ą ir port'ą į admin panelės overview/config langą
+            $fp = fsockopen('print-label.lan', 80, $errno, $errstr);
+            if (!$fp) {
+                $resp['error_msg'] = "ERROR: $errno - $errstr";
+            } else {
+                fwrite($fp, $labelData);
+                fread($fp, 26);
+                fclose($fp);
+                $resp['response'] = true;
+            }
         }
+        return new Response(json_encode($resp));
     }
 
 }
