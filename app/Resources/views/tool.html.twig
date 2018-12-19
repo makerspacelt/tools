@@ -7,7 +7,7 @@
         <img class="card-img-top img-fluid" src="/res/img/default-tool-pic.png">
         <div class="card-body">
             <h3 class="card-title">{{ tool.getName() }} {{ tool.getModel() }}</h3>
-            <h5 class="card-subtitle mb-3 text-muted">{{ tool.getCode() }}</h5>
+            <h5 class="card-subtitle mb-3 text-muted" id="tool-code">{{ tool.getCode() }}</h5>
             <p class="card-text">{{ tool.getDescription() }}</p>
 
             {% if tool.getShopLinks() is not empty %}
@@ -47,6 +47,7 @@
                     <div class="col-md-6 mt-3">
                         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#label-preview-modal">Peržiūrėti</button>
                         <button class="btn btn-danger" id="print-btn">Spausdinti</button>
+                        <div class="lds-dual-ring" id="print-spinner"></div>
                     </div>
                 </div>
             </div>
