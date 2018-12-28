@@ -31,7 +31,7 @@ class ToolsController extends Controller {
     private function generateToolCode() {
         $repo = $this->getDoctrine()->getRepository(Tool::class);
         do {
-            $code = str_pad(intval(rand(1, 10000000000)), '11', '0', STR_PAD_LEFT);
+            $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);
         } while ($repo->findOneBy(array('code' => $code)));
         return $code;
     }
