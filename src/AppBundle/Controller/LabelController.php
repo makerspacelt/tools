@@ -154,8 +154,8 @@ class LabelController extends Controller {
      * @Route("/print", name="tool_label_printer")
      */
     function printLabel(Request $request) {
-        $resp = array('response' => false);
         if ($request->request->has('tool_code')) {
+            $resp = array('response' => false);
             $tCode = $request->request->get('tool_code', '0');
             $esimPrint = new EsimPrint();
             try {
@@ -180,8 +180,9 @@ class LabelController extends Controller {
                 fclose($fp);
                 $resp['response'] = true;
             }
+            return new Response(json_encode($resp));
         }
-        return new Response(json_encode($resp));
+        return $this->redirectToRoute('index_page');
     }
 
 }
