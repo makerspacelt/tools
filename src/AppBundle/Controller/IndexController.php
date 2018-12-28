@@ -73,9 +73,24 @@ class IndexController extends Controller {
     public function search(Request $request) {
         if ($request->request->has('search_str')) {
             $searchStr = trim($request->request->get('search_str', ''));
-            // pirma patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
-            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-            $tag = $repo->findOneBy(array('tag' => $searchStr));
+            $toolRepo = $this->getDoctrine()->getRepository(Tool::class);
+            // pirma patikrinam ar ieškoma pagal įrankio kodą
+            if (is_numeric($searchStr) && (mb_strlen($searchStr) == 6)) {
+                $tool = $toolRepo->findOneBy(array('code' => $searchStr));
+                if ($tool) {
+                    return $this->render('tool.html.twig',
+                        array(
+                            'tags' => $this->tags,
+                            'tool' => $tool,
+                            'search_str' => $searchStr
+                        )
+                    );
+                }
+            }
+
+            // tada patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
+            $tagRepo = $this->getDoctrine()->getRepository(ToolTag::class);
+            $tag = $tagRepo->findOneBy(array('tag' => $searchStr));
             if ($tag && ($tag->countTools() > 0)) {
                 return $this->render('index.html.twig',
                     array(
@@ -85,8 +100,8 @@ class IndexController extends Controller {
                     )
                 );
             }
-            $repo = $this->getDoctrine()->getRepository(Tool::class);
-            $tools = $repo->searchTools($searchStr);
+
+            $tools = $toolRepo->searchTools($searchStr);
             return $this->render('index.html.twig',
                 array(
                     'tags' => $this->tags,
