@@ -8,6 +8,7 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
 use QR_Code\Types\QR_Url;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,7 @@ class LabelController extends Controller {
     const TITLE_LEN = 14;
     const MODEL_LEN = 24;
 
-    function generateErrorLabel($errorText) {
+    function generateErrorLabel($errorText, $rtn = false) {
         $baseImg = imagecreate(416, 320);
         imagecolorallocate($baseImg, 255, 255, 255);
         $black = imagecolorallocate($baseImg, 0, 0, 0);
@@ -34,12 +35,16 @@ class LabelController extends Controller {
             $yCoord += 20;
             imagestring($baseImg, 5, 50, $yCoord, $str, $black);
         }
-        ob_start();
-        imagepng($baseImg);
-        $pngImg = ob_get_contents();
-        ob_end_clean();
-        imagedestroy($baseImg);
-        return new Response($pngImg, 200, array('Content-Type' => 'image/png'));
+        if ($rtn) {
+            return $baseImg;
+        } else {
+            ob_start();
+            imagepng($baseImg);
+            $pngImg = ob_get_contents();
+            ob_end_clean();
+            imagedestroy($baseImg);
+            return new Response($pngImg, 200, array('Content-Type' => 'image/png'));
+        }
     }
 
     /**
@@ -51,11 +56,11 @@ class LabelController extends Controller {
             $repo = $this->getDoctrine()->getRepository(Tool::class);
             $tool = $repo->findOneBy(array('code' => $code));
             if (!$tool) {
-                return self::generateErrorLabel('Nerastas irankis pagal nurodyta koda:\n  \''.$code.'\'');
+                return self::generateErrorLabel('Nerastas irankis pagal nurodyta koda:\n  \''.$code.'\'', $rtn);
             }
             // reiktų patikrinti ar yra mums taip reikalingas font'as
             if (!file_exists(self::FONT_FILE)) {
-                return self::generateErrorLabel('Nerastas srifto failas:\n  \''.self::FONT_FILE.'\'');
+                return self::generateErrorLabel('Nerastas srifto failas:\n  \''.self::FONT_FILE.'\'', $rtn);
             } else {
                 // apkarpome pavadinimą ir modelį, kad nebūtų per ilgas, ribojam iki 24 simbolių
                 $title = mb_strtoupper(mb_substr($tool->getName(), 0, self::TITLE_LEN - 1)) . (mb_strlen($tool->getName()) > self::TITLE_LEN - 1 ? '~' : '');
@@ -102,7 +107,7 @@ class LabelController extends Controller {
                 try {
                     $barcode = imagecreatefromstring($generator->getBarcode($tool->getCode(), $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
                 } catch (BarcodeException $e) {
-                    return self::generateErrorLabel('Klaida generuojant barkodą:\n  '.$e->getMessage());
+                    return self::generateErrorLabel('Klaida generuojant barkodą:\n  '.$e->getMessage(), $rtn);
                 }
                 imagecopy(
                     $baseImg, $barcode,
@@ -153,9 +158,20 @@ class LabelController extends Controller {
         if ($request->request->has('tool_code')) {
             $tCode = $request->request->get('tool_code', '0');
             $esimPrint = new EsimPrint();
-            $labelData = $esimPrint->printGd($this->generateLabel($tCode, true));
+            try {
+                $labelData = $esimPrint->printGd($this->generateLabel($tCode, true));
+            } catch (ContextErrorException $cee) {
+                $resp['error_msg'] = 'ERROR: '.$cee->getMessage();
+                return new Response(json_encode($resp));
+            }
             // TODO: perkelti hostname'ą ir port'ą į admin panelės overview/config langą
-            $fp = fsockopen('print-label.lan', 80, $errno, $errstr);
+            try {
+                $fp = fsockopen('print-label.lan', 80, $errno, $errstr);
+            } catch (ContextErrorException $cee) {
+                $resp['error_msg'] = 'ERROR: '.$cee->getMessage();
+                return new Response(json_encode($resp));
+            }
+
             if (!$fp) {
                 $resp['error_msg'] = "ERROR: $errno - $errstr";
             } else {
