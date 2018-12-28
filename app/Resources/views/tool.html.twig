@@ -45,8 +45,9 @@
                         <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.getCode()}) }}" alt="label-preview">
                     </div>
                     <div class="col-md-6 mt-3">
-                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#label-preview-modal">Peržiūrėti</button>
+                        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#label-preview-modal">Peržiūrėti</button>
                         <button class="btn btn-danger" id="print-btn">Spausdinti</button>
+                        {# TODO: kažkodėl atsirandant spinner'iui paslenkama yra mygtukai žemyn, jam išnykus jie vėl pakyla #}
                         <div class="lds-dual-ring" id="print-spinner"></div>
                     </div>
                 </div>
@@ -54,7 +55,7 @@
         </div>
     </div>
 
-    <!-- modal langas lipduko peržūrai -->
+    <!-- modal langas lipduko peržiūrai -->
     <div class="modal fade" id="label-preview-modal" tabindex="-1" role="dialog" aria-labelledby="label-preview-modal-label" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -71,6 +72,27 @@
         </div>
     </div>
     <!-- /modal langas lipduko peržūrai -->
+
+    <!-- modal langas klaidos pranešimui -->
+        <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="error-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="error-modal-label"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="display: block; margin: auto">
+                        <p id="error-msg"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- /modal langas klaidos pranešimui -->
     {% endif %}
 
     <div class="card mt-4">

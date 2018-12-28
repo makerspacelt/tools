@@ -8,12 +8,12 @@
         $spinner.css('display', 'inline-block');
         var $toolCode = $('#tool-code').text();
         $.post('/print', {tool_code: $toolCode}, function(data) {
-                if (data.response) {
-                    alert('Data loaded OK!');
-                } else {
-                    alert("Data loading failed!\n"+data.error_msg);
-                    $spinner.css('display', 'none');
+                if (!data.response) {
+                    $('#error-modal-label').text("Data loading failed!");
+                    $('#error-msg').text(data.error_msg);
+                    $('#error-modal').modal('show');
                 }
+                $spinner.css('display', 'none');
             }, 'json');
     };
 

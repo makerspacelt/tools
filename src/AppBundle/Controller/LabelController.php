@@ -161,14 +161,14 @@ class LabelController extends Controller {
             try {
                 $labelData = $esimPrint->printGd($this->generateLabel($tCode, true));
             } catch (ContextErrorException $cee) {
-                $resp['error_msg'] = 'ERROR: '.$cee->getMessage();
+                $resp['error_msg'] = $cee->getMessage();
                 return new Response(json_encode($resp));
             }
             // TODO: perkelti hostname'ą ir port'ą į admin panelės overview/config langą
             try {
                 $fp = fsockopen('print-label.lan', 80, $errno, $errstr);
             } catch (ContextErrorException $cee) {
-                $resp['error_msg'] = 'ERROR: '.$cee->getMessage();
+                $resp['error_msg'] = $cee->getMessage();
                 return new Response(json_encode($resp));
             }
 
