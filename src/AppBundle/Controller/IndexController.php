@@ -72,7 +72,7 @@ class IndexController extends Controller {
      */
     public function search(Request $request) {
         if ($request->request->has('search_str')) {
-            $searchStr = $request->request->get('search_str', '');
+            $searchStr = trim($request->request->get('search_str', ''));
             // pirma patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
             $repo = $this->getDoctrine()->getRepository(ToolTag::class);
             $tag = $repo->findOneBy(array('tag' => $searchStr));
