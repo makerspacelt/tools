@@ -23,6 +23,7 @@
         "php": ">=5.5.9",
         "ext-gd": "*",
         "ext-json": "^1.6",
+        "doctrine/annotations": "^1.6",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "incenteev/composer-parameter-handler": "^2.0",
@@ -36,6 +37,7 @@
         "symfony/polyfill-apcu": "^1.0",
         "symfony/swiftmailer-bundle": "^2.3.10",
         "symfony/symfony": "3.*",
+        "symfony/validator": "^4.2",
         "twig/twig": "^1.0||^2.0",
         "werneckbh/qr-code": "^2.1"
     },

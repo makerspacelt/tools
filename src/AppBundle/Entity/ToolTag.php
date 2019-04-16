@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="tools_tags")
@@ -21,6 +22,11 @@ class ToolTag {
 
     /**
      * @ORM\Column
+     * @Assert\Regex(
+     *     pattern="/^[a-zA-Z]+$/",
+     *     match=true,
+     *     message="Tag name can only contain letters"
+     * )
      */
     private $tag;
 
