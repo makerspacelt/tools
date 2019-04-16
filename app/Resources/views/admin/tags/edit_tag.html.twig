@@ -11,16 +11,15 @@
     </div>
     <div class="card-body">
         <div class="col-md-5">
-            <form action="{{ path('admin_edit_tag') }}" method="post">
-                <input type="text" class="form-control" placeholder="Input a tag" name="tag" value="{{ tag }}" required>
+            {{ form_start(form) }}
+                {{ form_widget(form.tag) }}
                 <div class="row">
                     <div class="col mt-2">
                         <a href="{{ path('admin_tags') }}" class="btn btn-secondary">Back</a>
-                        <input type="hidden" name="tag_id" value="{{ tag_id }}">
-                        <input type="submit" class="btn btn-primary" value="Submit">
+                        {{ form_widget(form.save) }}
                     </div>
                 </div>
-            </form>
+            {{ form_end(form) }}
         </div>
     </div>
 </div>

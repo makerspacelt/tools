@@ -2,14 +2,13 @@
 
 namespace AppBundle\Controller\Admin;
 
-use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolTag;
-use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Forms;
 
 /**
  * @Route("/tags")
@@ -54,24 +53,26 @@ class TagsController extends Controller {
     }
 
     /**
-     * @Route("/editTag", name="admin_edit_tag")
+     * @Route("/editTag/{id}", name="admin_edit_tag")
      */
-    public function editTag(Request $request) {
-        if ($request->request->has('edit_token')) {
-            $reqArr = $request->request->all();
-            return $this->render('admin/tags/edit_tag.html.twig', $reqArr);
-        } else {
-            $reqArr = $request->request->all();
-            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-            $tag = $repo->find($reqArr['tag_id']);
-            if ($tag) {
-                $tag->setTag(trim(strtolower($reqArr['tag'])));
-                $em = $this->getDoctrine()->getManager();
-                $em->flush();
-                $this->addFlash('success', 'Tag edited!');
-            }
+    public function editTag(Request $request, ToolTag $toolTag) {
+        $form = $this->createFormBuilder($toolTag)->
+            add('tag', TextType::class, ['required' => true])->
+            add('save', SubmitType::class, ['label' => 'Submit'])->
+            getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formToolTag = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($formToolTag);
+            $em->flush();
+            $this->addFlash('success', 'Tag edited!');
             return $this->redirectToRoute('admin_tags');
         }
+
+        return $this->render('admin/tags/edit_tag.html.twig', ['form' => $form->createView()]);
     }
 
     /**

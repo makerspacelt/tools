@@ -38,10 +38,7 @@
                                         <input type="hidden" name="tag_id" value="{{ tag['id'] }}">
                                         <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tag['tag'] }}\'?')">
                                     </form>
-                                    <form action="{{ path('admin_edit_tag') }}" method="post">
-                                        <input type="hidden" name="tag_id" value="{{ tag['id'] }}">
-                                        <input type="hidden" name="tag" value="{{ tag['tag'] }}">
-                                        <input type="hidden" name="edit_token" value="{{ random(999) }}">
+                                    <form action="{{ path('admin_edit_tag', {id: tag['id']}) }}" method="get">
                                         <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
                                     </form>
                                 </div>
