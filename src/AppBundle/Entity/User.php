@@ -4,10 +4,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="tools_users")
  * @ORM\Entity
+ * @UniqueEntity(fields = {"username"}, message="This username is taken")
+ * @UniqueEntity(fields = {"email"}, message="This email is taken")
  */
 class User implements UserInterface, \Serializable {
 
@@ -21,6 +25,11 @@ class User implements UserInterface, \Serializable {
 
     /**
      * @ORM\Column(type="string", length=20, unique=true)
+     * @Assert\Regex(
+     *     pattern = "/^\w+(\d+)?$/",
+     *     match = true,
+     *     message = "Only letters and numbers permitted"
+     * )
      */
     private $username;
 
@@ -40,9 +49,9 @@ class User implements UserInterface, \Serializable {
     private $email;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="simple_array")
      */
-    private $role;
+    private $roles;
     #=====================================================
     /**
      * String representation of object
@@ -52,7 +61,7 @@ class User implements UserInterface, \Serializable {
             $this->id,
             $this->username,
             $this->password,
-            $this->role,
+            $this->roles,
             $this->fullname,
             $this->email
         ));
@@ -66,7 +75,7 @@ class User implements UserInterface, \Serializable {
             $this->id,
             $this->username,
             $this->password,
-             $this->role,
+             $this->roles,
             $this->fullname,
             $this->email
             ) = unserialize($serialized, array('allowed_classes' => false));
@@ -96,7 +105,7 @@ class User implements UserInterface, \Serializable {
      * @return (Role|string)[] The user roles
      */
     public function getRoles() {
-        return array($this->role);
+        return $this->roles;
     }
 
     /**
@@ -172,10 +181,10 @@ class User implements UserInterface, \Serializable {
     }
 
     /**
-     * @param mixed $role
+     * @param mixed $roles
      */
-    public function setRole($role) {
-        $this->role = $role;
+    public function setRoles($roles) {
+        $this->roles = $roles;
     }
 
     /**

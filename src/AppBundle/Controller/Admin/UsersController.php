@@ -3,6 +3,11 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\User;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -31,79 +36,63 @@ class UsersController extends Controller {
         return $this->render('admin/users/users.html.twig', array('users' => $users));
     }
 
+    private function generateForm(User $user) {
+        return $this->createFormBuilder($user)->
+        add('fullname', TextType::class, ['required' => true, 'label' => 'Full name', 'attr' => ['class' => 'mb-3']])->
+        add('username', TextType::class, ['required' => true, 'disabled' => ($user->getUsername() != ''), 'attr' => ['class' => 'mb-3']])->
+        add('password', PasswordType::class, ['required' => ($user->getPassword() == ''), 'attr' => ['class' => 'mb-3']])->
+        add('email', EmailType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
+        add('roles', ChoiceType::class, ['multiple' => true, 'choices' => ['Super admin' => 'ROLE_SUPERADMIN'], 'attr' => ['class' => 'mb-3']])->
+        add('save', SubmitType::class, ['label' => 'Submit'])->
+        getForm();
+    }
+
     /**
      * @Route("/addUser", name="admin_add_user")
      */
     public function addUser(Request $request) {
-        if ($request->request->count() == 5) {
-            $user = $request->request->get('username');
-            $email = $request->request->get('email');
-            if (($user != null) && ($email != null)) {
-                // patikrinam, ar vartotojas egzistuoja su tokiais username arba email
-                $repo = $this->getDoctrine()->getRepository(User::class);
-                $obj = $repo->findOneBy(array('username' => $user));
-                if ($obj != null) {
-                    $this->addFlash('error', 'Username already exists!');
-                    return $this->render('admin/add_user.html.twig', $request->request->all());
-                }
-                $obj = $repo->findOneBy(array('email' => $email));
-                if ($obj != null) {
-                    $this->addFlash('error', 'Email already exists!');
-                    return $this->render('admin/users/add_user.html.twig', $request->request->all());
-                }
-                // neegzistuoja, tai sukuriam
-                $entityManager = $this->getDoctrine()->getManager();
+        $user = new User();
+        $form = $this->generateForm($user);
 
-                $postArr = $request->request->all();
-                $user = new User();
-                $user->setFullname($postArr['fullname']);
-                $user->setUsername(preg_replace('#\\s#', '', $postArr['username']));
-                $user->setEmail($postArr['email']);
-                $user->setPassword($this->encoder->encodePassword($user, $postArr['password']));
-                $user->setRole($postArr['role']);
+        $form->handleRequest($request);
 
-                $entityManager->persist($user);
-                $entityManager->flush();
-
-                $this->addFlash('success', 'User created!');
-                return $this->redirectToRoute('admin_users');
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formUser = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($formUser);
+            $em->flush();
+            $this->addFlash('success', 'User created!');
+            return $this->redirectToRoute('admin_users');
         }
-        return $this->render('admin/users/add_user.html.twig');
+
+        return $this->render('admin/users/add_user.html.twig', ['form' => $form->createView()]);
     }
 
     /**
-     * @Route("/editUser", name="admin_edit_user")
+     * @Route("/editUser/{id}", name="admin_edit_user")
      */
-    public function editUser(Request $request) {
-        if ($request->request->count() == 5) { // čia ateina, kai submitina formą pakeitimų
-            $repo = $this->getDoctrine()->getRepository(User::class);
-            $user = $repo->findOneBy(array('username' => $request->request->get('username')));
-            if ($request->request->get('fullname')) $user->setFullname($request->request->get('fullname'));
-            if ($request->request->get('email')) $user->setEmail($request->request->get('email'));
-            $passwd = trim($request->request->get('password'));
-            if ($passwd && ($passwd != '')) {
-                /** @noinspection PhpParamsInspection */
-                $user->setPassword($this->encoder->encodePassword($user, $request->request->get('password')));
+    public function editUser(Request $request, User $user) {
+        $form = $this->generateForm($user);
+        // reikia išsaugoti seną slaptažodį čia, nes po handleRequest() objektas pasikeičia
+        $oldPasswd = $user->getPassword();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formUser = $form->getData();
+            if ($formUser->getPassword() != null) {
+                $formUser->setPassword($this->encoder->encodePassword($user, $formUser->getPassword()));
+            } else { // jei naujas neįvestas, tai nustatom seną...
+                $formUser->setPassword($oldPasswd);
             }
-            try {
-                $this->getDoctrine()->getManager()->flush();
-            } catch (\Exception $e) {
-                // Integrity constraint violation, emailas jau naudojamas :/
-                // username keisti neleidžiam, tai tikrinam tik dėl email
-                if (strpos($e->getMessage(), '1062 Duplicate entry') !== false) {
-                    $this->addFlash('error', 'Email already exists!');
-                } else {
-                    $this->addFlash('error', 'Error updating user!');
-                }
-                return $this->render('admin/users/edit_user.html.twig', $request->request->all());
-            }
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($formUser);
+            $em->flush();
             $this->addFlash('success', 'User modified!');
             return $this->redirectToRoute('admin_users');
-        } else if ($request->request->count() == 4) { // čia ateina, kai paspaudžia mygtuką Edit
-            return $this->render('admin/users/edit_user.html.twig', $request->request->all());
         }
-        return $this->redirectToRoute('admin_users');
+
+        return $this->render('admin/users/edit_user.html.twig', ['form' => $form->createView()]);
     }
 
     /**

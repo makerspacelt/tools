@@ -45,11 +45,7 @@
                                         <input type="hidden" name="userid" value="{{ user.id }}">
                                         <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ user.username }}\'?')" {% if user.username == app.user.username %}disabled{% endif %}>
                                     </form>
-                                    <form action="{{ path('admin_edit_user') }}" method="post">
-                                        <input type="hidden" name="fullname" value="{{ user.fullname }}">
-                                        <input type="hidden" name="username" value="{{ user.username }}">
-                                        <input type="hidden" name="email" value="{{ user.email }}">
-                                        <input type="hidden" name="roles" value="{{ user.roles | join(', ') }}">
+                                    <form action="{{ path('admin_edit_user', {id: user.id}) }}" method="get">
                                         <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
                                     </form>
                                 </div>

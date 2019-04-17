@@ -15,21 +15,55 @@
                         {{ msg }}
                     </div>
                 {% endfor %}
-                <form action="{% block form_action %}{{ path('admin_add_user') }}{% endblock %}" method="post">
-                    <input type="text" class="form-control" placeholder="Full name" name="fullname" value="{{ fullname | default('') }}" required>
-                    <input type="text" class="form-control mt-3" placeholder="Username" name="username" value="{{ username | default('') }}" {% block username_attrib %}required{% endblock %}>
-                    <input type="password" class="form-control mt-3" placeholder="Password" name="password" value="{{ password | default('') }}" {% block passwd_attrib %}required{% endblock %}>
-                    <input type="email" class="form-control mt-3" placeholder="Email" name="email" value="{{ email | default('') }}" required>
-                    <select class="custom-select mr-sm-2 mt-3" title="role" name="role">
-                        <option selected value="ROLE_SUPERADMIN">ROLE_SUPERADMIN</option>
-                    </select>
+                {{ form_start(form) }}
+                    {{ form_label(form.fullname) }}
+                    {{ form_widget(form.fullname) }}
+
+                    {% if not is_mobile() %}
                     <div class="row">
-                        <div class="col mt-2">
-                            <a href="{{ path('admin_users') }}" class="btn btn-secondary">Back</a>
-                            <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">
+                        <div class="col">
+                    {% endif %}
+                            {{ form_label(form.username) }}
+                            {{ form_widget(form.username) }}
+                    {% if not is_mobile() %}
+                        </div>
+                        <div class="col">
+                    {% endif %}
+                            {{ form_label(form.password) }}
+                            {{ form_widget(form.password) }}
+                    {% if not is_mobile() %}
                         </div>
                     </div>
-                </form>
+                    {% endif %}
+
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email) }}
+
+                    {{ form_label(form.roles) }}
+                    {{ form_widget(form.roles) }}
+
+                    <div class="row">
+                        <div class="col">
+                            <a href="{{ path('admin_users') }}" class="btn btn-secondary">Back</a>
+                            {{ form_widget(form.save) }}
+                        </div>
+                    </div>
+                {{ form_end(form) }}
+{#                <form action="{% block form_action %}{{ path('admin_add_user') }}{% endblock %}" method="post">#}
+{#                    <input type="text" class="form-control" placeholder="Full name" name="fullname" value="{{ fullname | default('') }}" required>#}
+{#                    <input type="text" class="form-control mt-3" placeholder="Username" name="username" value="{{ username | default('') }}" {% block username_attrib %}required{% endblock %}>#}
+{#                    <input type="password" class="form-control mt-3" placeholder="Password" name="password" value="{{ password | default('') }}" {% block passwd_attrib %}required{% endblock %}>#}
+{#                    <input type="email" class="form-control mt-3" placeholder="Email" name="email" value="{{ email | default('') }}" required>#}
+{#                    <select class="custom-select mr-sm-2 mt-3" title="role" name="role">#}
+{#                        <option selected value="ROLE_SUPERADMIN">ROLE_SUPERADMIN</option>#}
+{#                    </select>#}
+{#                    <div class="row">#}
+{#                        <div class="col mt-2">#}
+{#                            <a href="{{ path('admin_users') }}" class="btn btn-secondary">Back</a>#}
+{#                            <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </form>#}
             </div>
         </div>
     </div>
