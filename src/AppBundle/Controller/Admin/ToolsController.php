@@ -6,6 +6,12 @@ use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -36,69 +42,98 @@ class ToolsController extends Controller {
         return $code;
     }
 
+    private function generateForm(Tool $tool) {
+        return $this->createFormBuilder($tool)->
+        add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
+        add('model', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
+        add('code', TextType::class, ['required' => true, 'data' => $this->generateToolCode(), 'attr' => ['class' => 'mb-3']])->
+        add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
+//            add('photos', FileType::class)->
+        add('tags', TextType::class, ['attr' => ['required' => false, 'class' => 'tagsinput']])->
+        add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])->
+        add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])->
+        add('acquisitiondate', DateType::class, ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])->
+//        add('save', SubmitType::class, ['label' => 'Submit'])->
+        getForm();
+    }
+
     /**
      * @Route("/addTool", name="admin_add_tool")
      */
     public function addTool(Request $request) {
-        $paramArr = $request->request->all();
-//        echo '<pre>'; print_r($paramArr); die();
-        if (count($paramArr) > 8) {
-            $name = $request->request->get('tool_name');
-            $model = $request->request->get('tool_model');
-            $code = $request->request->get('tool_code');
-            $descr = $request->request->get('tool_description');
-            if ($name && $model && $code && $descr) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $tool = new Tool();
-                $tool->setName($paramArr['tool_name']);
-                $tool->setModel($paramArr['tool_model']);
-                $tool->setCode($paramArr['tool_code']);
-                $tool->setDescription($paramArr['tool_description']);
-                $tool->setShopLinks($paramArr['tool_links']);
-                $tool->setOriginalPrice($paramArr['tool_price']);
-                $tool->setAcquisitionDate($paramArr['tool_date']);
+        $tool = new Tool();
+        $form = $this->generateForm($tool);
 
-                // tag'ai turi būti unikalūs
-                $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-                foreach (explode(',', $paramArr['tool_tags']) as $tag) {
-                    $dbTag = $repo->findOneBy(array('tag' => $tag));
-                    if ($dbTag) {
-                        $tool->addTag($dbTag);
-                    } else {
-                        $toolTag = new ToolTag();
-                        $tool->addTag($toolTag);
-                        $toolTag->setTag(trim(strtolower($tag)));
-                        $entityManager->persist($toolTag);
-                    }
-                }
-
-                foreach ($paramArr['tool_param'] as $param) {
-                    if (!empty(trim($param['name'])) && !empty(trim($param['value']))) {
-                        $toolParam = new ToolParameter();
-                        $toolParam->setName(trim($param['name']));
-                        $toolParam->setValue(trim($param['value']));
-                        $tool->addParam($toolParam);
-                        $entityManager->persist($toolParam);
-                    }
-                }
-
-                foreach ($paramArr['tool_repair_log'] as $entry) {
-                    if (!empty(($entry))) {
-                        $toolLog = new ToolLog();
-                        $toolLog->setLog(trim($entry));
-                        $tool->addLog($toolLog);
-                        $entityManager->persist($toolLog);
-                    }
-                }
-
-                $entityManager->persist($tool);
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Tool created!');
-                return $this->redirectToRoute('admin_tools');
-            }
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formTool = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($formTool);
+            $em->flush();
+            $this->addFlash('success', 'Tool created!');
+            return $this->redirectToRoute('admin_tools');
         }
-        return $this->render('admin/tools/add_tool.html.twig', array('code' => $this->generateToolCode()));
+
+        return $this->render('admin/tools/add_tool.html.twig', array('form' => $form->createView()));
+
+//        $paramArr = $request->request->all();
+//        if (count($paramArr) > 8) {
+//            $name = $request->request->get('tool_name');
+//            $model = $request->request->get('tool_model');
+//            $code = $request->request->get('tool_code');
+//            $descr = $request->request->get('tool_description');
+//            if ($name && $model && $code && $descr) {
+//                $entityManager = $this->getDoctrine()->getManager();
+//                $tool = new Tool();
+//                $tool->setName($paramArr['tool_name']);
+//                $tool->setModel($paramArr['tool_model']);
+//                $tool->setCode($paramArr['tool_code']);
+//                $tool->setDescription($paramArr['tool_description']);
+//                $tool->setShopLinks($paramArr['tool_links']);
+//                $tool->setOriginalPrice($paramArr['tool_price']);
+//                $tool->setAcquisitionDate($paramArr['tool_date']);
+//
+//                // tag'ai turi būti unikalūs
+//                $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+//                foreach (explode(',', $paramArr['tool_tags']) as $tag) {
+//                    $dbTag = $repo->findOneBy(array('tag' => $tag));
+//                    if ($dbTag) {
+//                        $tool->addTag($dbTag);
+//                    } else {
+//                        $toolTag = new ToolTag();
+//                        $tool->addTag($toolTag);
+//                        $toolTag->setTag(trim(strtolower($tag)));
+//                        $entityManager->persist($toolTag);
+//                    }
+//                }
+//
+//                foreach ($paramArr['tool_param'] as $param) {
+//                    if (!empty(trim($param['name'])) && !empty(trim($param['value']))) {
+//                        $toolParam = new ToolParameter();
+//                        $toolParam->setName(trim($param['name']));
+//                        $toolParam->setValue(trim($param['value']));
+//                        $tool->addParam($toolParam);
+//                        $entityManager->persist($toolParam);
+//                    }
+//                }
+//
+//                foreach ($paramArr['tool_repair_log'] as $entry) {
+//                    if (!empty(($entry))) {
+//                        $toolLog = new ToolLog();
+//                        $toolLog->setLog(trim($entry));
+//                        $tool->addLog($toolLog);
+//                        $entityManager->persist($toolLog);
+//                    }
+//                }
+//
+//                $entityManager->persist($tool);
+//                $entityManager->flush();
+//
+//                $this->addFlash('success', 'Tool created!');
+//                return $this->redirectToRoute('admin_tools');
+//            }
+//        }
+//        return $this->render('admin/tools/add_tool.html.twig', array('code' => $this->generateToolCode()));
     }
 
     /**
@@ -138,12 +173,6 @@ class ToolsController extends Controller {
                     // TODO: [insert tool param edit code block here]
 
                     // TODO: padaryti log'ų atnaujinimą ir naujų įrašų išsaugojimą nekuriant dublikatų
-//                    foreach ($paramArr['tool_repair_log'] as $entry) {
-//                        $toolLog = new ToolLog();
-//                        $toolLog->setLog($entry);
-//                        $tool->addLog($toolLog);
-//                        $entityManager->persist($toolLog);
-//                    }
 
                     $entityManager->flush();
                 }

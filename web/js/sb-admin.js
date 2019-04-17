@@ -53,7 +53,7 @@
         });
 
       // https://github.com/underovsky/jquery-tagsinput-revisited
-        $('.tagsinput#tool_tagsinput').tagsInput({
+        $('.tagsinput#form_tags').tagsInput({
             placeholder: 'Tool tags',
             minChars: 3,
             delimiter: [',', ';', '|'],

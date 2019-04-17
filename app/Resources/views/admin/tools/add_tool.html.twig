@@ -23,7 +23,7 @@
             {% block card_title %}Add new tool{% endblock %}
         </div>
         <div class="card-body">
-            <form action="{% block form_action %}{{ path('admin_add_tool') }}{% endblock %}" method="post">
+            {{ form_start(form) }}
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
@@ -32,20 +32,25 @@
                         <div class="col-md-7">
                             <div class="row">
                                 <div class="col">
-                                    <input type="text" class="form-control" name="tool_name" placeholder="Tool name" value="{{ tool.getName() | default('') }}" required>
+                                    {{ form_label(form.name) }}
+                                    {{ form_widget(form.name) }}
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" name="tool_model" placeholder="Tool model" value="{{ tool.getModel() | default('') }}" required>
+                                    {{ form_label(form.model) }}
+                                    {{ form_widget(form.model) }}
                                 </div>
                             </div>
-                            {% if code is not defined %}
-                                {% set code = tool.getCode() %}
-                            {% endif %}
-                            <input type="text" class="form-control mt-3" name="tool_code" placeholder="Tool code" value="{{ code | default('') }}" required>
-                            <textarea name="tool_description" class="form-control mt-3" placeholder="Tool description" required>{{ tool.getDescription() | default('') }}</textarea>
-                            <input type="file" name="tool_photos" class="form-control mt-3" placeholder="Tool photo">
+                            {{ form_label(form.code) }}
+                            {{ form_widget(form.code) }}
+
+                            {{ form_label(form.description) }}
+                            {{ form_widget(form.description) }}
+
+{#                            {{ form_label(form.photos) }}#}
+{#                            {{ form_widget(form.photos) }}#}
                             <div class="mt-3">
-                                <input class="form-control tagsinput" id="tool_tagsinput" name="tool_tags" value="{{ tags | default('') | join(",")}}" placeholder="Tool tags">
+                                {{ form_label(form.tags) }}
+                                {{ form_widget(form.tags) }}
                             </div>
                         </div>
                     </div>
@@ -57,18 +62,21 @@
                             Additional information
                         </h5>
                         <div class="col-md-7">
-                            <textarea name="tool_links" class="form-control mt-3" placeholder="Where to buy?">{{ tool.getShopLinks() | default('') }}</textarea>
+                            {{ form_label(form.shoplinks) }}
+                            {{ form_widget(form.shoplinks) }}
                             <div class="row mt-3">
                                 <div class="col">
+                                    {{ form_label(form.originalprice) }}
                                     <div class="input-group">
-                                        <input type="text" class="form-control" name="tool_price" value="{{ tool.getOriginalPrice() | default('') }}" placeholder="Original price">
+                                        {{ form_widget(form.originalprice) }}
                                         <div class="input-group-append">
                                             <div class="input-group-text">&euro;</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <input type="date" class="form-control" name="tool_date" value="{{ tool.getAcquisitionDate() | default('') }}" placeholder="Bought when?">
+                                    {{ form_label(form.acquisitiondate) }}
+                                    {{ form_widget(form.acquisitiondate) }}
                                 </div>
                             </div>
                         </div>
@@ -135,11 +143,10 @@
                 <div class="row">
                     <div class="col mt-2">
                         <a href="{{ path('admin_tools') }}" class="btn btn-secondary">Back</a>
-                        {% block input_params %}{% endblock %}
                         <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">
                     </div>
                 </div>
-            </form>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}
