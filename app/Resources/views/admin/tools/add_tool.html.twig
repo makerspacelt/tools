@@ -48,11 +48,9 @@
 
 {#                            {{ form_label(form.photos) }}#}
 {#                            {{ form_widget(form.photos) }}#}
-                            <div class="mt-3">
-                                {{ form_label(form.tags) }}
-                                {{ form_widget(form.tags) }}
-                            </div>
-                        </div>
+
+                            {{ form_label(form.tags) }}
+                            {{ form_widget(form.tags) }}
                     </div>
                 </div>
 
@@ -143,7 +141,8 @@
                 <div class="row">
                     <div class="col mt-2">
                         <a href="{{ path('admin_tools') }}" class="btn btn-secondary">Back</a>
-                        <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">
+                        {{ form_widget(form.save) }}
+{#                        <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">#}
                     </div>
                 </div>
             {{ form_end(form) }}

@@ -6,6 +6,8 @@ use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
+use AppBundle\Form\TagType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -49,11 +51,17 @@ class ToolsController extends Controller {
         add('code', TextType::class, ['required' => true, 'data' => $this->generateToolCode(), 'attr' => ['class' => 'mb-3']])->
         add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
 //            add('photos', FileType::class)->
-        add('tags', TextType::class, ['attr' => ['required' => false, 'class' => 'tagsinput']])->
+        add('tags', CollectionType::class, [
+            'required' => false,
+            'entry_type' => TextType::class,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'attr' => ['class' => 'tagsinput']
+        ])->
         add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])->
         add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])->
         add('acquisitiondate', DateType::class, ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])->
-//        add('save', SubmitType::class, ['label' => 'Submit'])->
+        add('save', SubmitType::class, ['label' => 'Submit'])->
         getForm();
     }
 
@@ -62,19 +70,36 @@ class ToolsController extends Controller {
      */
     public function addTool(Request $request) {
         $tool = new Tool();
+        echo '<pre>'; print_r($request->request->all()); die();
         $form = $this->generateForm($tool);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $formTool = $form->getData();
+//            echo '<pre>'; print_r($formTool->getTags()); die();
             $em = $this->getDoctrine()->getManager();
+
+//            // tag'ai turi būti unikalūs
+//            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+//            foreach (explode(',', $paramArr['tool_tags']) as $tag) {
+//                $dbTag = $repo->findOneBy(array('tag' => $tag));
+//                if ($dbTag) {
+//                    $tool->addTag($dbTag);
+//                } else {
+//                    $toolTag = new ToolTag();
+//                    $tool->addTag($toolTag);
+//                    $toolTag->setTag(trim(strtolower($tag)));
+//                    $entityManager->persist($toolTag);
+//                }
+//            }
+
             $em->persist($formTool);
             $em->flush();
             $this->addFlash('success', 'Tool created!');
             return $this->redirectToRoute('admin_tools');
         }
 
-        return $this->render('admin/tools/add_tool.html.twig', array('form' => $form->createView()));
+        return $this->render('admin/tools/add_tool.html.twig', ['form' => $form->createView()]);
 
 //        $paramArr = $request->request->all();
 //        if (count($paramArr) > 8) {
@@ -137,49 +162,64 @@ class ToolsController extends Controller {
     }
 
     /**
-     * @Route("/editTool", name="admin_edit_tool")
+     * @Route("/editTool/{id}", name="admin_edit_tool")
      */
-    public function editTool(Request $request) {
-        $toolid = $request->request->get('tool_id');
-        if ($toolid && $request->request->has('edit_token')) { // čia ateina redaguoti info
-            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
-            $rtnArr = array('tool' => $tool);
-            if ($tool) {
-                $rtnArr['tags'] = $tool->getTagsArray();
-                $rtnArr['params'] = $tool->getParams();
-                $rtnArr['logs'] = $tool->getLogs();
-            }
-            return $this->render('admin/tools/edit_tool.html.twig', $rtnArr);
-        } else if ($request->request->count() >= 4) { // pakeista info buvo submitinta
-            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
-            if ($tool) {
-                $name = $request->request->get('tool_name');
-                $model = $request->request->get('tool_model');
-                $code = $request->request->get('tool_code');
-                $descr = $request->request->get('tool_description');
-                if ($name && $model && $code && $descr) {
-                    $paramArr = $request->request->all();
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $tool->setName($paramArr['tool_name']);
-                    $tool->setModel($paramArr['tool_model']);
-                    $tool->setCode($paramArr['tool_code']);
-                    $tool->setDescription($paramArr['tool_description']);
-                    $tool->setShopLinks($paramArr['tool_links']);
-                    $tool->setOriginalPrice($paramArr['tool_price']);
-                    $tool->setAcquisitionDate($paramArr['tool_date']);
+    public function editTool(Request $request, Tool $tool) {
+        $form = $this->generateForm($tool);
+//        echo '<pre>'; var_dump($request->request->all()); die();
 
-                    // TODO: [insert tool tag edit code block here]
-
-                    // TODO: [insert tool param edit code block here]
-
-                    // TODO: padaryti log'ų atnaujinimą ir naujų įrašų išsaugojimą nekuriant dublikatų
-
-                    $entityManager->flush();
-                }
-                $this->addFlash('success', 'Tool modified!');
-            }
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formTool = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($formTool);
+            $em->flush();
+            $this->addFlash('success', 'Tool modified!');
+            return $this->redirectToRoute('admin_tools');
         }
-        return $this->redirectToRoute('admin_tools');
+
+        return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
+
+//        $toolid = $request->request->get('tool_id');
+//        if ($toolid && $request->request->has('edit_token')) { // čia ateina redaguoti info
+//            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
+//            $rtnArr = array('tool' => $tool);
+//            if ($tool) {
+//                $rtnArr['tags'] = $tool->getTagsArray();
+//                $rtnArr['params'] = $tool->getParams();
+//                $rtnArr['logs'] = $tool->getLogs();
+//            }
+//            return $this->render('admin/tools/edit_tool.html.twig', $rtnArr);
+//        } else if ($request->request->count() >= 4) { // pakeista info buvo submitinta
+//            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
+//            if ($tool) {
+//                $name = $request->request->get('tool_name');
+//                $model = $request->request->get('tool_model');
+//                $code = $request->request->get('tool_code');
+//                $descr = $request->request->get('tool_description');
+//                if ($name && $model && $code && $descr) {
+//                    $paramArr = $request->request->all();
+//                    $entityManager = $this->getDoctrine()->getManager();
+//                    $tool->setName($paramArr['tool_name']);
+//                    $tool->setModel($paramArr['tool_model']);
+//                    $tool->setCode($paramArr['tool_code']);
+//                    $tool->setDescription($paramArr['tool_description']);
+//                    $tool->setShopLinks($paramArr['tool_links']);
+//                    $tool->setOriginalPrice($paramArr['tool_price']);
+//                    $tool->setAcquisitionDate($paramArr['tool_date']);
+//
+//                    // TODO: [insert tool tag edit code block here]
+//
+//                    // TODO: [insert tool param edit code block here]
+//
+//                    // TODO: padaryti log'ų atnaujinimą ir naujų įrašų išsaugojimą nekuriant dublikatų
+//
+//                    $entityManager->flush();
+//                }
+//                $this->addFlash('success', 'Tool modified!');
+//            }
+//        }
+//        return $this->redirectToRoute('admin_tools');
     }
 
     /**

@@ -35,22 +35,22 @@ class Tool {
     private $code;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(nullable=true)
      */
     private $description;
 
     /**
-     * @ORM\Column(name="shop_links")
+     * @ORM\Column(name="shop_links", nullable=true)
      */
     private $shopLinks;
 
     /**
-     * @ORM\Column(name="original_price")
+     * @ORM\Column(name="original_price", nullable=true)
      */
     private $originalPrice;
 
     /**
-     * @ORM\Column(name="acquisition_date")
+     * @ORM\Column(name="acquisition_date", nullable=true)
      */
     private $acquisitionDate;
 

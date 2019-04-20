@@ -43,9 +43,7 @@
                                             <input type="hidden" name="tool_id" value="{{ tool.id }}">
                                             <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
                                         </form>
-                                        <form action="{{ path('admin_edit_tool') }}" method="post">
-                                            <input type="hidden" name="tool_id" value="{{ tool.id }}">
-                                            <input type="hidden" name="edit_token" value="{{ random(999) }}">
+                                        <form action="{{ path('admin_edit_tool', {id:  tool.id}) }}" method="get">
                                             <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
                                         </form>
                                     </div>
