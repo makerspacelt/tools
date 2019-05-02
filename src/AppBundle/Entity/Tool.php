@@ -55,9 +55,9 @@ class Tool {
     private $acquisitionDate;
 
     /**
-     * @ORM\ManyToMany(targetEntity="ToolTag", mappedBy="tool")
+     * @ORM\ManyToMany(targetEntity="ToolTag", mappedBy="tool", cascade={"persist"})
      */
-    private $tags;
+    public $tags;
 
     /**
      * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="tool")

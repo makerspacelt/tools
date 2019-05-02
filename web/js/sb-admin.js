@@ -52,8 +52,8 @@
             "order": [[ 1, "desc" ]]
         });
 
-      // https://github.com/underovsky/jquery-tagsinput-revisited
-        $('.tagsinput#form_tags').tagsInput({
+        // https://github.com/underovsky/jquery-tagsinput-revisited
+        $('.tagsinput#form_tags_tags').tagsInput({
             placeholder: 'Tool tags',
             minChars: 3,
             delimiter: [',', ';', '|'],

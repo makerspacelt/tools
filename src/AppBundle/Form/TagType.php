@@ -3,24 +3,24 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\ToolTag;
-use AppBundle\Entity\Tool;
+use AppBundle\Form\DataTransformer\TagTransformer;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TagType extends AbstractType {
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('tag');
+    private $em;
+
+    public function __construct(EntityManager $em) {
+        $this->em = $em;
     }
 
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults([
-            'data_class' => ToolTag::class
-        ]);
+    public function buildForm(FormBuilderInterface $builder, array $options) {
+        $builder->add(
+            'tags', TextType::class, ['required' => false, 'attr' => ['class' => 'tagsinput']]
+        )->addModelTransformer(new TagTransformer($this->em));
     }
 
 }

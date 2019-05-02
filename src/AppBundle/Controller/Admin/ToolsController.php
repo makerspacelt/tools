@@ -6,7 +6,9 @@ use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
+use AppBundle\Form\DataTransformer\TagTransformer;
 use AppBundle\Form\TagType;
+use AppBundle\Form\Type\ToolType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -51,13 +53,7 @@ class ToolsController extends Controller {
         add('code', TextType::class, ['required' => true, 'data' => $this->generateToolCode(), 'attr' => ['class' => 'mb-3']])->
         add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
 //            add('photos', FileType::class)->
-        add('tags', CollectionType::class, [
-            'required' => false,
-            'entry_type' => TextType::class,
-            'allow_add' => true,
-            'allow_delete' => true,
-            'attr' => ['class' => 'tagsinput']
-        ])->
+        add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
         add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])->
         add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])->
         add('acquisitiondate', DateType::class, ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])->
@@ -70,28 +66,16 @@ class ToolsController extends Controller {
      */
     public function addTool(Request $request) {
         $tool = new Tool();
-        echo '<pre>'; print_r($request->request->all()); die();
         $form = $this->generateForm($tool);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $formTool = $form->getData();
-//            echo '<pre>'; print_r($formTool->getTags()); die();
             $em = $this->getDoctrine()->getManager();
 
-//            // tag'ai turi būti unikalūs
-//            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-//            foreach (explode(',', $paramArr['tool_tags']) as $tag) {
-//                $dbTag = $repo->findOneBy(array('tag' => $tag));
-//                if ($dbTag) {
-//                    $tool->addTag($dbTag);
-//                } else {
-//                    $toolTag = new ToolTag();
-//                    $tool->addTag($toolTag);
-//                    $toolTag->setTag(trim(strtolower($tag)));
-//                    $entityManager->persist($toolTag);
-//                }
-//            }
+            foreach ($tool->getTags() as $tag) {
+                $tag->setTool($tool);
+            }
 
             $em->persist($formTool);
             $em->flush();
@@ -166,7 +150,6 @@ class ToolsController extends Controller {
      */
     public function editTool(Request $request, Tool $tool) {
         $form = $this->generateForm($tool);
-//        echo '<pre>'; var_dump($request->request->all()); die();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
