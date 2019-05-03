@@ -50,7 +50,7 @@ class ToolsController extends Controller {
         return $this->createFormBuilder($tool)->
         add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
         add('model', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
-        add('code', TextType::class, ['required' => true, 'data' => $this->generateToolCode(), 'attr' => ['class' => 'mb-3']])->
+        add('code', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
         add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
 //            add('photos', FileType::class)->
         add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
@@ -67,6 +67,7 @@ class ToolsController extends Controller {
     public function addTool(Request $request) {
         $tool = new Tool();
         $form = $this->generateForm($tool);
+        $form->get('code')->setData($this->generateToolCode());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
