@@ -50,7 +50,7 @@ class Tool {
     private $originalPrice;
 
     /**
-     * @ORM\Column(name="acquisition_date", nullable=true)
+     * @ORM\Column(name="acquisition_date", nullable=true, type="date")
      */
     private $acquisitionDate;
 

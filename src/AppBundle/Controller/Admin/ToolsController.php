@@ -163,47 +163,6 @@ class ToolsController extends Controller {
         }
 
         return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
-
-//        $toolid = $request->request->get('tool_id');
-//        if ($toolid && $request->request->has('edit_token')) { // čia ateina redaguoti info
-//            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
-//            $rtnArr = array('tool' => $tool);
-//            if ($tool) {
-//                $rtnArr['tags'] = $tool->getTagsArray();
-//                $rtnArr['params'] = $tool->getParams();
-//                $rtnArr['logs'] = $tool->getLogs();
-//            }
-//            return $this->render('admin/tools/edit_tool.html.twig', $rtnArr);
-//        } else if ($request->request->count() >= 4) { // pakeista info buvo submitinta
-//            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
-//            if ($tool) {
-//                $name = $request->request->get('tool_name');
-//                $model = $request->request->get('tool_model');
-//                $code = $request->request->get('tool_code');
-//                $descr = $request->request->get('tool_description');
-//                if ($name && $model && $code && $descr) {
-//                    $paramArr = $request->request->all();
-//                    $entityManager = $this->getDoctrine()->getManager();
-//                    $tool->setName($paramArr['tool_name']);
-//                    $tool->setModel($paramArr['tool_model']);
-//                    $tool->setCode($paramArr['tool_code']);
-//                    $tool->setDescription($paramArr['tool_description']);
-//                    $tool->setShopLinks($paramArr['tool_links']);
-//                    $tool->setOriginalPrice($paramArr['tool_price']);
-//                    $tool->setAcquisitionDate($paramArr['tool_date']);
-//
-//                    // TODO: [insert tool tag edit code block here]
-//
-//                    // TODO: [insert tool param edit code block here]
-//
-//                    // TODO: padaryti log'ų atnaujinimą ir naujų įrašų išsaugojimą nekuriant dublikatų
-//
-//                    $entityManager->flush();
-//                }
-//                $this->addFlash('success', 'Tool modified!');
-//            }
-//        }
-//        return $this->redirectToRoute('admin_tools');
     }
 
     /**
@@ -222,11 +181,11 @@ class ToolsController extends Controller {
                         $repo->remove($tag);
                     }
                 }
-
+                // TODO: patikrinti kaip bus su cascade delete
                 foreach ($tool->getParams() as $param) {
                     $repo->remove($param);
                 }
-
+                // TODO: patikrinti kaip bus su cascade delete
                 foreach ($tool->getLogs() as $log) {
                     $repo->remove($log);
                 }

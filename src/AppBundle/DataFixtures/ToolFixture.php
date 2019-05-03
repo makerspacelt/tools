@@ -23,7 +23,11 @@ class ToolFixture extends Fixture implements DependentFixtureInterface {
             $tool->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
             $tool->setShopLinks("http://9v.lt\nhttps://google.com\nir senukai ar kažkur");
             $tool->setOriginalPrice(rand(1, 100));
-            $tool->setAcquisitionDate('2018-' . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . '-' . str_pad(rand(1, 30), 2, '0', STR_PAD_LEFT));
+            try {
+                $tool->setAcquisitionDate(new \DateTime('2018-' . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . '-' . str_pad(rand(1, 30), 2, '0', STR_PAD_LEFT)));
+            } catch (Exception $e) {
+                continue;
+            }
 
             $usedTags = array();
             for ($i = 0; $i < rand(3, 8); $i++) {
