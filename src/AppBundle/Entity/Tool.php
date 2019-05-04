@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="tools_tool")
@@ -31,6 +32,13 @@ class Tool {
 
     /**
      * @ORM\Column
+     * @Assert\NotNull(
+     *     message = "Code cannot be empty"
+     * )
+     * @Assert\Regex(
+     *     pattern = "/^\d{6}$/",
+     *     message = "Code must be 6 numbers long"
+     * )
      */
     private $code;
 
@@ -46,8 +54,13 @@ class Tool {
 
     /**
      * @ORM\Column(name="original_price", nullable=true)
+     * @Assert\Regex(
+     *     pattern = "/^\d+([,\.]\d+)?$/",
+     *     match = "true",
+     *     message = "Only valid price format is permitted"
+     * )
      */
-    private $originalPrice;
+    private $originalprice;
 
     /**
      * @ORM\Column(name="acquisition_date", nullable=true, type="date")
@@ -126,7 +139,7 @@ class Tool {
      * @return mixed
      */
     public function getOriginalPrice() {
-        return $this->originalPrice;
+        return $this->originalprice;
     }
 
     /**
@@ -205,10 +218,10 @@ class Tool {
     }
 
     /**
-     * @param mixed $originalPrice
+     * @param mixed $originalprice
      */
-    public function setOriginalPrice($originalPrice) {
-        $this->originalPrice = $originalPrice;
+    public function setOriginalPrice($originalprice) {
+        $this->originalprice = $originalprice;
     }
 
     /**
