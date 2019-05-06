@@ -8,7 +8,6 @@ use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
 use AppBundle\Form\DataTransformer\TagTransformer;
 use AppBundle\Form\TagType;
-use AppBundle\Form\Type\ToolType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -99,6 +98,16 @@ class ToolsController extends Controller {
         if ($form->isSubmitted() && $form->isValid()) {
             $formTool = $form->getData();
             $em = $this->getDoctrine()->getManager();
+
+//            if ($formTool->tags) {
+//                $toolTags = $formTool->getTagsArray();
+//                foreach ($formTool->tags as $tag) {
+//                    if (!in_array($tag->getTag(), $toolTags)) {
+//                        $formTool->addTag($tag);
+//                    }
+//                }
+//            }
+
             $em->persist($formTool);
             $em->flush();
             $this->addFlash('success', 'Tool modified!');
