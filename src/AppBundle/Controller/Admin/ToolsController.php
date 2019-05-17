@@ -100,11 +100,9 @@ class ToolsController extends Controller {
             $em = $this->getDoctrine()->getManager();
 
 //            if ($formTool->tags) {
-//                $toolTags = $formTool->getTagsArray();
-//                foreach ($formTool->tags as $tag) {
-//                    if (!in_array($tag->getTag(), $toolTags)) {
-//                        $formTool->addTag($tag);
-//                    }
+//                $toolTags = $formTool->getTags();
+//                foreach ($toolTags as $tag) {
+//                    $tag->setTool($tool);
 //                }
 //            }
 
