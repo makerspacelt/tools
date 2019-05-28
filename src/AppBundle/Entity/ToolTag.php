@@ -64,7 +64,7 @@ class ToolTag {
     /**
      * @return mixed
      */
-    public function getTools() {
+    public function getTool() {
         return $this->tool;
     }
 
@@ -73,6 +73,10 @@ class ToolTag {
      */
     public function setTool(Tool $tool) {
         $this->tool->add($tool);
+    }
+
+    public function removeTool(Tool $tool) {
+        $this->tool->removeElement($tool);
     }
 
     public function countTools() {

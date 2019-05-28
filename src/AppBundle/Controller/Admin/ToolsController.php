@@ -8,10 +8,7 @@ use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
 use AppBundle\Form\DataTransformer\TagTransformer;
 use AppBundle\Form\TagType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -70,16 +67,8 @@ class ToolsController extends Controller {
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $formTool = $form->getData();
             $em = $this->getDoctrine()->getManager();
-
-            if ($tool->getTags()) {
-                foreach ($tool->getTags() as $tag) {
-                    $tag->setTool($tool);
-                }
-            }
-
-            $em->persist($formTool);
+            $em->persist($tool);
             $em->flush();
             $this->addFlash('success', 'Tool created!');
             return $this->redirectToRoute('admin_tools');
@@ -93,21 +82,28 @@ class ToolsController extends Controller {
      */
     public function editTool(Request $request, Tool $tool) {
         $form = $this->generateForm($tool);
-
+        $currentTags = $tool->getTags()->toArray();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $formTool = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-
-//            if ($formTool->tags) {
-//                $toolTags = $formTool->getTags();
-//                foreach ($toolTags as $tag) {
-//                    $tag->setTool($tool);
-//                }
-//            }
-
-            $em->persist($formTool);
-            $em->flush();
+            $submittedTags = array();
+            if ($formTool->getTags()) {
+                $submittedTags = $formTool->getTags()->asArray();
+            }
+//            echo '<pre>'; var_dump($submittedTags); die();
+            $repo = $this->getDoctrine()->getManager();
+            $removedTags = array_udiff($currentTags, $submittedTags,
+                function ($a, $b) {
+                    return $a->getId() - $b->getId();
+                }
+            );
+            foreach ($removedTags as $tag) {
+                $tag->removeTool($tool);
+                if ($tag->getTool()->count() == 0) {
+                    $repo->remove($tag);
+                }
+            }
+            $repo->flush();
             $this->addFlash('success', 'Tool modified!');
             return $this->redirectToRoute('admin_tools');
         }
@@ -127,7 +123,7 @@ class ToolsController extends Controller {
 
                 // pašalinam tag'ą tik jeigu jis nenaudojamas niekur kitur
                 foreach ($tool->getTags() as $tag) {
-                    if ($tag->getTools()->count() <= 1) {
+                    if ($tag->getTool()->count() <= 1) {
                         $repo->remove($tag);
                     }
                 }
