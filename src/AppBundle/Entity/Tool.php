@@ -235,7 +235,7 @@ class Tool {
      * @param mixed $tags
      */
     public function addTag(ToolTag $tagEntry) {
-        $tagEntry->setTool($this);
+        $tagEntry->addTool($this);
         $this->tags->add($tagEntry);
     }
 

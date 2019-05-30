@@ -7,7 +7,7 @@ use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
 use AppBundle\Form\DataTransformer\TagTransformer;
-use AppBundle\Form\TagType;
+use AppBundle\Form\Type\TagType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -74,6 +74,9 @@ class ToolsController extends Controller {
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($form->getData()->getTags() as $tag) {
+                $tool->addTag($tag);
+            }
             $em = $this->getDoctrine()->getManager();
             $em->persist($tool);
             $em->flush();
@@ -134,7 +137,7 @@ class ToolsController extends Controller {
 
                 // pašalinam tag'ą tik jeigu jis nenaudojamas niekur kitur
                 foreach ($tool->getTags() as $tag) {
-                    if ($tag->getTool()->count() <= 1) {
+                    if ($tag->getTools()->count() <= 1) {
                         $repo->remove($tag);
                     }
                 }
