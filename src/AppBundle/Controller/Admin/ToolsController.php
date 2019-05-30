@@ -42,6 +42,13 @@ class ToolsController extends Controller {
         return $code;
     }
 
+    /**
+     * Funkcija skirta naudoti kaip callback'as array_udiff funkcijai
+     */
+    private function arrayCompare($arr1, $arr2) {
+        return $arr1->getId() - $arr2->getId();
+    }
+
     private function generateForm(Tool $tool) {
         return $this->createFormBuilder($tool)->
         add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
@@ -86,23 +93,27 @@ class ToolsController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $formTool = $form->getData();
+            $repo = $this->getDoctrine()->getManager();
+
             $submittedTags = array();
             if ($formTool->getTags()) {
-                $submittedTags = $formTool->getTags()->asArray();
+                $submittedTags = $formTool->getTags()->toArray();
             }
-//            echo '<pre>'; var_dump($submittedTags); die();
-            $repo = $this->getDoctrine()->getManager();
-            $removedTags = array_udiff($currentTags, $submittedTags,
-                function ($a, $b) {
-                    return $a->getId() - $b->getId();
-                }
-            );
+
+            $removedTags = array_udiff($currentTags, $submittedTags, array($this, 'arrayCompare'));
+            $addedTags = array_udiff($submittedTags, $currentTags, array($this, 'arrayCompare'));
+
             foreach ($removedTags as $tag) {
                 $tag->removeTool($tool);
-                if ($tag->getTool()->count() == 0) {
+                if ($tag->getTools()->count() == 0) {
                     $repo->remove($tag);
                 }
             }
+
+            foreach ($addedTags as $tag) {
+                $tag->addTool($tool);
+            }
+
             $repo->flush();
             $this->addFlash('success', 'Tool modified!');
             return $this->redirectToRoute('admin_tools');

@@ -26,7 +26,7 @@ class TagsController extends Controller {
             $tagArr[] = array(
                 'id' => $tag->getId(),
                 'tag' => $tag->getTag(),
-                'usageCount' => $tag->getTool()->count()
+                'usageCount' => $tag->getTools()->count()
             );
         }
         return $this->render('admin/tags/tags.html.twig', array('tags' => $tagArr));

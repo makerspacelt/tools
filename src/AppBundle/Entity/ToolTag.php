@@ -64,15 +64,17 @@ class ToolTag {
     /**
      * @return mixed
      */
-    public function getTool() {
+    public function getTools() {
         return $this->tool;
     }
 
     /**
      * @param mixed $tool
      */
-    public function setTool(Tool $tool) {
-        $this->tool->add($tool);
+    public function addTool(Tool $tool) {
+        if (!$this->tool->contains($tool)) {
+            $this->tool->add($tool);
+        }
     }
 
     public function removeTool(Tool $tool) {
