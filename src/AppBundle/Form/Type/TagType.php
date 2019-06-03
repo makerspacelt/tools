@@ -19,7 +19,7 @@ class TagType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add(
-            'tags', TextType::class, ['required' => false, 'attr' => ['class' => 'tagsinput']]
+            'tags', TextType::class, ['attr' => ['class' => 'tagsinput']]
         )->addModelTransformer(new TagTransformer($this->em));
     }
 

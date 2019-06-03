@@ -7,7 +7,9 @@ use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
 use AppBundle\Form\DataTransformer\TagTransformer;
+use AppBundle\Form\Type\LogType;
 use AppBundle\Form\Type\TagType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -57,6 +59,7 @@ class ToolsController extends Controller {
         add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
 //            add('photos', FileType::class)->
         add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
+        add('logs', CollectionType::class, ['required' => false, 'entry_type' => LogType::class, 'allow_add' => true, 'allow_delete' => true])->
         add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])->
         add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])->
         add('acquisitiondate', DateType::class, ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])->
@@ -98,6 +101,7 @@ class ToolsController extends Controller {
             $formTool = $form->getData();
             $repo = $this->getDoctrine()->getManager();
 
+            //----------------- tag block ------------------
             $submittedTags = array();
             if ($formTool->getTags()) {
                 $submittedTags = $formTool->getTags()->toArray();
@@ -116,6 +120,9 @@ class ToolsController extends Controller {
             foreach ($addedTags as $tag) {
                 $tag->addTool($tool);
             }
+            //------------------------------------------------
+            echo '<pre>'; var_dump($formTool->getLogs()); die();
+            //------------------------------------------------
 
             $repo->flush();
             $this->addFlash('success', 'Tool modified!');

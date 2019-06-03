@@ -124,16 +124,34 @@
                             Repair log
                         </h5>
                         <div class="col-md-7">
-                            {% if logs is defined %}
-                                {% for log in logs %}
-                                    <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_log">
-                                        <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log">{{ log.getLog() }}</textarea>
-                                        {% if not is_mobile() %}<div class="input-group-append">{% endif %}
-                                            <button type="button" class="btn {% if is_mobile() %}btn-block{% endif %} btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>
-                                        {% if not is_mobile() %}</div>{% endif %}
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
+{#                            {% if logs is defined %}#}
+{#                                {% for log in logs %}#}
+{#                                    <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_log">#}
+{#                                        <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log">{{ log.getLog() }}</textarea>#}
+{#                                        {% if not is_mobile() %}<div class="input-group-append">{% endif %}#}
+{#                                            <button type="button" class="btn {% if is_mobile() %}btn-block{% endif %} btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>#}
+{#                                        {% if not is_mobile() %}</div>{% endif %}#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                            {% endif %}#}
+{#                            <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_log">#}
+{#                                <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log"></textarea>#}
+{#                                {% if not is_mobile() %}<div class="input-group-append">{% endif %}#}
+{#                                    <button type="button" class="btn {% if is_mobile() %}btn-block{% endif %} btn-success btn-add-log"><i class="fas fa-plus"></i></button>#}
+{#                                {% if not is_mobile() %}</div>{% endif %}#}
+{#                            </div>#}
+
+                            {% for log in form.logs %}
+                                <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_log">
+                                    {% block textarea_widget %}
+                                        <textarea name="{{ log.vars.id }}" class="form-control" placeholder="Tool repair log">{{ log.vars.value.getLog() }}</textarea>
+                                        {% do log.setRendered() %}
+                                    {% endblock %}
+                                    {% if not is_mobile() %}<div class="input-group-append">{% endif %}
+                                        <button type="button" class="btn {% if is_mobile() %}btn-block{% endif %} btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>
+                                    {% if not is_mobile() %}</div>{% endif %}
+                                </div>
+                            {% endfor %}
                             <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_log">
                                 <textarea name="tool_repair_log[]" class="form-control" placeholder="Tool repair log"></textarea>
                                 {% if not is_mobile() %}<div class="input-group-append">{% endif %}
