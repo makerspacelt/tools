@@ -24,7 +24,7 @@
                     Originali kaina: {{ tool.getOriginalPrice() }} &euro;<br/>
                 {% endif %}
                 {% if tool.getAcquisitionDate() is not empty %}
-                    Įsigyta: {{ tool.getAcquisitionDate() }}
+                    Įsigyta: {{ tool.getAcquisitionDateString() }}
                 {% endif %}
             </p>
         </div>

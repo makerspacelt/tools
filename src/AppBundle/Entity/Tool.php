@@ -149,6 +149,10 @@ class Tool {
         return $this->acquisitionDate;
     }
 
+    public function getAcquisitionDateString() {
+        return $this->acquisitionDate->format('Y-m-d');
+    }
+
     /**
      * @return mixed
      */
