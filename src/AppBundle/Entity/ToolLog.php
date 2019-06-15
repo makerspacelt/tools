@@ -57,6 +57,10 @@ class ToolLog {
         $this->tool = $tool;
     }
 
+    public function removeTool() {
+        $this->tool = null;
+    }
+
     /**
      * return Tool
      */

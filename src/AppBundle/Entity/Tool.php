@@ -73,9 +73,9 @@ class Tool {
     public $tags;
 
     /**
-     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="tool")
+     * @ORM\OneToMany(targetEntity="ToolLog", mappedBy="tool", cascade={"all"}, orphanRemoval=true)
      */
-    private $logs;
+    public $logs;
 
     /**
      * @ORM\OneToMany(targetEntity="ToolParameter", mappedBy="tool")
@@ -245,6 +245,11 @@ class Tool {
     public function addLog(ToolLog $logEntry) {
         $logEntry->setTool($this);
         $this->logs->add($logEntry);
+    }
+
+    public function removeLog(ToolLog $logEntry) {
+        $this->logs->removeElement($logEntry);
+        $logEntry->setTool(null);
     }
 
     /**

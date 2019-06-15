@@ -59,7 +59,7 @@ class ToolsController extends Controller {
         add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
 //            add('photos', FileType::class)->
         add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
-        add('logs', CollectionType::class, ['required' => false, 'entry_type' => LogType::class, 'allow_add' => true, 'allow_delete' => true])->
+        add('logs', CollectionType::class, ['required' => false, 'entry_type' => LogType::class, 'allow_add' => true, 'allow_delete' => true, 'label' => false,'by_reference' => false])->
         add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])->
         add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])->
         add('acquisitiondate', DateType::class, ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])->
@@ -99,6 +99,7 @@ class ToolsController extends Controller {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $formTool = $form->getData();
+//            echo '<pre>'; var_dump($formTool); die();
             $repo = $this->getDoctrine()->getManager();
 
             //----------------- tag block ------------------
@@ -120,9 +121,14 @@ class ToolsController extends Controller {
             foreach ($addedTags as $tag) {
                 $tag->addTool($tool);
             }
-            //------------------------------------------------
-            echo '<pre>'; var_dump($formTool->getLogs()); die();
-            //------------------------------------------------
+            //----------------- log block ------------------
+            // reikia panaikinti tuščią įvedimo lauką jeigu forma buvo siųsta nieko nekeitus log'uose
+            foreach ($formTool->getLogs() as $log) {
+                if (!$log->getLog()) {
+                    $formTool->removeLog($log);
+                }
+            }
+            //----------------------------------------------
 
             $repo->flush();
             $this->addFlash('success', 'Tool modified!');
