@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LogType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('log', TextareaType::class, ['label' => false, 'attr' => ['placeholder' => 'Tool repair log']]);
+        $builder->add('log', TextareaType::class, ['label' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver) {
