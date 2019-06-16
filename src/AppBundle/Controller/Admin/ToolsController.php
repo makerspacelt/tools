@@ -8,6 +8,7 @@ use AppBundle\Entity\ToolParameter;
 use AppBundle\Entity\ToolTag;
 use AppBundle\Form\DataTransformer\TagTransformer;
 use AppBundle\Form\Type\LogType;
+use AppBundle\Form\Type\ParamType;
 use AppBundle\Form\Type\TagType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -59,6 +60,7 @@ class ToolsController extends Controller {
         add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
 //            add('photos', FileType::class)->
         add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
+        add('params', CollectionType::class, ['required' => false, 'entry_type' => ParamType::class, 'allow_add' => true, 'allow_delete' => true, 'label' => false, 'by_reference' => false])->
         add('logs', CollectionType::class, ['required' => false, 'entry_type' => LogType::class, 'allow_add' => true, 'allow_delete' => true, 'label' => false,'by_reference' => false])->
         add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])->
         add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])->
@@ -128,6 +130,8 @@ class ToolsController extends Controller {
                     $formTool->removeLog($log);
                 }
             }
+            //----------------- param block ----------------
+//            echo '<pre>'; var_dump($formTool->getParams()->toArray()); die();
             //----------------------------------------------
 
             $repo->flush();

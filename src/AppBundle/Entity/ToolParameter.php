@@ -76,4 +76,8 @@ class ToolParameter {
         $this->tool = $tool;
     }
 
+    public function removeTool() {
+        $this->tool = null;
+    }
+
 }

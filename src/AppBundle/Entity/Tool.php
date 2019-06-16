@@ -78,9 +78,9 @@ class Tool {
     public $logs;
 
     /**
-     * @ORM\OneToMany(targetEntity="ToolParameter", mappedBy="tool")
+     * @ORM\OneToMany(targetEntity="ToolParameter", mappedBy="tool", cascade={"all"}, orphanRemoval=true)
      */
-    private $params;
+    public $params;
     #=====================================================
     public function __construct() {
         $this->tags = new ArrayCollection();
@@ -262,6 +262,11 @@ class Tool {
     public function addParam(ToolParameter $paramEntry) {
         $paramEntry->setTool($this);
         $this->params->add($paramEntry);
+    }
+
+    public function removeParam(ToolParameter $paramEntry) {
+        $this->params->removeElement($paramEntry);
+        $paramEntry->setTool(null);
     }
     #=====================================================
 }

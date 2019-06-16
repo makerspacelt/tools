@@ -94,22 +94,23 @@
                         </h5>
                         <div class="col-md-7">
                             {% set n = 0 %}
-                            {% if params is defined %}
-                                {% for param in params %}
-                                    <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_param_group">
-                                        <input type="text" class="form-control" id="tool_name" name="tool_param[{{ n }}][name]" value="{{ param.getName() }}" placeholder="Parameter">
-                                        <input type="text" class="form-control" id="tool_value" name="tool_param[{{ n }}][value]" value="{{ param.getValue() }}" placeholder="Value">
-                                        {% if not is_mobile() %}<div class="input-group-append">{% endif %}
-                                            <button class="btn {% if is_mobile() %}btn-block{% endif %} btn-danger btn-remove-param" type="button"><i class="fas fa-minus"></i></button>
-                                        {% if not is_mobile() %}</div>{% endif %}
-                                    </div>
-                                    {% set n = n + 1 %}
-                                {% endfor %}
+                            {% for param in form.params %}
+                                <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_param_group">
+                                    {% block text_widget %}
+                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[name]" value="{{ param.vars.value.getName() }}" placeholder="Parameter">
+                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[value]" value="{{ param.vars.value.getValue() }}" placeholder="Value">
+                                        {% do param.setRendered() %}
+                                    {% endblock %}
+                                    {% if not is_mobile() %}<div class="input-group-append">{% endif %}
+                                        <button class="btn {% if is_mobile() %}btn-block{% endif %} btn-danger btn-remove-param" type="button"><i class="fas fa-minus"></i></button>
+                                    {% if not is_mobile() %}</div>{% endif %}
+                                </div>
                                 {% set n = n + 1 %}
-                            {% endif %}
+                            {% endfor %}
+
                             <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_param_group">
-                                <input type="text" class="form-control" id="tool_name" name="tool_param[{{ n }}][name]" placeholder="Parameter">
-                                <input type="text" class="form-control" id="tool_value" name="tool_param[{{ n }}][value]" placeholder="Value">
+                                <input type="text" class="form-control" id="param_name" name="form[params][{{ n }}][name]" placeholder="Parameter">
+                                <input type="text" class="form-control" id="param_value" name="form[params][{{ n }}][value]" placeholder="Value">
                                 {% if not is_mobile() %}<div class="input-group-append">{% endif %}
                                     <button class="btn {% if is_mobile() %}btn-block{% endif %} btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
                                 {% if not is_mobile() %}</div>{% endif %}
