@@ -162,7 +162,7 @@ class ToolsController extends Controller {
                 foreach ($tool->getParams() as $param) {
                     $repo->remove($param);
                 }
-                
+
                 foreach ($tool->getLogs() as $log) {
                     $repo->remove($log);
                 }

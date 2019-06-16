@@ -3,4 +3,10 @@
 {% block title %}{{ parent() }} - Dashboard{% endblock %}
 
 {% block page_content %}
+    <h2>Welcome to "{{ include('admin/base_name.twig') }}" control panel!</h2>
+    <h4>For the time being, it's a bit empty here. But someday there might be some useful information displayed here!</h4>
+    <br/>
+    <div style="text-align: center;">
+        <img width="200px" class="img-fluid" src="/res/img/ms-logo-2.png" />
+    </div>
 {% endblock %}
