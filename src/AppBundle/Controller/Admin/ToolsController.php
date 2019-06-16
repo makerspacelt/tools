@@ -158,11 +158,11 @@ class ToolsController extends Controller {
                         $repo->remove($tag);
                     }
                 }
-                // TODO: patikrinti kaip bus su cascade delete
+
                 foreach ($tool->getParams() as $param) {
                     $repo->remove($param);
                 }
-                // TODO: patikrinti kaip bus su cascade delete
+                
                 foreach ($tool->getLogs() as $log) {
                     $repo->remove($log);
                 }
