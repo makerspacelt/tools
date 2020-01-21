@@ -187,7 +187,6 @@ body.fixed-nav.sidebar-toggled #content-wrapper {
   }
   .sidebar .nav-item .nav-link {
     display: block;
-    width: 100%;
     text-align: left;
     padding: 1rem;
     width: 225px;
@@ -374,3 +373,16 @@ body.sidebar-toggled footer.sticky-footer {
   }
 }
 
+.dropzone {
+  border-radius: 5px;
+  border: 2px dashed rgba(13, 15, 62, 0.75) !important;
+  color: rgb(100, 108, 127);
+  min-height: 216px !important;
+  font-family: Roboto, "Open Sans", sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.dz-message {
+  margin: 3.5em 0 !important;
+}

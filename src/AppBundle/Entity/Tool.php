@@ -81,11 +81,17 @@ class Tool {
      * @ORM\OneToMany(targetEntity="ToolParameter", mappedBy="tool", cascade={"all"}, orphanRemoval=true)
      */
     public $params;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ToolPhotos", mappedBy="tool", cascade={"all"}, orphanRemoval=true)
+     */
+    public $photos;
     #=====================================================
     public function __construct() {
         $this->tags = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->params = new ArrayCollection();
+        $this->photos = new ArrayCollection();
     }
     #=====================================================
 
@@ -184,6 +190,14 @@ class Tool {
     public function getParams() {
         return $this->params;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPhotos() {
+        return $this->photos;
+    }
+
     #=====================================================
 
     /**
@@ -267,6 +281,19 @@ class Tool {
     public function removeParam(ToolParameter $paramEntry) {
         $this->params->removeElement($paramEntry);
         $paramEntry->setTool(null);
+    }
+
+    /**
+     * @param mixed $photos
+     */
+    public function addPhoto(ToolPhotos $photoEntry) {
+        $photoEntry->setTool($this);
+        $this->photos->add($photoEntry);
+    }
+
+    public function removePhoto(ToolPhotos $photoEntry) {
+        $this->photos->removeElement($photoEntry);
+        $photoEntry->removeTool();
     }
     #=====================================================
 }

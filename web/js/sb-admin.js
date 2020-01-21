@@ -1,3 +1,5 @@
+Dropzone.autoDiscover = false;
+
 (function($) {
   "use strict"; // Start of use strict
 
@@ -37,7 +39,8 @@
     event.preventDefault();
   });
 
-  $(document).ready( function () {
+  $(document).ready(function () {
+
         $('#toolsDataTable').DataTable({
             "columnDefs": [
                 {"orderable": false, "targets": [0, -1]}
@@ -67,9 +70,28 @@
             }
         });
 
-    } );
+        var dropzone = new Dropzone('#drop-id', {
+            init: function() {
+                this.on("success", function(file, response) {
+                    var $stub = $('<input type="hidden" name="" value="">');
+                    var $photoDiv = $('div#photos');
+                    var $n = $photoDiv.children().length;
+                    $stub.attr('name', 'form[photo]['+$n+']');
+                    $stub.attr('value', response.filename);
+                    $photoDiv.append($stub);
+                });
+            },
+            url: '/admin/tools/uploadPhotos',
+            paramName: 'photo',
+            maxFiles: 4,
+            parallelUploads: 1,
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+        });
 
-  //======================= dynamic tool params =======================
+  });
+
+    //======================= dynamic tool params =======================
     var addParamGroup = function(event) {
         event.preventDefault();
         var $formGroup = $(this).closest('.tool_param_group');
@@ -115,5 +137,6 @@
     $(document).on('click', '.btn-add-log', addLog);
     $(document).on('click', '.btn-remove-log', removeLog);
     //======================= /dynamic tool logs ========================
+
 
 })(jQuery); // End of use strict

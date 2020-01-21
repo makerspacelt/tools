@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\ToolPhotos;
 use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolLog;
 use AppBundle\Entity\ToolParameter;
@@ -15,7 +16,9 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -58,7 +61,6 @@ class ToolsController extends Controller {
         add('model', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
         add('code', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
         add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
-//            add('photos', FileType::class)->
         add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
         add('params', CollectionType::class, ['required' => false, 'entry_type' => ParamType::class, 'allow_add' => true, 'allow_delete' => true, 'label' => false, 'by_reference' => false])->
         add('logs', CollectionType::class, ['required' => false, 'entry_type' => LogType::class, 'allow_add' => true, 'allow_delete' => true, 'label' => false,'by_reference' => false])->
@@ -99,7 +101,12 @@ class ToolsController extends Controller {
         $form = $this->generateForm($tool);
         $currentTags = $tool->getTags()->toArray();
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+//        echo '<pre>'; var_dump($form->getData()); die();
+        /*
+         * Čia turime praleisti $form->isValid() nes nuotraukų įkėlimas renderinamas atskirai,
+         * ne per formo kūrimą
+         */
+        if ($form->isSubmitted()) {
             $formTool = $form->getData();
 //            echo '<pre>'; var_dump($formTool); die();
             $repo = $this->getDoctrine()->getManager();
@@ -132,6 +139,10 @@ class ToolsController extends Controller {
             }
             //----------------- param block ----------------
 //            echo '<pre>'; var_dump($formTool->getParams()->toArray()); die();
+            //----------------------------------------------
+
+            //----------------- photo block ----------------
+            echo '<pre>'; var_dump($formTool->getPhotos()->toArray()); die();
             //----------------------------------------------
 
             $repo->flush();
@@ -177,4 +188,31 @@ class ToolsController extends Controller {
         return $this->redirectToRoute('admin_tools');
     }
 
+    /**
+     * @Route("/uploadPhotos", name="upload_photos")
+     */
+    public function uploadPhotos(Request $request) {
+        $output = array('uploaded' => false);
+
+        $file = $request->files->get('photo');
+        $fileName = uniqid().'.'.$file->getClientOriginalExtension();
+
+        $uploadDir = $this->get('kernel')->getRootDir() . '/../web/res/uploads/';
+        if (!file_exists($uploadDir) && !is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        if ($file->move($uploadDir, $fileName)) {
+            $em = $this->getDoctrine()->getManager();
+            $photoEntity = new ToolPhotos();
+            $photoEntity->setFileName($fileName);
+            $photoEntity->setTool($em->getRepository(Tool::class)->find(474));
+            $em->persist($photoEntity);
+            $em->flush();
+            $output['uploaded'] = true;
+            $output['filename'] = $fileName;
+        }
+
+        return new JsonResponse($output);
+    }
 }
