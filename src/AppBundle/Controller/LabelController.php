@@ -166,7 +166,7 @@ class LabelController extends Controller {
             }
             // TODO: perkelti hostname'ą ir port'ą į admin panelės overview/config langą
             try {
-                $fp = fsockopen('print-label.lan', 80, $errno, $errstr);
+                $fp = fsockopen('print-label.lan', 80, $errno, $errstr, 5);
             } catch (ContextErrorException $cee) {
                 $resp['error_msg'] = $cee->getMessage();
                 return new Response(json_encode($resp));
