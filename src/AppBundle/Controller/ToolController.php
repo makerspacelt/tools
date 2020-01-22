@@ -2,20 +2,18 @@
 
 namespace AppBundle\Controller;
 
-
 use AppBundle\Entity\Tool;
 use AppBundle\Entity\ToolTag;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 class ToolController extends Controller {
 
     private $tags;
 
-    public function __construct(EntityManager $em) {
+    public function __construct(EntityManagerInterface $em) {
         // get tags here
         $repo = $em->getRepository(ToolTag::class);
         $this->tags = $repo->findAll();

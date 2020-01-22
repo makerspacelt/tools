@@ -6,6 +6,7 @@ namespace AppBundle\Form\DataTransformer;
 use AppBundle\Entity\ToolTag;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -13,7 +14,7 @@ class TagTransformer implements DataTransformerInterface {
 
     private $manager;
 
-    public function __construct(EntityManager $manager) {
+    public function __construct(EntityManagerInterface $manager) {
         $this->manager = $manager;
     }
 

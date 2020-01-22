@@ -5,6 +5,7 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Form\DataTransformer\TagTransformer;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,7 +14,7 @@ class TagType extends AbstractType {
 
     private $em;
 
-    public function __construct(EntityManager $em) {
+    public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
     }
 
