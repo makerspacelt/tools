@@ -4,13 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Tool;
 use App\Entity\ToolTag;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ToolController extends Controller {
-
+class ToolController extends AbstractController
+{
     private $tags;
 
     public function __construct(EntityManagerInterface $em) {
@@ -32,5 +31,4 @@ class ToolController extends Controller {
         }
         return $this->redirectToRoute('index_page');
     }
-
 }

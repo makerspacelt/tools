@@ -3,22 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Tool;
-use App\Entity\ToolParameter;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
 use QR_Code\Types\QR_Url;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Makerspacelt\EsimLabelGernerator\Esim;
 use Makerspacelt\EsimLabelGernerator\EsimPrint;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
-class LabelController extends Controller {
-
+class LabelController extends AbstractController
+{
     const FONT_FILE = 'res/font/FreeMonoBold.ttf';
     const MARGIN = 10;
     const TITLE_LEN = 14;

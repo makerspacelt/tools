@@ -4,13 +4,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\ToolPhotos;
 use App\Entity\Tool;
-use App\Entity\ToolLog;
-use App\Entity\ToolParameter;
-use App\Entity\ToolTag;
-use App\Form\DataTransformer\TagTransformer;
 use App\Form\Type\LogType;
 use App\Form\Type\ParamType;
 use App\Form\Type\TagType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -18,16 +15,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 
 /**
  * @Route("/tools")
  */
-class ToolsController extends Controller {
-
+class ToolsController extends AbstractController
+{
     /**
      * @Route("/", name="admin_tools")
      */

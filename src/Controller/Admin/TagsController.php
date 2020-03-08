@@ -3,18 +3,18 @@
 namespace App\Controller\Admin;
 
 use App\Entity\ToolTag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * @Route("/tags")
  */
-class TagsController extends Controller {
-
+class TagsController extends AbstractController
+{
     /**
      * @Route("/", name="admin_tags")
      */

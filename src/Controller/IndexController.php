@@ -5,12 +5,12 @@ namespace App\Controller;
 use App\Entity\Tool;
 use App\Entity\ToolTag;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class IndexController extends Controller {
-
+class IndexController extends AbstractController
+{
     private $tags;
 
     public function __construct(EntityManagerInterface $em) {

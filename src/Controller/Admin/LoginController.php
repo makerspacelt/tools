@@ -2,15 +2,13 @@
 
 namespace App\Controller\Admin;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-class LoginController extends Controller {
-
+class LoginController extends AbstractController
+{
     /**
      * @Route("/login", name="login")
      */
@@ -22,5 +20,4 @@ class LoginController extends Controller {
         $error = $authenticationUtils->getLastAuthenticationError();
         return $this->render('admin/login.html.twig', array('error' => $error));
     }
-
 }
