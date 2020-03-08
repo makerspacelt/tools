@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Controller\Admin;
+
+use App\Entity\ToolTag;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+/**
+ * @Route("/tags")
+ */
+class TagsController extends AbstractController
+{
+    /**
+     * @Route("/", name="admin_tags")
+     */
+    public function tags() {
+        $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+        $tags = $repo->findAll();
+        $tagArr = array();
+        foreach ($tags as $tag) {
+            $tagArr[] = array(
+                'id' => $tag->getId(),
+                'tag' => $tag->getTag(),
+                'usageCount' => $tag->getTools()->count()
+            );
+        }
+        return $this->render('admin/tags/tags.html.twig', array('tags' => $tagArr));
+    }
+
+    /**
+     * @Route("/tags-autocomplete", name="admin_tags_autocomplete")
+     */
+    public function tagsAutocomplete(Request $request) {
+        $term = $request->query->get('term', null);
+        $repo = $this->getDoctrine()->getRepository(ToolTag::class);
+        if ($term) {
+            $tags = $repo->searchTags($term);
+        } else {
+            $tags = $repo->findAll();
+        }
+        $tagsArr = array();
+        foreach ($tags as $tag) {
+            $tagsArr[] = $tag->getTag();
+        }
+        $respObj = new Response(json_encode($tagsArr));
+        $respObj->headers->set('Content-Type', 'text/json');
+        return $respObj;
+    }
+
+    /**
+     * @Route("/editTag/{id}", name="admin_edit_tag")
+     */
+    public function editTag(Request $request, ToolTag $toolTag) {
+        $form = $this->createFormBuilder($toolTag)->
+            add('tag', TextType::class, ['required' => true])->
+            add('save', SubmitType::class, ['label' => 'Submit'])->
+            getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formToolTag = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($formToolTag);
+            $em->flush();
+            $this->addFlash('success', 'Tag edited!');
+            return $this->redirectToRoute('admin_tags');
+        }
+
+        return $this->render('admin/tags/edit_tag.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/deleteTag", name="admin_delete_tag")
+     */
+    public function deleteTag(Request $request) {
+        if ($request->request->has('tag_id')) {
+            $tag = $this->getDoctrine()->getRepository(ToolTag::class)->find(
+                $request->request->get('tag_id')
+            );
+            if ($tag) {
+                $repo = $this->getDoctrine()->getManager();
+                $repo->remove($tag);
+                $repo->flush();
+                $this->addFlash('success', 'Tag removed!');
+            }
+            return $this->redirectToRoute('admin_tags');
+        }
+    }
+}
