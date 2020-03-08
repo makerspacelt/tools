@@ -1,0 +1,10 @@
+app:
+    resource: '../src/Controller/'
+    type: annotation
+
+app_admin:
+    resource: '../src/Controller/Admin/'
+    prefix: '/admin'
+
+logout:
+    path: '/admin/logout'
