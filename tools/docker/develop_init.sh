@@ -26,7 +26,8 @@ composer --no-interaction -q config -g github-oauth.github.com d5d9879b14a2c066e
 composer --no-interaction config -g optimize-autoloader true
 
 time composer --no-interaction install
-
+time yarn install --frozen-lock
+grunt
 
 # init database
 bin/console doctrine:schema:update --force
