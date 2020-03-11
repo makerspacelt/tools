@@ -1,0 +1,23 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/makerspacelt/tools.git",
+  "license": "MIT",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.12.1",
+    "bootstrap": "^4.4.1",
+    "chart.js": "^2.9.3",
+    "datatables.net-bs4": "^1.10.20",
+    "dropzone": "^5.7.0",
+    "grunt": "^1.0.4",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "jit-grunt": "^0.10.0",
+    "jquery": "^3.4.1",
+    "jquery-ui.1.11.1": "^1.11.1",
+    "jquery.easing": "^1.4.1",
+    "jquery.tagsinput-revisited": "^2.0.0",
+    "popper.js": "^1.16.1"
+  }
+}
