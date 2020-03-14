@@ -1,7 +1,6 @@
 /.web-server-pid
 /app/config/parameters.yml
 /build/
-/phpunit.xml
 /var/*
 !/var/cache
 /var/cache/*
@@ -13,8 +12,6 @@
 /var/sessions/*
 !var/sessions/.gitkeep
 !var/SymfonyRequirements.php
-/vendor/
-/public/bundles/
 .idea
 
 ###> symfony/framework-bundle ###
@@ -32,3 +29,6 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+/public/vendor/
+/node_modules
