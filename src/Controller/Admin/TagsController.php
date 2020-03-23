@@ -3,9 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\ToolTag;
+use App\Repository\TagsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,51 +17,69 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TagsController extends AbstractController
 {
+    /** @var TagsRepository */
+    private $tagsRepository;
+
+    public function __construct(TagsRepository $tagsRepository)
+    {
+        $this->tagsRepository = $tagsRepository;
+    }
+
     /**
      * @Route("/", name="admin_tags")
      */
-    public function tags() {
-        $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-        $tags = $repo->findAll();
-        $tagArr = array();
+    public function tags(): Response
+    {
+        $tags = $this->tagsRepository->findAll();
+        $tagArr = [];
         foreach ($tags as $tag) {
-            $tagArr[] = array(
-                'id' => $tag->getId(),
-                'tag' => $tag->getTag(),
-                'usageCount' => $tag->getTools()->count()
-            );
+            $tagArr[] = [
+                'id'         => $tag->getId(),
+                'tag'        => $tag->getTag(),
+                'usageCount' => $tag->getTools()->count(),
+            ];
         }
-        return $this->render('admin/tags/tags.html.twig', array('tags' => $tagArr));
+        return $this->render(
+            'admin/tags/tags.html.twig',
+            [
+                'tags' => $tagArr,
+            ]
+        );
     }
 
     /**
      * @Route("/tags-autocomplete", name="admin_tags_autocomplete")
+     * @param Request $request
+     * @return Response
      */
-    public function tagsAutocomplete(Request $request) {
-        $term = $request->query->get('term', null);
-        $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-        if ($term) {
-            $tags = $repo->searchTags($term);
+    public function tagsAutocomplete(Request $request): Response
+    {
+        if ($request->query->has('term')) {
+            $tags = $this->tagsRepository->searchTags($request->query->get('term'));
         } else {
-            $tags = $repo->findAll();
+            $tags = $this->tagsRepository->findAll();
         }
-        $tagsArr = array();
+
+        $tagsArr = [];
         foreach ($tags as $tag) {
             $tagsArr[] = $tag->getTag();
         }
-        $respObj = new Response(json_encode($tagsArr));
-        $respObj->headers->set('Content-Type', 'text/json');
-        return $respObj;
+
+        return new JsonResponse($tagsArr, 200, ['Content-Type' => 'text/json']);
     }
 
     /**
      * @Route("/editTag/{id}", name="admin_edit_tag")
+     * @param Request $request
+     * @param ToolTag $toolTag
+     * @return Response
      */
-    public function editTag(Request $request, ToolTag $toolTag) {
-        $form = $this->createFormBuilder($toolTag)->
-            add('tag', TextType::class, ['required' => true])->
-            add('save', SubmitType::class, ['label' => 'Submit'])->
-            getForm();
+    public function editTag(Request $request, ToolTag $toolTag): Response
+    {
+        $form = $this->createFormBuilder($toolTag)
+            ->add('tag', TextType::class, ['required' => true])
+            ->add('save', SubmitType::class, ['label' => 'Submit'])
+            ->getForm();
 
         $form->handleRequest($request);
 
@@ -77,19 +97,25 @@ class TagsController extends AbstractController
 
     /**
      * @Route("/deleteTag", name="admin_delete_tag")
+     * @param Request $request
+     * @return Response
      */
-    public function deleteTag(Request $request) {
+    public function deleteTag(Request $request): Response
+    {
         if ($request->request->has('tag_id')) {
-            $tag = $this->getDoctrine()->getRepository(ToolTag::class)->find(
-                $request->request->get('tag_id')
-            );
+            $tag = $this->tagsRepository->find($request->request->get('tag_id'));
             if ($tag) {
-                $repo = $this->getDoctrine()->getManager();
-                $repo->remove($tag);
-                $repo->flush();
+                $manager = $this->getDoctrine()->getManager();
+                $manager->remove($tag);
+                $manager->flush();
                 $this->addFlash('success', 'Tag removed!');
+            } else {
+                $this->addFlash('error', sprintf("Tag '%s' not found.", $tag));
             }
-            return $this->redirectToRoute('admin_tags');
+        } else {
+            $this->addFlash('error', 'No tag_id in request.');
         }
+
+        return $this->redirectToRoute('admin_tags');
     }
 }

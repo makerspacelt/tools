@@ -7,14 +7,17 @@ use App\Entity\Tool;
 use App\Form\Type\LogType;
 use App\Form\Type\ParamType;
 use App\Form\Type\TagType;
+use App\Repository\ToolsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -23,53 +26,86 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ToolsController extends AbstractController
 {
+    /** @var ToolsRepository */
+    private $toolsRepository;
+
+    public function __construct(ToolsRepository $toolsRepository)
+    {
+        $this->toolsRepository = $toolsRepository;
+    }
+
     /**
      * @Route("/", name="admin_tools")
      */
-    public function tools() {
-        $repo = $this->getDoctrine()->getRepository(Tool::class);
-        $tools = $repo->findAll();
-        return $this->render('admin/tools/tools.html.twig', array('tools' => $tools));
+    public function tools(): Response
+    {
+        return $this->render(
+            'admin/tools/tools.html.twig',
+            [
+                'tools' => $this->toolsRepository->findAll(),
+            ]
+        );
     }
 
     /**
      * Generuojamas 11 skaitmenų kodas, atsitiktiniai skaičiai
      */
-    private function generateToolCode() {
-        $repo = $this->getDoctrine()->getRepository(Tool::class);
+    private function generateToolCode()
+    {
         do {
             $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);
-        } while ($repo->findOneBy(array('code' => $code)));
+        } while ($this->toolsRepository->findOneBy(['code' => $code]));
+
         return $code;
     }
 
     /**
      * Funkcija skirta naudoti kaip callback'as array_udiff funkcijai
      */
-    private function arrayCompare($arr1, $arr2) {
+    private function arrayCompare($arr1, $arr2)
+    {
         return $arr1->getId() - $arr2->getId();
     }
 
-    private function generateForm(Tool $tool) {
-        return $this->createFormBuilder($tool)->
-        add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
-        add('model', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
-        add('code', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])->
-        add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
-        add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])->
-        add('params', CollectionType::class, ['required' => false, 'entry_type' => ParamType::class, 'allow_add' => true, 'allow_delete' => true, 'label' => false, 'by_reference' => false])->
-        add('logs', CollectionType::class, ['required' => false, 'entry_type' => LogType::class, 'allow_add' => true, 'allow_delete' => true, 'label' => false,'by_reference' => false])->
-        add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])->
-        add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])->
-        add('acquisitiondate', DateType::class, ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])->
-        add('save', SubmitType::class, ['label' => 'Submit'])->
-        getForm();
+    private function generateForm(Tool $tool): FormInterface
+    {
+        return $this->createFormBuilder($tool)
+            ->add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
+            ->add('model', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
+            ->add('code', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
+            ->add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])
+            ->add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])
+            ->add('params', CollectionType::class, [
+                'required'     => false,
+                'entry_type'   => ParamType::class,
+                'allow_add'    => true,
+                'allow_delete' => true,
+                'label'        => false,
+                'by_reference' => false,
+            ])
+            ->add('logs', CollectionType::class, [
+                'required'     => false,
+                'entry_type'   => LogType::class,
+                'allow_add'    => true,
+                'allow_delete' => true,
+                'label'        => false,
+                'by_reference' => false,
+            ])
+            ->add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])
+            ->add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])
+            ->add('acquisitiondate', DateType::class,
+                ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])
+            ->add('save', SubmitType::class, ['label' => 'Submit'])
+            ->getForm();
     }
 
     /**
      * @Route("/addTool", name="admin_add_tool")
+     * @param Request $request
+     * @return Response
      */
-    public function addTool(Request $request) {
+    public function addTool(Request $request): Response
+    {
         $tool = new Tool();
         $form = $this->generateForm($tool);
         $form->get('code')->setData($this->generateToolCode());
@@ -91,8 +127,12 @@ class ToolsController extends AbstractController
 
     /**
      * @Route("/editTool/{id}", name="admin_edit_tool")
+     * @param Request $request
+     * @param Tool    $tool
+     * @return Response
      */
-    public function editTool(Request $request, Tool $tool) {
+    public function editTool(Request $request, Tool $tool): Response
+    {
         $form = $this->generateForm($tool);
         $currentTags = $tool->getTags()->toArray();
         $form->handleRequest($request);
@@ -107,13 +147,13 @@ class ToolsController extends AbstractController
             $repo = $this->getDoctrine()->getManager();
 
             //----------------- tag block ------------------
-            $submittedTags = array();
+            $submittedTags = [];
             if ($formTool->getTags()) {
                 $submittedTags = $formTool->getTags()->toArray();
             }
 
-            $removedTags = array_udiff($currentTags, $submittedTags, array($this, 'arrayCompare'));
-            $addedTags = array_udiff($submittedTags, $currentTags, array($this, 'arrayCompare'));
+            $removedTags = array_udiff($currentTags, $submittedTags, [$this, 'arrayCompare']);
+            $addedTags = array_udiff($submittedTags, $currentTags, [$this, 'arrayCompare']);
 
             foreach ($removedTags as $tag) {
                 $tag->removeTool($tool);
@@ -137,7 +177,9 @@ class ToolsController extends AbstractController
             //----------------------------------------------
 
             //----------------- photo block ----------------
-            echo '<pre>'; var_dump($formTool->getPhotos()->toArray()); die();
+            echo '<pre>';
+            var_dump($formTool->getPhotos()->toArray());
+            die();
             //----------------------------------------------
 
             $repo->flush();
@@ -150,11 +192,14 @@ class ToolsController extends AbstractController
 
     /**
      * @Route("/delTool", name="admin_del_tool")
+     * @param Request $request
+     * @return Response
      */
-    public function deleteTool(Request $request) {
+    public function deleteTool(Request $request): Response
+    {
         $toolid = $request->request->get('tool_id');
         if ($toolid != null) {
-            $tool = $this->getDoctrine()->getRepository(Tool::class)->find($toolid);
+            $tool = $this->toolsRepository->find($toolid);
             if ($tool) {
                 $repo = $this->getDoctrine()->getManager();
 
@@ -175,7 +220,7 @@ class ToolsController extends AbstractController
 
                 $repo->remove($tool);
                 $repo->flush();
-                $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName().' '.$tool->getModel()));
+                $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName() . ' ' . $tool->getModel()));
             } else {
                 $this->addFlash('error', 'Tool doesn\'t exist!');
             }
@@ -185,12 +230,15 @@ class ToolsController extends AbstractController
 
     /**
      * @Route("/uploadPhotos", name="upload_photos")
+     * @param Request $request
+     * @return Response
      */
-    public function uploadPhotos(Request $request) {
-        $output = array('uploaded' => false);
+    public function uploadPhotos(Request $request): Response
+    {
+        $output = ['uploaded' => false];
 
         $file = $request->files->get('photo');
-        $fileName = uniqid().'.'.$file->getClientOriginalExtension();
+        $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
 
         $uploadDir = $this->get('kernel')->getRootDir() . '/../web/res/uploads/';
         if (!file_exists($uploadDir) && !is_dir($uploadDir)) {
@@ -201,7 +249,7 @@ class ToolsController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $photoEntity = new ToolPhotos();
             $photoEntity->setFileName($fileName);
-            $photoEntity->setTool($em->getRepository(Tool::class)->find(474));
+            $photoEntity->setTool($this->toolsRepository->find(474));
             $em->persist($photoEntity);
             $em->flush();
             $output['uploaded'] = true;
