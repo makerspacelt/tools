@@ -11,9 +11,10 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 
-class ToolFixture extends Fixture implements DependentFixtureInterface {
-
-    public function load(ObjectManager $manager) {
+class ToolFixture extends Fixture implements DependentFixtureInterface
+{
+    public function load(ObjectManager $manager): void
+    {
         $tags = $manager->getRepository(ToolTag::class)->findAll();
         for ($j = 0; $j < 5; $j++) {
             $tool = new Tool();
@@ -24,12 +25,13 @@ class ToolFixture extends Fixture implements DependentFixtureInterface {
             $tool->setShopLinks("http://9v.lt\nhttps://google.com\nir senukai ar kažkur");
             $tool->setOriginalPrice(rand(1, 100));
             try {
-                $tool->setAcquisitionDate(new \DateTime('2018-' . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . '-' . str_pad(rand(1, 30), 2, '0', STR_PAD_LEFT)));
+                $tool->setAcquisitionDate(new \DateTime('2018-' . str_pad(rand(1, 12), 2, '0',
+                        STR_PAD_LEFT) . '-' . str_pad(rand(1, 30), 2, '0', STR_PAD_LEFT)));
             } catch (Exception $e) {
                 continue;
             }
 
-            $usedTags = array();
+            $usedTags = [];
             for ($i = 0; $i < rand(3, 8); $i++) {
                 do {
                     $tag = $tags[rand(0, count($tags) - 1)];
@@ -46,7 +48,10 @@ class ToolFixture extends Fixture implements DependentFixtureInterface {
                 $manager->persist($param);
             }
 
-            $logArr = array('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.');
+            $logArr = [
+                'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+                'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+            ];
             for ($i = 0; $i < 2; $i++) {
                 $log = new ToolLog();
                 $log->setLog($logArr[$i]);
@@ -66,7 +71,8 @@ class ToolFixture extends Fixture implements DependentFixtureInterface {
      *
      * @return array
      */
-    public function getDependencies() {
-        return array(TagFixture::class);
+    public function getDependencies()
+    {
+        return [TagFixture::class];
     }
 }

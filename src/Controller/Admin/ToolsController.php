@@ -50,7 +50,7 @@ class ToolsController extends AbstractController
     /**
      * Generuojamas 11 skaitmenų kodas, atsitiktiniai skaičiai
      */
-    private function generateToolCode()
+    private function generateToolCode(): string
     {
         do {
             $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);

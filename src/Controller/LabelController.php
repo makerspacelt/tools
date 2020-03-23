@@ -7,13 +7,11 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
 use QR_Code\Types\QR_Url;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Debug\Exception\ContextErrorException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Makerspacelt\EsimLabelGernerator\EsimPrint;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 
 class LabelController extends AbstractController
 {
@@ -22,7 +20,8 @@ class LabelController extends AbstractController
     const TITLE_LEN = 14;
     const MODEL_LEN = 24;
 
-    function generateErrorLabel($errorText, $rtn = false) {
+    private function generateErrorLabel($errorText, $rtn = false)
+    {
         $baseImg = imagecreate(416, 320);
         imagecolorallocate($baseImg, 255, 255, 255);
         $black = imagecolorallocate($baseImg, 0, 0, 0);
@@ -41,28 +40,31 @@ class LabelController extends AbstractController
             $pngImg = ob_get_contents();
             ob_end_clean();
             imagedestroy($baseImg);
-            return new Response($pngImg, 200, array('Content-Type' => 'image/png'));
+            return new Response($pngImg, 200, ['Content-Type' => 'image/png']);
         }
     }
 
     /**
      * @Route("/label/{code}", name="tool_label_generator")
      */
-    function generateLabel($code = null, $rtn = false) {
+    public function generateLabel($code = null, $rtn = false)
+    {
         if ($code) {
             // patikriname pirma ar yra toks įrankis pagal nurodytą kodą
             $repo = $this->getDoctrine()->getRepository(Tool::class);
-            $tool = $repo->findOneBy(array('code' => $code));
+            $tool = $repo->findOneBy(['code' => $code]);
             if (!$tool) {
-                return self::generateErrorLabel('Nerastas irankis pagal nurodyta koda:\n  \''.$code.'\'', $rtn);
+                return self::generateErrorLabel('Nerastas irankis pagal nurodyta koda:\n  \'' . $code . '\'', $rtn);
             }
             // reiktų patikrinti ar yra mums taip reikalingas font'as
             if (!file_exists(self::FONT_FILE)) {
-                return self::generateErrorLabel('Nerastas srifto failas:\n  \''.self::FONT_FILE.'\'', $rtn);
+                return self::generateErrorLabel('Nerastas srifto failas:\n  \'' . self::FONT_FILE . '\'', $rtn);
             } else {
                 // apkarpome pavadinimą ir modelį, kad nebūtų per ilgas, ribojam iki 24 simbolių
-                $title = mb_strtoupper(mb_substr($tool->getName(), 0, self::TITLE_LEN - 1)) . (mb_strlen($tool->getName()) > self::TITLE_LEN - 1 ? '~' : '');
-                $model = mb_substr($tool->getModel(), 0, self::MODEL_LEN - 1) . (mb_strlen($tool->getModel()) > self::MODEL_LEN - 1 ? '~' : '');
+                $title = mb_strtoupper(mb_substr($tool->getName(), 0,
+                        self::TITLE_LEN - 1)) . (mb_strlen($tool->getName()) > self::TITLE_LEN - 1 ? '~' : '');
+                $model = mb_substr($tool->getModel(), 0,
+                        self::MODEL_LEN - 1) . (mb_strlen($tool->getModel()) > self::MODEL_LEN - 1 ? '~' : '');
 
                 // pradedam generuoti etiketę
                 // etiketės matmenys 52x40mm, printeris palaiko 8 pikselius per milimetrą,
@@ -75,13 +77,13 @@ class LabelController extends AbstractController
                 // pavadinimas ir modelis
                 imagettftext($baseImg, 35, 0, self::MARGIN, 40, $black, self::FONT_FILE, $title);
                 imagettftext($baseImg, 20, 0, self::MARGIN, 70, $black, self::FONT_FILE, $model);
-                imageline($baseImg, self::MARGIN, 120, imagesx($baseImg)-self::MARGIN, 120, $black);
+                imageline($baseImg, self::MARGIN, 120, imagesx($baseImg) - self::MARGIN, 120, $black);
 
                 // įkeliam QR kodą
                 $qrUrl = new QR_Url(
                     $this->generateUrl(
                         'tool_page',
-                        array('code' => $code),
+                        ['code' => $code],
                         UrlGeneratorInterface::ABSOLUTE_URL
                     )
                 );
@@ -94,8 +96,8 @@ class LabelController extends AbstractController
                 $qrSize = 170;
                 imagecopyresized(
                     $baseImg, $qrCode,
-                    (imagesx($baseImg)-$qrSize)-self::MARGIN,
-                    (imagesy($baseImg)-$qrSize)-self::MARGIN-10,
+                    (imagesx($baseImg) - $qrSize) - self::MARGIN,
+                    (imagesy($baseImg) - $qrSize) - self::MARGIN - 10,
                     0, 0, $qrSize, $qrSize, imagesx($qrCode), imagesy($qrCode)
                 );
 
@@ -103,17 +105,19 @@ class LabelController extends AbstractController
                 // info dėl built-in fontų dydžio: https://docstore.mik.ua/orelly/webprog/pcook/ch15_06.htm
                 $generator = new BarcodeGeneratorPNG();
                 try {
-                    $barcode = imagecreatefromstring($generator->getBarcode($tool->getCode(), $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
+                    $barcode = imagecreatefromstring($generator->getBarcode($tool->getCode(),
+                        $generator::TYPE_INTERLEAVED_2_5_CHECKSUM));
                 } catch (BarcodeException $e) {
-                    return self::generateErrorLabel('Klaida generuojant barkodą:\n  '.$e->getMessage(), $rtn);
+                    return self::generateErrorLabel('Klaida generuojant barkodą:\n  ' . $e->getMessage(), $rtn);
                 }
                 imagecopy(
                     $baseImg, $barcode,
-                    self::MARGIN, (imagesy($baseImg)-imagesy($barcode))-self::MARGIN-10,
+                    self::MARGIN, (imagesy($baseImg) - imagesy($barcode)) - self::MARGIN - 10,
                     0, 0,
                     imagesx($barcode), imagesy($barcode)
                 );
-                imagestring($baseImg, 5, self::MARGIN, (imagesy($baseImg)-15)-imagesy($barcode)-self::MARGIN-12, $tool->getCode(), $black);
+                imagestring($baseImg, 5, self::MARGIN, (imagesy($baseImg) - 15) - imagesy($barcode) - self::MARGIN - 12,
+                    $tool->getCode(), $black);
 
                 // pridedame įrankio parametrus
                 $y = 160;
@@ -122,11 +126,11 @@ class LabelController extends AbstractController
                 $toolParams = $tool->getParams();
                 if (count($toolParams) > 0) {
                     foreach ($toolParams as $param) {
-                        $line = $param->getName().': '.$param->getValue();
+                        $line = $param->getName() . ': ' . $param->getValue();
                         imagettftext($baseImg, $fontSize, 0, self::MARGIN, $y, $black, self::FONT_FILE,
-                            mb_substr($line, 0, $lineLen).(mb_strlen($line) > $lineLen ? '~' : '')
+                            mb_substr($line, 0, $lineLen) . (mb_strlen($line) > $lineLen ? '~' : '')
                         );
-                        $y += $fontSize+8;
+                        $y += $fontSize + 8;
                     }
                 } else {
                     imagettftext($baseImg, $fontSize, 0, self::MARGIN, $y, $black, self::FONT_FILE, 'Parametrų nėra');
@@ -140,7 +144,7 @@ class LabelController extends AbstractController
                     $pngImg = ob_get_contents();
                     ob_end_clean();
                     imagedestroy($baseImg);
-                    return new Response($pngImg, 200, array('Content-Type' => 'image/png'));
+                    return new Response($pngImg, 200, ['Content-Type' => 'image/png']);
                 }
             }
         } else {
@@ -151,24 +155,15 @@ class LabelController extends AbstractController
     /**
      * @Route("/print", name="tool_label_printer")
      */
-    function printLabel(Request $request) {
+    public function printLabel(Request $request)
+    {
         if ($request->request->has('tool_code')) {
-            $resp = array('response' => false);
+            $resp = ['response' => false];
             $tCode = $request->request->get('tool_code', '0');
             $esimPrint = new EsimPrint();
-            try {
-                $labelData = $esimPrint->printGd($this->generateLabel($tCode, true));
-            } catch (ContextErrorException $cee) {
-                $resp['error_msg'] = $cee->getMessage();
-                return new Response(json_encode($resp));
-            }
+            $labelData = $esimPrint->printGd($this->generateLabel($tCode, true));
             // TODO: perkelti hostname'ą ir port'ą į admin panelės overview/config langą
-            try {
-                $fp = fsockopen('print-label.lan', 80, $errno, $errstr, 5);
-            } catch (ContextErrorException $cee) {
-                $resp['error_msg'] = $cee->getMessage();
-                return new Response(json_encode($resp));
-            }
+            $fp = fsockopen('print-label.lan', 80, $errno, $errstr, 5);
 
             if (!$fp) {
                 $resp['error_msg'] = "ERROR: $errno - $errstr";

@@ -27,7 +27,7 @@ class ToolController extends AbstractController
      * @param int|null $code
      * @return Response
      */
-    public function tool($code = null)
+    public function tool($code = null): Response
     {
         if ($code) {
             $tool = $this->toolsRepo->findOneBy(['code' => $code]);

@@ -26,7 +26,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/", name="index_page")
      */
-    public function index()
+    public function index(): Response
     {
         return $this->render(
             'index.html.twig',
@@ -42,7 +42,7 @@ class IndexController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function filterByTags(Request $request)
+    public function filterByTags(Request $request): Response
     {
         if ($request->request->has('tags')) {
             $tags = $request->request->get('tags', []);
@@ -71,7 +71,7 @@ class IndexController extends AbstractController
      * @param string|null $tag
      * @return Response
      */
-    public function filterBySingleTag($tag = null)
+    public function filterBySingleTag($tag = null): Response
     {
         if (!is_null($tag)) {
             $tagObj = $this->toolsRepo->findOneBy(['tag' => $tag]);
@@ -97,7 +97,7 @@ class IndexController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function search(Request $request)
+    public function search(Request $request): Response
     {
         if ($request->request->has('search_str')) {
             $searchStr = trim($request->request->get('search_str', ''));
