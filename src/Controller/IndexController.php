@@ -2,112 +2,138 @@
 
 namespace App\Controller;
 
-use App\Entity\Tool;
-use App\Entity\ToolTag;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TagsRepository;
+use App\Repository\ToolsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    private $tags;
+    /** @var ToolsRepository */
+    private $toolsRepo;
 
-    public function __construct(EntityManagerInterface $em) {
-        // get tags here
-        $repo = $em->getRepository(ToolTag::class);
-        $this->tags = $repo->findAll();
+    /** @var TagsRepository */
+    private $tagsRepo;
+
+    function __construct(ToolsRepository $toolsRepo, TagsRepository $tagsRepo)
+    {
+        $this->toolsRepo = $toolsRepo;
+        $this->tagsRepo = $tagsRepo;
     }
 
     /**
      * @Route("/", name="index_page")
      */
-    public function index() {
-        // get tools
-        $repo = $this->getDoctrine()->getRepository(Tool::class);
-        $tools = $repo->findAll();
-
-        return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tools));
+    public function index()
+    {
+        return $this->render(
+            'index.html.twig',
+            [
+                'tags'  => $this->tagsRepo->findAll(),
+                'tools' => $this->toolsRepo->findAll(),
+            ]
+        );
     }
 
     /**
      * @Route("/filter", name="filter_by_tags", methods={"POST"})
+     * @param Request $request
+     * @return Response
      */
-    public function filterByTags(Request $request) {
+    public function filterByTags(Request $request)
+    {
         if ($request->request->has('tags')) {
-            $tags = $request->request->get('tags', array());
-            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-            // TODO: pamastyti, gal galima panaudoti Repository klasę...?
-            $tools = array();
+            $tags = $request->request->get('tags', []);
+            $tools = [];
             foreach ($tags as $tag) {
-                $tagObj = $repo->findOneBy(array('tag' => $tag));
+                $tagObj = $this->tagsRepo->findOneBy(['tag' => $tag]);
                 if ($tagObj) {
                     $tools = array_merge($tools, $tagObj->getTools()->toArray());
                 }
             }
-            return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => array_unique($tools, SORT_REGULAR)));
+
+            return $this->render(
+                'index.html.twig',
+                [
+                    'tags'  => $this->tagsRepo->findAll(),
+                    'tools' => array_unique($tools, SORT_REGULAR),
+                ]
+            );
         }
+
         return $this->redirectToRoute('index_page');
     }
 
     /**
      * @Route("/filter/{tag}", name="filter_by_single_tag", methods={"GET"})
+     * @param string|null $tag
+     * @return Response
      */
-    public function filterBySingleTag($tag = null) {
-        if ($tag) {
-            $repo = $this->getDoctrine()->getRepository(ToolTag::class);
-            $tagObj = $repo->findOneBy(array('tag' => $tag));
-            $tools = array();
+    public function filterBySingleTag($tag = null)
+    {
+        if (!is_null($tag)) {
+            $tagObj = $this->toolsRepo->findOneBy(['tag' => $tag]);
+            $tools = [];
             if ($tagObj) {
                 $tools = $tagObj->getTools();
             }
-            return $this->render('index.html.twig', array('tags' => $this->tags, 'tools' => $tools));
-        } else {
-            return $this->redirectToRoute('index_page');
+
+            return $this->render(
+                'index.html.twig',
+                [
+                    'tags'  => $this->tagsRepo->findAll(),
+                    'tools' => $tools,
+                ]
+            );
         }
+
+        return $this->redirectToRoute('index_page');
     }
 
     /**
      * @Route("/search", name="search_tools")
+     * @param Request $request
+     * @return Response
      */
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         if ($request->request->has('search_str')) {
             $searchStr = trim($request->request->get('search_str', ''));
-            $toolRepo = $this->getDoctrine()->getRepository(Tool::class);
             // pirma patikrinam ar ieškoma pagal įrankio kodą
             if (is_numeric($searchStr) && (mb_strlen($searchStr) == 6)) {
-                $tool = $toolRepo->findOneBy(array('code' => $searchStr));
+                $tool = $this->toolsRepo->findOneBy(['code' => $searchStr]);
                 if ($tool) {
                     return $this->render('tool.html.twig',
-                        array(
-                            'tags' => $this->tags,
-                            'tool' => $tool,
-                            'search_str' => $searchStr
-                        )
+                        [
+                            'tags'       => $this->tagsRepo->findAll(),
+                            'tool'       => $tool,
+                            'search_str' => $searchStr,
+                        ]
                     );
                 }
             }
 
             // tada patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
-            $tagRepo = $this->getDoctrine()->getRepository(ToolTag::class);
-            $tag = $tagRepo->findOneBy(array('tag' => $searchStr));
+            $tag = $this->tagsRepo->findOneBy(['tag' => $searchStr]);
             if ($tag && ($tag->countTools() > 0)) {
                 return $this->render('index.html.twig',
-                    array(
-                        'tags' => $this->tags,
-                        'tools' => $tag->getTools(),
-                        'search_str' => $searchStr
-                    )
+                    [
+                        'tags'       => $this->tagsRepo->findAll(),
+                        'tools'      => $tag->getTools(),
+                        'search_str' => $searchStr,
+                    ]
                 );
             }
 
-            $tools = $toolRepo->searchTools($searchStr);
+            $tools = $this->toolsRepo->searchTools($searchStr);
             return $this->render('index.html.twig',
-                array(
-                    'tags' => $this->tags,
-                    'tools' => $tools,
-                    'search_str' => $searchStr
-                )
+                [
+                    'tags'       => $this->tagsRepo->findAll(),
+                    'tools'      => $tools,
+                    'search_str' => $searchStr,
+                ]
             );
         }
         return $this->redirectToRoute('index_page');

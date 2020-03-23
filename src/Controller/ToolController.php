@@ -2,31 +2,43 @@
 
 namespace App\Controller;
 
-use App\Entity\Tool;
-use App\Entity\ToolTag;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TagsRepository;
+use App\Repository\ToolsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ToolController extends AbstractController
 {
-    private $tags;
+    /** @var TagsRepository */
+    private $tagsRepo;
 
-    public function __construct(EntityManagerInterface $em) {
-        // get tags here
-        $repo = $em->getRepository(ToolTag::class);
-        $this->tags = $repo->findAll();
+    /** @var ToolsRepository */
+    private $toolsRepo;
+
+    public function __construct(TagsRepository $tagsRepo, ToolsRepository $toolsRepo)
+    {
+        $this->tagsRepo = $tagsRepo;
+        $this->toolsRepo = $toolsRepo;
     }
 
     /**
      * @Route("/tool/{code}", name="tool_page")
+     * @param int|null $code
+     * @return Response
      */
-    public function tool($code = null) {
+    public function tool($code = null)
+    {
         if ($code) {
-            $repo = $this->getDoctrine()->getRepository(Tool::class);
-            $tool = $repo->findOneBy(array('code' => $code));
+            $tool = $this->toolsRepo->findOneBy(['code' => $code]);
             if ($tool) {
-                return $this->render('tool.html.twig', array('tags' => $this->tags, 'tool' => $tool));
+                return $this->render(
+                    'tool.html.twig',
+                    [
+                        'tags' => $this->tagsRepo->findAll(),
+                        'tool' => $tool,
+                    ]
+                );
             }
         }
         return $this->redirectToRoute('index_page');
