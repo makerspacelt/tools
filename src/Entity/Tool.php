@@ -10,9 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="tools_tool")
  * @ORM\Entity(repositoryClass="App\Repository\ToolsRepository")
  */
-class Tool {
-
-    #=====================================================
+class Tool
+{
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -86,8 +85,10 @@ class Tool {
      * @ORM\OneToMany(targetEntity="ToolPhotos", mappedBy="tool", cascade={"all"}, orphanRemoval=true)
      */
     public $photos;
+
     #=====================================================
-    public function __construct() {
+    public function __construct()
+    {
         $this->tags = new ArrayCollection();
         $this->logs = new ArrayCollection();
         $this->params = new ArrayCollection();
@@ -98,44 +99,51 @@ class Tool {
     /**
      * @return mixed
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
      * @return mixed
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * @return mixed
      */
-    public function getModel() {
+    public function getModel()
+    {
         return $this->model;
     }
 
     /**
      * @return mixed
      */
-    public function getCode() {
+    public function getCode()
+    {
         return $this->code;
     }
 
     /**
      * @return mixed
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
     /**
      * @return mixed
      */
-    public function getShopLinks($parse = false) {
+    public function getShopLinks($parse = false)
+    {
         if ($parse) {
-            return preg_replace('#(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`\!()\[\]{};:\'".,<>?«»“”‘’]))#i', '<a href="$0" target="_blank">$0</a>', trim($this->shopLinks));
+            return preg_replace('#(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`\!()\[\]{};:\'".,<>?«»“”‘’]))#i',
+                '<a href="$0" target="_blank">$0</a>', trim($this->shopLinks));
         } else {
             return $this->shopLinks;
         }
@@ -144,33 +152,38 @@ class Tool {
     /**
      * @return mixed
      */
-    public function getOriginalPrice() {
+    public function getOriginalPrice()
+    {
         return $this->originalprice;
     }
 
     /**
      * @return mixed
      */
-    public function getAcquisitionDate() {
+    public function getAcquisitionDate()
+    {
         return $this->acquisitionDate;
     }
 
-    public function getAcquisitionDateString() {
+    public function getAcquisitionDateString()
+    {
         return $this->acquisitionDate->format('Y-m-d');
     }
 
     /**
      * @return mixed
      */
-    public function getTags() {
+    public function getTags()
+    {
         return $this->tags;
     }
 
     /**
      * @return array
      */
-    public function getTagsArray() {
-        $tagsArr = array();
+    public function getTagsArray()
+    {
+        $tagsArr = [];
         foreach ($this->tags as $tag) {
             $tagsArr[] = $tag->getTag();
         }
@@ -180,21 +193,24 @@ class Tool {
     /**
      * @return mixed
      */
-    public function getLogs() {
+    public function getLogs()
+    {
         return $this->logs;
     }
 
     /**
      * @return mixed
      */
-    public function getParams() {
+    public function getParams()
+    {
         return $this->params;
     }
 
     /**
      * @return mixed
      */
-    public function getPhotos() {
+    public function getPhotos()
+    {
         return $this->photos;
     }
 
@@ -203,56 +219,64 @@ class Tool {
     /**
      * @param mixed $name
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
     /**
      * @param mixed $model
      */
-    public function setModel($model) {
+    public function setModel($model)
+    {
         $this->model = $model;
     }
 
     /**
      * @param mixed $code
      */
-    public function setCode($code) {
+    public function setCode($code)
+    {
         $this->code = $code;
     }
 
     /**
      * @param mixed $description
      */
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
 
     /**
      * @param mixed $shopLinks
      */
-    public function setShopLinks($shopLinks) {
+    public function setShopLinks($shopLinks)
+    {
         $this->shopLinks = $shopLinks;
     }
 
     /**
      * @param mixed $originalprice
      */
-    public function setOriginalPrice($originalprice) {
+    public function setOriginalPrice($originalprice)
+    {
         $this->originalprice = $originalprice;
     }
 
     /**
      * @param mixed $acquisitionDate
      */
-    public function setAcquisitionDate($acquisitionDate) {
+    public function setAcquisitionDate($acquisitionDate)
+    {
         $this->acquisitionDate = $acquisitionDate;
     }
 
     /**
      * @param mixed $tags
      */
-    public function addTag(ToolTag $tagEntry) {
+    public function addTag(ToolTag $tagEntry)
+    {
         $tagEntry->addTool($this);
         $this->tags->add($tagEntry);
     }
@@ -260,12 +284,14 @@ class Tool {
     /**
      * @param mixed $logEntry
      */
-    public function addLog(ToolLog $logEntry) {
+    public function addLog(ToolLog $logEntry)
+    {
         $logEntry->setTool($this);
         $this->logs->add($logEntry);
     }
 
-    public function removeLog(ToolLog $logEntry) {
+    public function removeLog(ToolLog $logEntry)
+    {
         $this->logs->removeElement($logEntry);
         $logEntry->setTool(null);
     }
@@ -273,12 +299,14 @@ class Tool {
     /**
      * @param mixed $params
      */
-    public function addParam(ToolParameter $paramEntry) {
+    public function addParam(ToolParameter $paramEntry)
+    {
         $paramEntry->setTool($this);
         $this->params->add($paramEntry);
     }
 
-    public function removeParam(ToolParameter $paramEntry) {
+    public function removeParam(ToolParameter $paramEntry)
+    {
         $this->params->removeElement($paramEntry);
         $paramEntry->setTool(null);
     }
@@ -286,12 +314,14 @@ class Tool {
     /**
      * @param mixed $photos
      */
-    public function addPhoto(ToolPhotos $photoEntry) {
+    public function addPhoto(ToolPhotos $photoEntry)
+    {
         $photoEntry->setTool($this);
         $this->photos->add($photoEntry);
     }
 
-    public function removePhoto(ToolPhotos $photoEntry) {
+    public function removePhoto(ToolPhotos $photoEntry)
+    {
         $this->photos->removeElement($photoEntry);
         $photoEntry->removeTool();
     }

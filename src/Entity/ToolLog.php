@@ -1,21 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Kulverstukas
- * Date: 2018-08-20
- * Time: 22:42
- */
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="tools_logs")
  * @ORM\Entity
  */
-class ToolLog {
+class ToolLog
+{
 
     #=====================================================
     /**
@@ -39,33 +33,38 @@ class ToolLog {
     /**
      * @return mixed
      */
-    public function getLog() {
+    public function getLog()
+    {
         return $this->log;
     }
 
     /**
      * @param mixed $log
      */
-    public function setLog($log) {
+    public function setLog($log)
+    {
         $this->log = $log;
     }
 
     /**
      * @param Tool $tool
      */
-    public function setTool($tool) {
+    public function setTool($tool)
+    {
         $this->tool = $tool;
     }
 
-    public function removeTool() {
+    public function removeTool()
+    {
         $this->tool = null;
     }
 
     /**
      * return Tool
      */
-    public function getTool() {
-       return $this->tool;
+    public function getTool()
+    {
+        return $this->tool;
     }
 }
 

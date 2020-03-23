@@ -13,7 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields = {"username"}, message="This username is taken")
  * @UniqueEntity(fields = {"email"}, message="This email is taken")
  */
-class User implements UserInterface, \Serializable {
+class User implements UserInterface, \Serializable
+{
 
     #=====================================================
     /**
@@ -53,38 +54,42 @@ class User implements UserInterface, \Serializable {
      */
     private $roles;
     #=====================================================
+
     /**
      * String representation of object
      */
-    public function serialize() {
-        return serialize(array(
+    public function serialize()
+    {
+        return serialize([
             $this->id,
             $this->username,
             $this->password,
             $this->roles,
             $this->fullname,
-            $this->email
-        ));
+            $this->email,
+        ]);
     }
 
     /**
      * Constructs the object
      */
-    public function unserialize($serialized) {
-        list (
+    public function unserialize($serialized)
+    {
+        [
             $this->id,
             $this->username,
             $this->password,
-             $this->roles,
+            $this->roles,
             $this->fullname,
-            $this->email
-            ) = unserialize($serialized, array('allowed_classes' => false));
+            $this->email,
+        ] = unserialize($serialized, ['allowed_classes' => false]);
     }
 
     /**
      * @return mixed
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -104,7 +109,8 @@ class User implements UserInterface, \Serializable {
      *
      * @return (Role|string)[] The user roles
      */
-    public function getRoles() {
+    public function getRoles()
+    {
         return $this->roles;
     }
 
@@ -116,7 +122,8 @@ class User implements UserInterface, \Serializable {
      *
      * @return string The password
      */
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->password;
     }
 
@@ -127,7 +134,8 @@ class User implements UserInterface, \Serializable {
      *
      * @return string|null The salt
      */
-    public function getSalt() {
+    public function getSalt()
+    {
         return null;
     }
 
@@ -136,7 +144,8 @@ class User implements UserInterface, \Serializable {
      *
      * @return string The username
      */
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
@@ -146,58 +155,66 @@ class User implements UserInterface, \Serializable {
      * This is important if, at any given point, sensitive information like
      * the plain-text password is stored on this object.
      */
-    public function eraseCredentials() {
+    public function eraseCredentials()
+    {
         // tuščia, mmk
     }
 
     /**
      * @return mixed
      */
-    public function getFullname() {
+    public function getFullname()
+    {
         return $this->fullname;
     }
 
     /**
      * @return mixed
      */
-    public function getEmail() {
+    public function getEmail()
+    {
         return $this->email;
     }
 
-
     #=====================================================
+
     /**
      * @param mixed $username
      */
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
     }
 
     /**
      * @param mixed $password
      */
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password = $password;
     }
 
     /**
      * @param mixed $roles
      */
-    public function setRoles($roles) {
+    public function setRoles($roles)
+    {
         $this->roles = $roles;
     }
 
     /**
      * @param mixed $fullname
      */
-    public function setFullname($fullname) {
+    public function setFullname($fullname)
+    {
         $this->fullname = $fullname;
     }
 
     /**
      * @param mixed $email
      */
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         $this->email = $email;
     }
     #=====================================================

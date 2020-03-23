@@ -8,7 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tools_parameters")
  * @ORM\Entity
  */
-class ToolParameter {
+class ToolParameter
+{
 
     #=====================================================
     /**
@@ -37,46 +38,53 @@ class ToolParameter {
     /**
      * @return mixed
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * @param mixed $name
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
     /**
      * @return mixed
      */
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 
     /**
      * @param mixed $value
      */
-    public function setValue($value) {
+    public function setValue($value)
+    {
         $this->value = $value;
     }
 
     /**
      * @return mixed
      */
-    public function getTool() {
+    public function getTool()
+    {
         return $this->tool;
     }
 
     /**
      * @param mixed $tool
      */
-    public function setTool($tool) {
+    public function setTool($tool)
+    {
         $this->tool = $tool;
     }
 
-    public function removeTool() {
+    public function removeTool()
+    {
         $this->tool = null;
     }
 

@@ -10,7 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="tools_tags")
  * @ORM\Entity(repositoryClass="App\Repository\TagsRepository")
  */
-class ToolTag {
+class ToolTag
+{
 
     #=====================================================
     /**
@@ -34,8 +35,10 @@ class ToolTag {
      * @ORM\ManyToMany(targetEntity="Tool", inversedBy="tags")
      */
     private $tool;
+
     #=====================================================
-    public function __construct() {
+    public function __construct()
+    {
         $this->tool = new ArrayCollection();
     }
     #=====================================================
@@ -43,45 +46,52 @@ class ToolTag {
     /**
      * @return mixed
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
      * @return mixed
      */
-    public function getTag() {
+    public function getTag()
+    {
         return $this->tag;
     }
 
     /**
      * @param mixed $tag
      */
-    public function setTag($tag) {
+    public function setTag($tag)
+    {
         $this->tag = $tag;
     }
 
     /**
      * @return mixed
      */
-    public function getTools() {
+    public function getTools()
+    {
         return $this->tool;
     }
 
     /**
      * @param mixed $tool
      */
-    public function addTool(Tool $tool) {
+    public function addTool(Tool $tool)
+    {
         if (!$this->tool->contains($tool)) {
             $this->tool->add($tool);
         }
     }
 
-    public function removeTool(Tool $tool) {
+    public function removeTool(Tool $tool)
+    {
         $this->tool->removeElement($tool);
     }
 
-    public function countTools() {
+    public function countTools()
+    {
         return $this->tool->count();
     }
 }
