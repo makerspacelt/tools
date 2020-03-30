@@ -31,7 +31,6 @@ class IndexController extends AbstractController
         return $this->render(
             'index.html.twig',
             [
-                'tags'  => $this->tagsRepo->findAll(),
                 'tools' => $this->toolsRepo->findAll(),
             ]
         );
@@ -57,7 +56,6 @@ class IndexController extends AbstractController
             return $this->render(
                 'index.html.twig',
                 [
-                    'tags'  => $this->tagsRepo->findAll(),
                     'tools' => array_unique($tools, SORT_REGULAR),
                 ]
             );
@@ -74,7 +72,7 @@ class IndexController extends AbstractController
     public function filterBySingleTag($tag = null): Response
     {
         if (!is_null($tag)) {
-            $tagObj = $this->toolsRepo->findOneBy(['tag' => $tag]);
+            $tagObj = $this->tagsRepo->findOneBy(['tag' => $tag]);
             $tools = [];
             if ($tagObj) {
                 $tools = $tagObj->getTools();
@@ -83,7 +81,6 @@ class IndexController extends AbstractController
             return $this->render(
                 'index.html.twig',
                 [
-                    'tags'  => $this->tagsRepo->findAll(),
                     'tools' => $tools,
                 ]
             );
@@ -107,7 +104,6 @@ class IndexController extends AbstractController
                 if ($tool) {
                     return $this->render('tool.html.twig',
                         [
-                            'tags'       => $this->tagsRepo->findAll(),
                             'tool'       => $tool,
                             'search_str' => $searchStr,
                         ]
@@ -120,7 +116,6 @@ class IndexController extends AbstractController
             if ($tag && ($tag->countTools() > 0)) {
                 return $this->render('index.html.twig',
                     [
-                        'tags'       => $this->tagsRepo->findAll(),
                         'tools'      => $tag->getTools(),
                         'search_str' => $searchStr,
                     ]
@@ -130,7 +125,6 @@ class IndexController extends AbstractController
             $tools = $this->toolsRepo->searchTools($searchStr);
             return $this->render('index.html.twig',
                 [
-                    'tags'       => $this->tagsRepo->findAll(),
                     'tools'      => $tools,
                     'search_str' => $searchStr,
                 ]

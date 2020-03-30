@@ -35,7 +35,6 @@ class ToolController extends AbstractController
                 return $this->render(
                     'tool.html.twig',
                     [
-                        'tags' => $this->tagsRepo->findAll(),
                         'tool' => $tool,
                     ]
                 );
