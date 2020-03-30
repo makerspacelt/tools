@@ -3,6 +3,13 @@
 {% block title %}{{ parent() }} - Users{% endblock %}
 
 {% block page_content %}
+    {% if app.session.flashBag.has('success') %}
+        {% for msg in app.session.flashBag.get('success') %}
+            <div class="alert alert-success py-2" role="alert">
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
     <div class="card mb-3">
         <div class="card-header">
             <i class="fas fa-users-cog"></i>
@@ -10,16 +17,9 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-1">
+                <div class="col">
                     <a href="{{ path('admin_add_user') }}" class="btn btn-primary mb-2 mr-2">Add user</a>
                 </div>
-                {% for msg in app.session.flashBag.get('success') %}
-                <div class="col-md-3">
-                    <div class="alert alert-success py-2" role="alert">
-                        {{ msg }}
-                    </div>
-                </div>
-                {% endfor %}
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered">
@@ -33,7 +33,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        {% for user in users %}
+                    {% for user in users %}
                         <tr>
                             <td>{{ user.fullname }}</td>
                             <td>{{ user.username }}</td>
@@ -43,7 +43,9 @@
                                 <div class="btn-group" role="group">
                                     <form action="{{ path('admin_del_user') }}" method="post">
                                         <input type="hidden" name="userid" value="{{ user.id }}">
-                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ user.username }}\'?')" {% if user.username == app.user.username %}disabled{% endif %}>
+                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete"
+                                               onclick="return confirm('Are you sure to delete \'{{ user.username }}\'?')"
+                                               {% if user.username == app.user.username %}disabled{% endif %}>
                                     </form>
                                     <form action="{{ path('admin_edit_user', {id: user.id}) }}" method="get">
                                         <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
@@ -51,7 +53,7 @@
                                 </div>
                             </td>
                         </tr>
-                        {% endfor %}
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
