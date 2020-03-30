@@ -19,7 +19,7 @@ security:
             security: false
 
         main:
-            pattern: ^/admin
+            pattern: ^/
             anonymous: ~
             provider: tools_db_provider
             form_login:
