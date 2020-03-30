@@ -14,7 +14,7 @@
         <div class="container">
             <a href="{{ path('index_page') }}">
                 <div class="navbar-brand">
-                    <img src="/res/img/ms-logo.png" width="30" height="30">
+                    <img src="/res/img/ms-logo.png" width="30" height="30" alt="logo">
                     {% block navbar_title %}{{ include('admin/base_name.twig') }}{% endblock %}
                 </div>
             </a>
@@ -25,14 +25,14 @@
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         {% if app.user %}
-                            <a class="nav-link" href="/admin">Admin panelė</a>
+                            <a class="nav-link" href="{{ url('admin_homepage') }}">Admin panelė</a>
                         {% elseif not app.user %}
-                            <a class="nav-link" href="/admin/login">Prisijungti</a>
+                            <a class="nav-link" href="{{ path('login') }}">Prisijungti</a>
                         {% endif %}
                     </li>
                     {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/logout">Atsijungti</a>
+                        <a class="nav-link" href="{{ url('logout') }}">Atsijungti</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -71,7 +71,7 @@
                                         <div class="custom-control custom-checkbox pl-3">
                                             <input type="checkbox" class="custom-control-input" name="tags[]" id="{{ tag.getId() }}" value="{{ tag.getTag() }}" />
                                             <label class="custom-control-label" for="{{ tag.getId() }}">
-                                                <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}{% if is_mobile() %}#content{% endif %}"><nobr>#{{ tag.getTag() }}</nobr></a>
+                                                <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}{% if is_mobile() %}#content{% endif %}">#{{ tag.getTag() }}</a>
                                             </label>
                                         </div>
                                     {% endfor %}

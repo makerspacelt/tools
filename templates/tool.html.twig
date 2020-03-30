@@ -4,7 +4,7 @@
 
 {% block main_block %}
     <div class="card" id="content">
-        <img class="card-img-top img-fluid" src="/res/img/default-tool-pic.png">
+        <img class="card-img-top img-fluid" src="/res/img/default-tool-pic.png" alt="tool_pic">
         <div class="card-body">
             <h3 class="card-title">{{ tool.getName() }} {{ tool.getModel() }}</h3>
             <h5 class="card-subtitle mb-3 text-muted" id="tool-code">{{ tool.getCode() }}</h5>
@@ -30,7 +30,7 @@
         </div>
         <div class="card-footer">
             {% for tag in tool.getTags() %}
-                <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}"><small class="text-muted"><nobr>#{{ tag.getTag() }}</nobr></small></a>
+                <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}"><small class="text-muted">#{{ tag.getTag() }}</small></a>
             {% endfor %}
         </div>
     </div>

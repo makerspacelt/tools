@@ -22,7 +22,7 @@
                 {% endfor %}
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered display" id="toolsDataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered display" id="toolsDataTable">
                     <thead>
                         <tr>
                             <th style="width: 10%">Image</th>
@@ -34,7 +34,7 @@
                     <tbody>
                         {% for tool in tools %}
                             <tr>
-                                <td><img src="https://via.placeholder.com/50x50"></td>
+                                <td><img src="https://via.placeholder.com/50x50" alt="placeholder"></td>
                                 <td>{{ tool.name }} {{ tool.model }}</td>
                                 <td>{{ tool.code }}</td>
                                 <td>
