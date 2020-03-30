@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\TagsRepository;
 use App\Repository\ToolsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,15 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ToolController extends AbstractController
 {
-    /** @var TagsRepository */
-    private $tagsRepo;
-
     /** @var ToolsRepository */
     private $toolsRepo;
 
-    public function __construct(TagsRepository $tagsRepo, ToolsRepository $toolsRepo)
+    public function __construct(ToolsRepository $toolsRepo)
     {
-        $this->tagsRepo = $tagsRepo;
         $this->toolsRepo = $toolsRepo;
     }
 
@@ -40,6 +35,7 @@ class ToolController extends AbstractController
                 );
             }
         }
+
         return $this->redirectToRoute('index_page');
     }
 }

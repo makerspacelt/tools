@@ -13,6 +13,20 @@ class ToolsRepository extends ServiceEntityRepository
         parent::__construct($registry, Tool::class);
     }
 
+    /**
+     * @param string[] $tags
+     * @return Tool[]
+     */
+    public function findByTags(array $tags): array
+    {
+        return $this->createQueryBuilder('t')
+            ->join('t.tags', 'tg')
+            ->where('tg.tag IN (:tags)')
+            ->setParameter('tags', $tags)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function searchTools($q)
     {
         $qb = $this->createQueryBuilder('t');

@@ -43,25 +43,16 @@ class IndexController extends AbstractController
      */
     public function filterByTags(Request $request): Response
     {
-        if ($request->request->has('tags')) {
-            $tags = $request->request->get('tags', []);
-            $tools = [];
-            foreach ($tags as $tag) {
-                $tagObj = $this->tagsRepo->findOneBy(['tag' => $tag]);
-                if ($tagObj) {
-                    $tools = array_merge($tools, $tagObj->getTools()->toArray());
-                }
-            }
-
-            return $this->render(
-                'index.html.twig',
-                [
-                    'tools' => array_unique($tools, SORT_REGULAR),
-                ]
-            );
+        if (!$request->request->has('tags')) {
+            return $this->redirectToRoute('index_page');
         }
 
-        return $this->redirectToRoute('index_page');
+        return $this->render(
+            'index.html.twig',
+            [
+                'tools' => $this->toolsRepo->findByTags($request->request->get('tags', [])),
+            ]
+        );
     }
 
     /**
@@ -71,22 +62,16 @@ class IndexController extends AbstractController
      */
     public function filterBySingleTag($tag = null): Response
     {
-        if (!is_null($tag)) {
-            $tagObj = $this->tagsRepo->findOneBy(['tag' => $tag]);
-            $tools = [];
-            if ($tagObj) {
-                $tools = $tagObj->getTools();
-            }
-
-            return $this->render(
-                'index.html.twig',
-                [
-                    'tools' => $tools,
-                ]
-            );
+        if (is_null($tag)) {
+            return $this->redirectToRoute('index_page');
         }
 
-        return $this->redirectToRoute('index_page');
+        return $this->render(
+            'index.html.twig',
+            [
+                'tools' => $this->toolsRepo->findByTags([$tag]),
+            ]
+        );
     }
 
     /**
@@ -96,40 +81,40 @@ class IndexController extends AbstractController
      */
     public function search(Request $request): Response
     {
-        if ($request->request->has('search_str')) {
-            $searchStr = trim($request->request->get('search_str', ''));
-            // pirma patikrinam ar ieškoma pagal įrankio kodą
-            if (is_numeric($searchStr) && (mb_strlen($searchStr) == 6)) {
-                $tool = $this->toolsRepo->findOneBy(['code' => $searchStr]);
-                if ($tool) {
-                    return $this->render('tool.html.twig',
-                        [
-                            'tool'       => $tool,
-                            'search_str' => $searchStr,
-                        ]
-                    );
-                }
-            }
+        if (!$request->request->has('search_str')) {
+            return $this->redirectToRoute('index_page');
+        }
 
-            // tada patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
-            $tag = $this->tagsRepo->findOneBy(['tag' => $searchStr]);
-            if ($tag && ($tag->countTools() > 0)) {
-                return $this->render('index.html.twig',
+        $searchStr = trim($request->request->get('search_str', ''));
+        // pirma patikrinam ar ieškoma pagal įrankio kodą
+        if (is_numeric($searchStr) && (mb_strlen($searchStr) == 6)) {
+            $tool = $this->toolsRepo->findOneBy(['code' => $searchStr]);
+            if ($tool) {
+                return $this->render('tool.html.twig',
                     [
-                        'tools'      => $tag->getTools(),
+                        'tool'       => $tool,
                         'search_str' => $searchStr,
                     ]
                 );
             }
+        }
 
-            $tools = $this->toolsRepo->searchTools($searchStr);
+        // tada patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
+        $tag = $this->tagsRepo->findOneBy(['tag' => $searchStr]);
+        if ($tag && ($tag->countTools() > 0)) {
             return $this->render('index.html.twig',
                 [
-                    'tools'      => $tools,
+                    'tools'      => $tag->getTools(),
                     'search_str' => $searchStr,
                 ]
             );
         }
-        return $this->redirectToRoute('index_page');
+
+        return $this->render('index.html.twig',
+            [
+                'tools'      => $this->toolsRepo->searchTools($searchStr),
+                'search_str' => $searchStr,
+            ]
+        );
     }
 }
