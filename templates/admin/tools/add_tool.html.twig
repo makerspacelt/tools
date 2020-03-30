@@ -1,6 +1,6 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ include('admin/base_name.twig') }} - Add tool{% endblock %}
+{% block title %}{{ parent() }} - {% block section_title %}Add tool{% endblock %}{% endblock %}
 
 {% block style_links %}
     {{ parent() }}
@@ -29,22 +29,16 @@
                             Main information
                         </h5>
                         <div class="col-md-7">
-                            {% if not is_mobile() %}
                             <div class="row">
                                 <div class="col">
-                            {% endif %}
                                     {{ form_label(form.name) }}
                                     {{ form_widget(form.name) }}
-                                {% if not is_mobile() %}
                                 </div>
                                 <div class="col">
-                                {% endif %}
                                     {{ form_label(form.model) }}
                                     {{ form_widget(form.model) }}
-                            {% if not is_mobile() %}
                                 </div>
                             </div>
-                            {% endif %}
                             {{ form_label(form.code) }}
                             {{ form_widget(form.code) }}
 
@@ -103,25 +97,25 @@
                         <div class="col-md-7">
                             {% set n = 0 %}
                             {% for param in form.params %}
-                                <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_param_group">
+                                <div class="input-group form-group tool_param_group">
                                     {% block text_widget %}
                                         <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[name]" value="{{ param.vars.value.getName() }}" placeholder="Parameter">
                                         <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[value]" value="{{ param.vars.value.getValue() }}" placeholder="Value">
                                         {% do param.setRendered() %}
                                     {% endblock %}
-                                    {% if not is_mobile() %}<div class="input-group-append">{% endif %}
-                                        <button class="btn {% if is_mobile() %}btn-block{% endif %} btn-danger btn-remove-param" type="button"><i class="fas fa-minus"></i></button>
-                                    {% if not is_mobile() %}</div>{% endif %}
+                                    <div class="input-group-append">
+                                        <button class="btn btn-danger btn-remove-param" type="button"><i class="fas fa-minus"></i></button>
+                                    </div>
                                 </div>
                                 {% set n = n + 1 %}
                             {% endfor %}
 
-                            <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_param_group">
+                            <div class="input-group form-group tool_param_group">
                                 <input type="text" class="form-control" id="param_name" name="form[params][{{ n }}][name]" placeholder="Parameter">
                                 <input type="text" class="form-control" id="param_value" name="form[params][{{ n }}][value]" placeholder="Value">
-                                {% if not is_mobile() %}<div class="input-group-append">{% endif %}
-                                    <button class="btn {% if is_mobile() %}btn-block{% endif %} btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
-                                {% if not is_mobile() %}</div>{% endif %}
+                                <div class="input-group-append">
+                                    <button class="btn btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -134,22 +128,22 @@
                         </h5>
                         <div class="col-md-7">
                             {% for log in form.logs %}
-                                <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_log">
+                                <div class="input-group form-group tool_log">
                                     {% block textarea_widget %}
                                         <textarea id="{{ log.vars.id }}" name="{{ log.vars.full_name }}[log]" class="form-control" placeholder="Tool repair log">{{ log.vars.value.getLog() }}</textarea>
                                         {% do log.setRendered() %}
                                     {% endblock %}
 
-                                    {% if not is_mobile() %}<div class="input-group-append">{% endif %}
-                                        <button type="button" class="btn {% if is_mobile() %}btn-block{% endif %} btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>
-                                    {% if not is_mobile() %}</div>{% endif %}
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>
+                                    </div>
                                 </div>
                             {% endfor %}
-                            <div class="{% if not is_mobile() %}input-group{% endif %} form-group tool_log">
+                            <div class="input-group form-group tool_log">
                                 <textarea name="form[logs][][log]" class="form-control" placeholder="Tool repair log"></textarea>
-                                {% if not is_mobile() %}<div class="input-group-append">{% endif %}
-                                    <button type="button" class="btn {% if is_mobile() %}btn-block{% endif %} btn-success btn-add-log"><i class="fas fa-plus"></i></button>
-                                {% if not is_mobile() %}</div>{% endif %}
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-success btn-add-log"><i class="fas fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -159,7 +153,6 @@
                     <div class="col mt-2">
                         <a href="{{ path('admin_tools') }}" class="btn btn-secondary">Back</a>
                         {{ form_widget(form.save) }}
-{#                        <input type="submit" class="btn btn-primary" value="{% block submit_btn_name %}Create{% endblock %}">#}
                     </div>
                 </div>
             {{ form_end(form) }}

@@ -49,7 +49,7 @@
                 <div class="card my-4">
                     <h5 class="card-header">Paieška</h5>
                     <div class="card-body">
-                        <form method="post" action="{{ path('search_tools') }}{% if is_mobile() %}#content{% endif %}">
+                        <form method="post" action="{{ path('search_tools') }}">
                             <div class="input-group">
                                 <input type="text" name="search_str" class="form-control" placeholder="Ieškoti ko..." value="{{ search_str | default('') }}" autofocus>
                                 <div class="input-group-append">

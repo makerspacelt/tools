@@ -3,6 +3,11 @@
 {% block title %}{{ parent() }} - Tools{% endblock %}
 
 {% block page_content %}
+    {% for msg in app.session.flashBag.get('success') %}
+        <div class="alert alert-success py-2" role="alert">
+            {{ msg }}
+        </div>
+    {% endfor %}
     <div class="card mb-3">
         <div class="card-header">
             <i class="fas fa-toolbox"></i>
@@ -10,46 +15,40 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-1">
+                <div class="col">
                     <a href="{{ path('admin_add_tool') }}" class="btn btn-primary mb-2 mr-2">Add tool</a>
                 </div>
-                {% for msg in app.session.flashBag.get('success') %}
-                    <div class="col-md-6">
-                        <div class="alert alert-success py-2" role="alert">
-                            {{ msg }}
-                        </div>
-                    </div>
-                {% endfor %}
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered display" id="toolsDataTable">
                     <thead>
-                        <tr>
-                            <th style="width: 10%">Image</th>
-                            <th>Name and Model</th>
-                            <th>Code</th>
-                            <th style="width: 15%">Action</th>
-                        </tr>
+                    <tr>
+                        <th style="width: 10%">Image</th>
+                        <th>Name and Model</th>
+                        <th>Code</th>
+                        <th style="width: 15%">Action</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for tool in tools %}
-                            <tr>
-                                <td><img src="https://via.placeholder.com/50x50" alt="placeholder"></td>
-                                <td>{{ tool.name }} {{ tool.model }}</td>
-                                <td>{{ tool.code }}</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <form action="{{ path('admin_del_tool') }}" method="post">
-                                            <input type="hidden" name="tool_id" value="{{ tool.id }}">
-                                            <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
-                                        </form>
-                                        <form action="{{ path('admin_edit_tool', {id:  tool.id}) }}" method="get">
-                                            <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                    {% for tool in tools %}
+                        <tr>
+                            <td><img src="https://via.placeholder.com/50x50" alt="placeholder"></td>
+                            <td>{{ tool.name }} {{ tool.model }}</td>
+                            <td>{{ tool.code }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <form action="{{ path('admin_del_tool') }}" method="post">
+                                        <input type="hidden" name="tool_id" value="{{ tool.id }}">
+                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete"
+                                               onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
+                                    </form>
+                                    <form action="{{ path('admin_edit_tool', {id:  tool.id}) }}" method="get">
+                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>

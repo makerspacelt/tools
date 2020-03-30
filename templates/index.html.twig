@@ -9,7 +9,7 @@
                         <img class="card-img-top tool-def-img" src="/res/img/default-tool-pic-listing.png" alt="tool_pic">
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="{{ path('tool_page', {'code': tool.getCode()}) }}{% if is_mobile() %}#content{% endif %}">{{ tool.getName() }} {{ tool.getModel() }}</a>
+                                <a href="{{ path('tool_page', {'code': tool.getCode()}) }}">{{ tool.getName() }} {{ tool.getModel() }}</a>
                             </h4>
                             <h5 class="text-muted">{{ tool.getCode() }}</h5>
                             <p class="card-text">{{ tool.getDescription() }}</p>
