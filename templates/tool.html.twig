@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-md-6 mt-3">
                         <button class="btn btn-info" type="button" data-toggle="modal" data-target="#label-preview-modal">Peržiūrėti</button>
-                        <button class="btn btn-danger" id="print-btn">Spausdinti</button>
+                        <a href="{{ path('tool_label_printer', { 'code': tool.code }) }}" class="btn btn-danger" id="print-btn">Spausdinti</a>
                         {# TODO: kažkodėl atsirandant spinner'iui paslenkama yra mygtukai žemyn, jam išnykus jie vėl pakyla #}
                         <div class="lds-dual-ring" id="print-spinner"></div>
                     </div>

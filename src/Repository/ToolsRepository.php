@@ -6,6 +6,12 @@ use App\Entity\Tool;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+/**
+ * @method Tool|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Tool|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Tool[]    findAll()
+ * @method Tool[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class ToolsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

@@ -6,6 +6,12 @@ use App\Entity\ToolTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+/**
+ * @method ToolTag|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ToolTag|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ToolTag[]    findAll()
+ * @method ToolTag[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
 class TagsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
