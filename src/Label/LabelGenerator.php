@@ -4,7 +4,6 @@ namespace App\Label;
 
 use App\Entity\Tool;
 use App\Label\Exception\LabelGeneratorException;
-use App\Label\Exception\MissingFontException;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
 use QR_Code\Types\QR_Url;
@@ -13,7 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class LabelGenerator
 {
-    const FONT_FILE = 'res/font/FreeMonoBold.ttf';
+    const FONT_FILE = __DIR__ . '/font/FreeMonoBold.ttf';
     const MARGIN = 10;
     const TITLE_LEN = 14;
     const MODEL_LEN = 24;
@@ -33,11 +32,6 @@ class LabelGenerator
      */
     public function generate(Tool $tool)
     {
-        // reiktų patikrinti ar yra mums taip reikalingas font'as
-        if (!file_exists(self::FONT_FILE)) {
-            throw new MissingFontException();
-        }
-
         // apkarpome pavadinimą ir modelį, kad nebūtų per ilgas, ribojam iki 24 simbolių
         $title = $this->trim($tool->getName(), self::TITLE_LEN);
         $model = $this->trim($tool->getModel(), self::MODEL_LEN);
@@ -86,7 +80,7 @@ class LabelGenerator
                 BarcodeGeneratorPNG::TYPE_INTERLEAVED_2_5_CHECKSUM
             ));
         } catch (BarcodeException $e) {
-            throw new LabelGeneratorException("", 0, $e);
+            throw new LabelGeneratorException("failed to generate barcode", 0, $e);
         }
         imagecopy(
             $baseImg, $barcode,
