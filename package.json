@@ -14,7 +14,7 @@
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "jit-grunt": "^0.10.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-ui.1.11.1": "^1.11.1",
     "jquery.easing": "^1.4.1",
     "jquery.tagsinput-revisited": "^2.0.0",
