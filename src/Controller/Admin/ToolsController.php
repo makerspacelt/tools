@@ -4,17 +4,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\ToolPhotos;
 use App\Entity\Tool;
-use App\Form\Type\LogType;
-use App\Form\Type\ParamType;
-use App\Form\Type\TagType;
+use App\Form\Type\ToolType;
 use App\Repository\ToolsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,46 +51,6 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * Funkcija skirta naudoti kaip callback'as array_udiff funkcijai
-     */
-    private function arrayCompare($arr1, $arr2)
-    {
-        return $arr1->getId() - $arr2->getId();
-    }
-
-    private function generateForm(Tool $tool): FormInterface
-    {
-        return $this->createFormBuilder($tool)
-            ->add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
-            ->add('model', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
-            ->add('code', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
-            ->add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])
-            ->add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])
-            ->add('params', CollectionType::class, [
-                'required'     => false,
-                'entry_type'   => ParamType::class,
-                'allow_add'    => true,
-                'allow_delete' => true,
-                'label'        => false,
-                'by_reference' => false,
-            ])
-            ->add('logs', CollectionType::class, [
-                'required'     => false,
-                'entry_type'   => LogType::class,
-                'allow_add'    => true,
-                'allow_delete' => true,
-                'label'        => false,
-                'by_reference' => false,
-            ])
-            ->add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])
-            ->add('originalprice', TextType::class, ['required' => false, 'label' => 'Original price'])
-            ->add('acquisitiondate', DateType::class,
-                ['required' => false, 'widget' => 'single_text', 'label' => 'Acquisition date'])
-            ->add('save', SubmitType::class, ['label' => 'Submit'])
-            ->getForm();
-    }
-
-    /**
      * @Route("/addTool", name="admin_add_tool")
      * @param Request $request
      * @return Response
@@ -106,7 +58,7 @@ class ToolsController extends AbstractController
     public function addTool(Request $request): Response
     {
         $tool = new Tool();
-        $form = $this->generateForm($tool);
+        $form = $this->createForm(ToolType::class, $tool);
         $form->get('code')->setData($this->generateToolCode());
 
         $form->handleRequest($request);
@@ -132,7 +84,7 @@ class ToolsController extends AbstractController
      */
     public function editTool(Request $request, Tool $tool): Response
     {
-        $form = $this->generateForm($tool);
+        $form = $this->createForm(ToolType::class, $tool);
         $currentTags = $tool->getTags()->toArray();
         $form->handleRequest($request);
 //        echo '<pre>'; var_dump($form->getData()); die();
