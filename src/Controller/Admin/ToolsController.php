@@ -39,18 +39,6 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * Generuojamas 11 skaitmenų kodas, atsitiktiniai skaičiai
-     */
-    private function generateToolCode(): string
-    {
-        do {
-            $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);
-        } while ($this->toolsRepository->findOneBy(['code' => $code]));
-
-        return $code;
-    }
-
-    /**
      * @Route("/addTool", name="admin_add_tool")
      * @param Request $request
      * @return Response
@@ -58,22 +46,17 @@ class ToolsController extends AbstractController
     public function addTool(Request $request): Response
     {
         $tool = new Tool();
-        $form = $this->createForm(ToolType::class, $tool);
-        $form->get('code')->setData($this->generateToolCode());
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($form->getData()->getTags() as $tag) {
-                $tool->addTag($tag);
-            }
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($tool);
-            $em->flush();
-            $this->addFlash('success', 'Tool created!');
-            return $this->redirectToRoute('admin_tools');
+        $form = $this->createForm(ToolType::class, $tool)->handleRequest($request);
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render('admin/tools/add_tool.html.twig', ['form' => $form->createView()]);
         }
 
-        return $this->render('admin/tools/add_tool.html.twig', ['form' => $form->createView()]);
+        $manager = $this->getDoctrine()->getManager();
+        $manager->persist($tool);
+        $manager->flush();
+        $this->addFlash('success', 'Tool saved!');
+
+        return $this->redirectToRoute('admin_tools');
     }
 
     /**
@@ -84,61 +67,56 @@ class ToolsController extends AbstractController
      */
     public function editTool(Request $request, Tool $tool): Response
     {
-        $form = $this->createForm(ToolType::class, $tool);
         $currentTags = $tool->getTags()->toArray();
-        $form->handleRequest($request);
-//        echo '<pre>'; var_dump($form->getData()); die();
-        /*
-         * Čia turime praleisti $form->isValid() nes nuotraukų įkėlimas renderinamas atskirai,
-         * ne per formo kūrimą
-         */
-        if ($form->isSubmitted()) {
-            $formTool = $form->getData();
-//            echo '<pre>'; var_dump($formTool); die();
-            $repo = $this->getDoctrine()->getManager();
+        $form = $this->createForm(ToolType::class, $tool)->handleRequest($request);
 
-            //----------------- tag block ------------------
-            $submittedTags = [];
-            if ($formTool->getTags()) {
-                $submittedTags = $formTool->getTags()->toArray();
-            }
-
-            $removedTags = array_udiff($currentTags, $submittedTags, [$this, 'arrayCompare']);
-            $addedTags = array_udiff($submittedTags, $currentTags, [$this, 'arrayCompare']);
-
-            foreach ($removedTags as $tag) {
-                $tag->removeTool($tool);
-                if ($tag->getTools()->count() == 0) {
-                    $repo->remove($tag);
-                }
-            }
-
-            foreach ($addedTags as $tag) {
-                $tag->addTool($tool);
-            }
-            //----------------- log block ------------------
-            // reikia panaikinti tuščią įvedimo lauką jeigu forma buvo siųsta nieko nekeitus log'uose
-            foreach ($formTool->getLogs() as $log) {
-                if (!$log->getLog()) {
-                    $formTool->removeLog($log);
-                }
-            }
-            //----------------- param block ----------------
-//            echo '<pre>'; var_dump($formTool->getParams()->toArray()); die();
-            //----------------------------------------------
-
-            //----------------- photo block ----------------
-            echo '<pre>';
-            var_dump($formTool->getPhotos()->toArray());
-            die();
-            //----------------------------------------------
-
-            $repo->flush();
-            $this->addFlash('success', 'Tool modified!');
-            return $this->redirectToRoute('admin_tools');
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
         }
 
-        return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
+        $repo = $this->getDoctrine()->getManager();
+
+        //----------------- tag block ------------------
+        $submittedTags = [];
+        if ($tool->getTags()) {
+            $submittedTags = $tool->getTags()->toArray();
+        }
+
+        $removedTags = array_udiff($currentTags, $submittedTags, [$this, 'arrayCompare']);
+        $addedTags = array_udiff($submittedTags, $currentTags, [$this, 'arrayCompare']);
+
+        foreach ($removedTags as $tag) {
+            $tag->removeTool($tool);
+            if ($tag->getTools()->count() == 0) {
+                $repo->remove($tag);
+            }
+        }
+
+        foreach ($addedTags as $tag) {
+            $tag->addTool($tool);
+        }
+
+        //----------------- log block ------------------
+        // reikia panaikinti tuščią įvedimo lauką jeigu forma buvo siųsta nieko nekeitus log'uose
+        // TODO ^
+        foreach ($tool->getLogs() as $log) {
+            if (!$log->getLog()) {
+                $tool->removeLog($log);
+            }
+        }
+
+        //----------------- param block ----------------
+        // TODO
+        //----------------------------------------------
+
+        //----------------- photo block ----------------
+        // TODO
+        //----------------------------------------------
+
+        $repo->flush();
+        $this->addFlash('success', 'Tool updated!');
+
+        return $this->redirectToRoute('admin_tools');
     }
 
     /**
@@ -208,5 +186,10 @@ class ToolsController extends AbstractController
         }
 
         return new JsonResponse($output);
+    }
+
+    private function arrayCompare($arr1, $arr2)
+    {
+        return $arr1->getId() - $arr2->getId();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Form\Type;
 
 use App\Entity\Tool;
+use App\Repository\ToolsRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -14,12 +15,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ToolType extends AbstractType
 {
+    /** @var ToolsRepository */
+    private $toolsRepository;
+
+    public function __construct(ToolsRepository $toolsRepository)
+    {
+        $this->toolsRepository = $toolsRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
             ->add('model', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
-            ->add('code', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
+            ->add(
+                'code',
+                TextType::class,
+                [
+                    'required' => true,
+                    'attr'     => ['class' => 'mb-3'],
+                    'data'     => $this->generateToolCode(),
+                ]
+            )
             ->add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])
             ->add('tags', TagType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])
             ->add(
@@ -63,5 +80,18 @@ class ToolType extends AbstractType
                 'data_class' => Tool::class,
             ]
         );
+    }
+
+    /**
+     * Generate unique, random code of 6 digits
+     */
+    private function generateToolCode(): string
+    {
+        // TODO: find  out if it really needs to be random. Maybe padded row id from db can be used.
+        do {
+            $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);
+        } while ($this->toolsRepository->findOneBy(['code' => $code]));
+
+        return $code;
     }
 }
