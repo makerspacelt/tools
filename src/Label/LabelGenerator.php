@@ -32,6 +32,7 @@ class LabelGenerator
      */
     public function generate(Tool $tool)
     {
+        // TODO: tidy up and handle errors gracefully, not print them on sticker...
         // apkarpome pavadinimą ir modelį, kad nebūtų per ilgas, ribojam iki 24 simbolių
         $title = $this->trim($tool->getName(), self::TITLE_LEN);
         $model = $this->trim($tool->getModel(), self::MODEL_LEN);
