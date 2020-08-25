@@ -5,12 +5,10 @@
 {% block style_links %}
     {{ parent() }}
     <link href="/vendor/tagsinput-revisited/jquery.tagsinput-revisited.css" rel="stylesheet">
-    <link href="/vendor/dropzone/dropzone.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block script_links %}
     <script src="/vendor/tagsinput-revisited/jquery.tagsinput-revisited.js"></script>
-    <script src="/vendor/dropzone/dropzone.min.js"></script>
     {{ parent() }}
 {% endblock %}
 
@@ -48,18 +46,6 @@
                             {{ form_widget(form.tags) }}
                         </div>
                     </div>
-                </div>
-
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            Tool photos
-                        </h5>
-                        <div class="col-md-7">
-                            <div id="drop-id" class="dropzone"></div>
-                        </div>
-                    </div>
-                    <div id="photos"></div>
                 </div>
 
                 <div class="card mt-4">

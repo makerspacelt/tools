@@ -2,11 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\ToolPhotos;
+use App\Entity\ToolPhoto;
 use App\Entity\Tool;
 use App\Form\Type\ToolType;
 use App\Repository\ToolsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +41,7 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * @Route("/addTool", name="admin_add_tool")
+     * @Route("/add", name="admin_add_tool")
      * @param Request $request
      * @return Response
      */
@@ -60,7 +62,7 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * @Route("/editTool/{id}", name="admin_edit_tool")
+     * @Route("/edit/{id}", name="admin_edit_tool")
      * @param Request $request
      * @param Tool    $tool
      * @return Response
@@ -74,7 +76,9 @@ class ToolsController extends AbstractController
             return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
         }
 
-        $repo = $this->getDoctrine()->getManager();
+        // TODO: make a copy of old value and do updating in clearer way
+
+        $manager = $this->getDoctrine()->getManager();
 
         //----------------- tag block ------------------
         $submittedTags = [];
@@ -88,7 +92,7 @@ class ToolsController extends AbstractController
         foreach ($removedTags as $tag) {
             $tag->removeTool($tool);
             if ($tag->getTools()->count() == 0) {
-                $repo->remove($tag);
+                $manager->remove($tag);
             }
         }
 
@@ -109,83 +113,88 @@ class ToolsController extends AbstractController
         // TODO
         //----------------------------------------------
 
-        //----------------- photo block ----------------
-        // TODO
-        //----------------------------------------------
-
-        $repo->flush();
+        $manager->flush();
         $this->addFlash('success', 'Tool updated!');
 
         return $this->redirectToRoute('admin_tools');
     }
 
     /**
-     * @Route("/delTool", name="admin_del_tool")
-     * @param Request $request
+     * @Route("/delete/{id}", name="admin_del_tool", methods={"POST"})
+     * @param Tool $tool
      * @return Response
      */
-    public function deleteTool(Request $request): Response
+    public function deleteTool(Tool $tool): Response
     {
-        $toolid = $request->request->get('tool_id');
-        if ($toolid != null) {
-            $tool = $this->toolsRepository->find($toolid);
-            if ($tool) {
-                $repo = $this->getDoctrine()->getManager();
+        $manager = $this->getDoctrine()->getManager();
 
-                // pašalinam tag'ą tik jeigu jis nenaudojamas niekur kitur
-                foreach ($tool->getTags() as $tag) {
-                    if ($tag->getTools()->count() <= 1) {
-                        $repo->remove($tag);
-                    }
-                }
-
-                foreach ($tool->getParams() as $param) {
-                    $repo->remove($param);
-                }
-
-                foreach ($tool->getLogs() as $log) {
-                    $repo->remove($log);
-                }
-
-                $repo->remove($tool);
-                $repo->flush();
-                $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName() . ' ' . $tool->getModel()));
-            } else {
-                $this->addFlash('error', 'Tool doesn\'t exist!');
+        // TODO: move to repository
+        // Remove tags from database only if they have no reference to other tools
+        foreach ($tool->getTags() as $tag) {
+            if ($tag->getTools()->count() <= 1) {
+                $manager->remove($tag);
             }
         }
+
+        // TODO: solve with cascading
+        foreach ($tool->getParams() as $param) {
+            $manager->remove($param);
+        }
+
+        // TODO: solve with cascading
+        foreach ($tool->getLogs() as $log) {
+            $manager->remove($log);
+        }
+
+        $manager->remove($tool);
+        $manager->flush();
+        $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName() . ' ' . $tool->getModel()));
+
         return $this->redirectToRoute('admin_tools');
     }
 
     /**
-     * @Route("/uploadPhotos", name="upload_photos")
+     * @Route("/upload-photo/{id}", name="upload_photos")
      * @param Request $request
+     * @param Tool    $tool
      * @return Response
      */
-    public function uploadPhotos(Request $request): Response
+    public function uploadPhotos(Request $request, Tool $tool): Response
     {
-        $output = ['uploaded' => false];
+        // TODO: add separate page for already existing tool to add pictures
 
+        /** @var UploadedFile $file */
         $file = $request->files->get('photo');
-        $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // This is needed to safely include the file name as part of the URL
+        $safeFilename = transliterator_transliterate(
+            'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+            $originalFilename
+        );
+        $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
-        $uploadDir = $this->get('kernel')->getRootDir() . '/../web/res/uploads/';
-        if (!file_exists($uploadDir) && !is_dir($uploadDir)) {
-            mkdir($uploadDir, 0775, true);
+        try {
+            $file->move(
+                $this->getParameter('images_directory'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            return new JsonResponse(['uploaded' => false]);
         }
 
-        if ($file->move($uploadDir, $fileName)) {
-            $em = $this->getDoctrine()->getManager();
-            $photoEntity = new ToolPhotos();
-            $photoEntity->setFileName($fileName);
-            $photoEntity->setTool($this->toolsRepository->find(474));
-            $em->persist($photoEntity);
-            $em->flush();
-            $output['uploaded'] = true;
-            $output['filename'] = $fileName;
-        }
+        $manager = $this->getDoctrine()->getManager();
+        $photo = new ToolPhoto();
+        $photo->setFileName($newFilename);
+        $photo->setTool($tool);
+        $manager->persist($photo);
+        $manager->flush();
 
-        return new JsonResponse($output);
+        return new JsonResponse(
+            [
+                'uploaded' => true,
+                'filename' => $newFilename,
+            ]
+        );
     }
 
     private function arrayCompare($arr1, $arr2)

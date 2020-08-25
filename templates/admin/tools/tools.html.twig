@@ -37,12 +37,11 @@
                             <td>{{ tool.code }}</td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <form action="{{ path('admin_del_tool') }}" method="post">
-                                        <input type="hidden" name="tool_id" value="{{ tool.id }}">
+                                    <form action="{{ path('admin_del_tool', {id: tool.id}) }}" method="post">
                                         <input type="submit" class="btn btn-danger btn-sm" value="Delete"
                                                onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
                                     </form>
-                                    <form action="{{ path('admin_edit_tool', {id:  tool.id}) }}" method="get">
+                                    <form action="{{ path('admin_edit_tool', {id: tool.id}) }}" method="get">
                                         <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
                                     </form>
                                 </div>

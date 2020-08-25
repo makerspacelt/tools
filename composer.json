@@ -31,7 +31,8 @@
         "symfony/validator": "4.4.*",
         "symfony/web-link": "4.4.*",
         "symfony/yaml": "4.4.*",
-        "werneckbh/qr-code": "^2.1"
+        "werneckbh/qr-code": "^2.1",
+        "ext-intl": "*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",

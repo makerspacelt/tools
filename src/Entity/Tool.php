@@ -82,7 +82,7 @@ class Tool
     public $params;
 
     /**
-     * @ORM\OneToMany(targetEntity="ToolPhotos", mappedBy="tool", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="ToolPhoto", mappedBy="tool", cascade={"all"}, orphanRemoval=true)
      */
     public $photos;
 
@@ -314,13 +314,13 @@ class Tool
     /**
      * @param mixed $photos
      */
-    public function addPhoto(ToolPhotos $photoEntry)
+    public function addPhoto(ToolPhoto $photoEntry)
     {
         $photoEntry->setTool($this);
         $this->photos->add($photoEntry);
     }
 
-    public function removePhoto(ToolPhotos $photoEntry)
+    public function removePhoto(ToolPhoto $photoEntry)
     {
         $this->photos->removeElement($photoEntry);
         $photoEntry->removeTool();
