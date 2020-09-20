@@ -109,8 +109,8 @@
                             {% endfor %}
 
                             <div class="input-group form-group tool_param_group">
-                                <input type="text" class="form-control" id="param_name" name="form[params][{{ n }}][name]" placeholder="Parameter">
-                                <input type="text" class="form-control" id="param_value" name="form[params][{{ n }}][value]" placeholder="Value">
+                                <input type="text" class="form-control" id="param_name" name="tool[params][{{ n }}][name]" placeholder="Parameter">
+                                <input type="text" class="form-control" id="param_value" name="tool[params][{{ n }}][value]" placeholder="Value">
                                 <div class="input-group-append">
                                     <button class="btn btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
                                 </div>
@@ -138,7 +138,7 @@
                                 </div>
                             {% endfor %}
                             <div class="input-group form-group tool_log">
-                                <textarea name="form[logs][][log]" class="form-control" placeholder="Tool repair log"></textarea>
+                                <textarea name="tool[logs][][log]" class="form-control" placeholder="Tool repair log"></textarea>
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-success btn-add-log"><i class="fas fa-plus"></i></button>
                                 </div>

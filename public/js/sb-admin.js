@@ -83,8 +83,8 @@
             .html('<i class="fas fa-minus"></i>');
         $formGroupClone.find('input').val('');
         var $n = $('div.tool_param_group').length;
-        $formGroupClone.find('#param_name').attr('name', 'form[params][' + $n + '][name]');
-        $formGroupClone.find('#param_value').attr('name', 'form[params][' + $n + '][value]');
+        $formGroupClone.find('#param_name').attr('name', 'tool[params][' + $n + '][name]');
+        $formGroupClone.find('#param_value').attr('name', 'tool[params][' + $n + '][value]');
         $formGroupClone.insertAfter($formGroup);
     };
 

@@ -48,47 +48,14 @@ class ToolsController extends AbstractController
     public function addTool(Request $request): Response
     {
         $tool = new Tool();
+        $tool->setCode($this->generateToolCode());
         $form = $this->createForm(ToolType::class, $tool)->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->render('admin/tools/add_tool.html.twig', ['form' => $form->createView()]);
         }
 
+        $this->processUploadedPhotos($tool, $form->get('photos')->getData());
         $manager = $this->getDoctrine()->getManager();
-
-        /** @var UploadedFile $file */
-        foreach ($form->get('photos')->getData() as $file) {
-            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            // this is needed to safely include the file name as part of the URL
-            $safeFilename = transliterator_transliterate(
-                'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
-                $originalFilename
-            );
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
-
-            // Move the file to the directory where brochures are stored
-            try {
-                $file->move(
-                    $this->getParameter('images_directory'),
-                    $newFilename
-                );
-
-                $photo = new ToolPhoto();
-                $photo->setFileName($newFilename);
-                $photo->setTool($tool);
-                $tool->addPhoto($photo);
-                $manager->persist($photo);
-            } catch (FileException $e) {
-                $this->addFlash(
-                    'danger',
-                    sprintf(
-                        'Failed to upload photo "%s": %s',
-                        $file->getClientOriginalName(),
-                        $e->getMessage()
-                    )
-                );
-            }
-        }
-
         $manager->persist($tool);
         $manager->flush();
         $this->addFlash('success', 'Tool saved!');
@@ -171,16 +138,6 @@ class ToolsController extends AbstractController
             }
         }
 
-        // TODO: solve with cascading
-        foreach ($tool->getParams() as $param) {
-            $manager->remove($param);
-        }
-
-        // TODO: solve with cascading
-        foreach ($tool->getLogs() as $log) {
-            $manager->remove($log);
-        }
-
         $manager->remove($tool);
         $manager->flush();
         $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName() . ' ' . $tool->getModel()));
@@ -202,5 +159,57 @@ class ToolsController extends AbstractController
                 return $arr1->getId() - $arr2->getId();
             }
         );
+    }
+
+    /**
+     * @param UploadedFile[] $files
+     * @param Tool           $tool
+     */
+    private function processUploadedPhotos(Tool $tool, array $files): void
+    {
+        foreach ($files as $file) {
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            // this is needed to safely include the file name as part of the URL
+            $safeFilename = transliterator_transliterate(
+                'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+                $originalFilename
+            );
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+            // Move the file to the directory where brochures are stored
+            try {
+                $file->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+
+                $photo = new ToolPhoto();
+                $photo->setFileName($newFilename);
+                $photo->setTool($tool);
+                $tool->addPhoto($photo);
+            } catch (FileException $e) {
+                $this->addFlash(
+                    'danger',
+                    sprintf(
+                        'Failed to upload photo "%s": %s',
+                        $file->getClientOriginalName(),
+                        $e->getMessage()
+                    )
+                );
+            }
+        }
+    }
+
+    /**
+     * Generate unique, random code of 6 digits
+     */
+    private function generateToolCode(): string
+    {
+        // TODO: find out if it really needs to be random. Maybe padded row id from db can be used.
+        do {
+            $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);
+        } while ($this->toolsRepository->findOneBy(['code' => $code]));
+
+        return $code;
     }
 }

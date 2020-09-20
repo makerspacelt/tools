@@ -35,9 +35,8 @@ class ToolType extends AbstractType
                 'code',
                 TextType::class,
                 [
-                    'required' => true,
-                    'attr'     => ['class' => 'mb-3'],
-                    'data'     => $this->generateToolCode(),
+                    'required'    => true,
+                    'attr'        => ['class' => 'mb-3'],
                 ]
             )
             ->add('description', TextareaType::class, ['required' => false, 'attr' => ['class' => 'mb-3']])
@@ -72,13 +71,14 @@ class ToolType extends AbstractType
                 [
                     'mapped'      => false,
                     'multiple'    => true,
+                    'required'    => false,
                     'constraints' => [
                         new All(
                             [
                                 new File(
                                     [
-                                        'maxSize'          => '2m',
-                                        'mimeTypes'        => [
+                                        'maxSize'   => '2m',
+                                        'mimeTypes' => [
                                             'image/bmp',
                                             'image/jpeg',
                                             'image/png',
@@ -107,18 +107,5 @@ class ToolType extends AbstractType
                 'data_class' => Tool::class,
             ]
         );
-    }
-
-    /**
-     * Generate unique, random code of 6 digits
-     */
-    private function generateToolCode(): string
-    {
-        // TODO: find  out if it really needs to be random. Maybe padded row id from db can be used.
-        do {
-            $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);
-        } while ($this->toolsRepository->findOneBy(['code' => $code]));
-
-        return $code;
     }
 }
