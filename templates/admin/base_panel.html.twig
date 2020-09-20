@@ -1,15 +1,15 @@
 {% extends 'admin/base.html.twig' %}
 
 {% block style_links %}
-    <link href="/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block script_links %}
-    <script src="/vendor/chart.js/Chart.min.js"></script>
-    <script src="/vendor/datatables/jquery.dataTables.js"></script>
-    <script src="/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.js') }}"></script>
 
-    <script src="/js/sb-admin.js"></script>
+    <script src="{{ asset('js/sb-admin.js') }}"></script>
 {% endblock %}
 
 {% block body_attribs %}id="page-top"{% endblock %}
@@ -18,7 +18,7 @@
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
         <a class="navbar-brand mr-1" href="{{ path('index_page') }}">
-            <img src="/res/img/ms-logo.png" width="30" height="30">
+            <img alt="makerspace logo" src="{{ asset('img/ms-logo.png') }}" width="30" height="30">
             {% block navbar_title %}{{ include('admin/base_name.twig') }}{% endblock %}
         </a>
 

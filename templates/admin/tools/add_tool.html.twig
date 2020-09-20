@@ -4,11 +4,12 @@
 
 {% block style_links %}
     {{ parent() }}
-    <link href="/vendor/tagsinput-revisited/jquery.tagsinput-revisited.css" rel="stylesheet">
+    <link href="{{ asset('vendor/tagsinput-revisited/jquery.tagsinput-revisited.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block script_links %}
-    <script src="/vendor/tagsinput-revisited/jquery.tagsinput-revisited.js"></script>
+    <script src="{{ asset('vendor/tagsinput-revisited/jquery.tagsinput-revisited.js') }}"></script>
+    <script src="{{ asset('vendor/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
     {{ parent() }}
 {% endblock %}
 
@@ -44,6 +45,17 @@
                             {{ form_widget(form.description) }}
 
                             {{ form_widget(form.tags) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            Tool photos
+                        </h5>
+                        <div class="col-md-7">
+                            {{ form_widget(form.photos) }}
                         </div>
                     </div>
                 </div>
@@ -144,4 +156,12 @@
             {{ form_end(form) }}
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init()
+        })
+    </script>
 {% endblock %}

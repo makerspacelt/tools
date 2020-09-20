@@ -7,11 +7,14 @@ use App\Repository\ToolsRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\File;
 
 class ToolType extends AbstractType
 {
@@ -61,6 +64,30 @@ class ToolType extends AbstractType
                     'allow_delete' => true,
                     'label'        => false,
                     'by_reference' => false,
+                ]
+            )
+            ->add(
+                'photos',
+                FileType::class,
+                [
+                    'mapped'      => false,
+                    'multiple'    => true,
+                    'constraints' => [
+                        new All(
+                            [
+                                new File(
+                                    [
+                                        'maxSize'          => '2m',
+                                        'mimeTypes'        => [
+                                            'image/bmp',
+                                            'image/jpeg',
+                                            'image/png',
+                                        ],
+                                    ]
+                                ),
+                            ]
+                        ),
+                    ],
                 ]
             )
             ->add('shoplinks', TextareaType::class, ['required' => false, 'label' => 'Where to buy?'])

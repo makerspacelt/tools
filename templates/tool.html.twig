@@ -4,7 +4,7 @@
 
 {% block main_block %}
     <div class="card" id="content">
-        <img class="card-img-top img-fluid" src="/res/img/default-tool-pic.png" alt="tool_pic">
+        <img class="card-img-top img-fluid" src="{{ asset('img/default-tool-pic.png') }}" alt="tool_pic">
         <div class="card-body">
             <h3 class="card-title">{{ tool.getName() }} {{ tool.getModel() }}</h3>
             <h5 class="card-subtitle mb-3 text-muted" id="tool-code">{{ tool.getCode() }}</h5>

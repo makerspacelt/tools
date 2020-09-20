@@ -4,12 +4,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\ToolPhoto;
 use App\Entity\Tool;
+use App\Entity\ToolTag;
 use App\Form\Type\ToolType;
 use App\Repository\ToolsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -54,6 +54,41 @@ class ToolsController extends AbstractController
         }
 
         $manager = $this->getDoctrine()->getManager();
+
+        /** @var UploadedFile $file */
+        foreach ($form->get('photos')->getData() as $file) {
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            // this is needed to safely include the file name as part of the URL
+            $safeFilename = transliterator_transliterate(
+                'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+                $originalFilename
+            );
+            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+            // Move the file to the directory where brochures are stored
+            try {
+                $file->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+
+                $photo = new ToolPhoto();
+                $photo->setFileName($newFilename);
+                $photo->setTool($tool);
+                $tool->addPhoto($photo);
+                $manager->persist($photo);
+            } catch (FileException $e) {
+                $this->addFlash(
+                    'danger',
+                    sprintf(
+                        'Failed to upload photo "%s": %s',
+                        $file->getClientOriginalName(),
+                        $e->getMessage()
+                    )
+                );
+            }
+        }
+
         $manager->persist($tool);
         $manager->flush();
         $this->addFlash('success', 'Tool saved!');
@@ -86,8 +121,8 @@ class ToolsController extends AbstractController
             $submittedTags = $tool->getTags()->toArray();
         }
 
-        $removedTags = array_udiff($currentTags, $submittedTags, [$this, 'arrayCompare']);
-        $addedTags = array_udiff($submittedTags, $currentTags, [$this, 'arrayCompare']);
+        $removedTags = $this->diffTagSets($currentTags, $submittedTags);
+        $addedTags = $this->diffTagSets($submittedTags, $currentTags);
 
         foreach ($removedTags as $tag) {
             $tag->removeTool($tool);
@@ -154,51 +189,18 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * @Route("/upload-photo/{id}", name="upload_photos")
-     * @param Request $request
-     * @param Tool    $tool
-     * @return Response
+     * @param ToolTag[] $set1
+     * @param ToolTag[] $set2
+     * @return ToolTag[]
      */
-    public function uploadPhotos(Request $request, Tool $tool): Response
+    private function diffTagSets(array $set1, array $set2): array
     {
-        // TODO: add separate page for already existing tool to add pictures
-
-        /** @var UploadedFile $file */
-        $file = $request->files->get('photo');
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        // This is needed to safely include the file name as part of the URL
-        $safeFilename = transliterator_transliterate(
-            'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
-            $originalFilename
+        return array_udiff(
+            $set1,
+            $set2,
+            function (ToolTag $arr1, ToolTag $arr2) {
+                return $arr1->getId() - $arr2->getId();
+            }
         );
-        $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
-
-        try {
-            $file->move(
-                $this->getParameter('images_directory'),
-                $newFilename
-            );
-        } catch (FileException $e) {
-            return new JsonResponse(['uploaded' => false]);
-        }
-
-        $manager = $this->getDoctrine()->getManager();
-        $photo = new ToolPhoto();
-        $photo->setFileName($newFilename);
-        $photo->setTool($tool);
-        $manager->persist($photo);
-        $manager->flush();
-
-        return new JsonResponse(
-            [
-                'uploaded' => true,
-                'filename' => $newFilename,
-            ]
-        );
-    }
-
-    private function arrayCompare($arr1, $arr2)
-    {
-        return $arr1->getId() - $arr2->getId();
     }
 }

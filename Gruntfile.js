@@ -107,15 +107,11 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            'dropzone': {
+            'bs-custom-file-input': {
                 files: [
                     {
-                        src: 'node_modules/dropzone/dist/min/dropzone.min.js',
-                        dest: 'public/vendor/dropzone/dropzone.min.js'
-                    },
-                    {
-                        src: 'node_modules/dropzone/dist/min/dropzone.min.css',
-                        dest: 'public/vendor/dropzone/dropzone.min.css'
+                        src: 'node_modules/bs-custom-file-input/dist/bs-custom-file-input.min.js',
+                        dest: 'public/vendor/bs-custom-file-input/bs-custom-file-input.min.js'
                     }
                 ]
             },
@@ -149,7 +145,7 @@ module.exports = function (grunt) {
         'copy:tagsinput-revisited',
         'copy:fontawesome',
         'copy:chartjs',
-        'copy:dropzone',
+        'copy:bs-custom-file-input',
         'copy:datatables',
     ]);
 

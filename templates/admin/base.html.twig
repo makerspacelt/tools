@@ -9,19 +9,19 @@
     <title>{% block title %}{{ include('admin/base_name.twig') }}{% endblock %}</title>
 
     <!-- Bootstrap core CSS-->
-    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- Custom font for this template-->
-    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
 
     <!-- Custom styles for this template-->
-    <link href="/css/sb-admin.css" rel="stylesheet">
+    <link href="{{ asset('css/sb-admin.css') }}" rel="stylesheet">
 
     <!-- jQuery UI style stuff -->
-    <link href="/vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
+    <link href="{{ asset('vendor/jquery-ui/jquery-ui.css') }}" rel="stylesheet">
 
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     {% block style_links %}{% endblock %}
 </head>
@@ -31,13 +31,14 @@
 {% block body %}
 {% endblock %}
 
-<script src="/vendor/jquery/jquery.min.js"></script>
-<script src="/vendor/jquery-ui/jquery-ui.js"></script>
-<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('vendor/jquery-ui/jquery-ui.js') }}"></script>
+<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
 {% block script_links %}{% endblock %}
+{% block scripts %}{% endblock %}
 
 </body>
 
