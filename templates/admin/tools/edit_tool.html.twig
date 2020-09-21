@@ -3,3 +3,31 @@
 {% block section_title %}Edit tool{% endblock %}
 {% block icon %}fa-edit{% endblock %}
 {% block card_title %}Edit tool{% endblock %}
+
+{% block photos %}
+    {{ parent() }}
+
+    <h6 class="pt-2">Current photos</h6>
+    <div class="row align-items-end">
+        {% for photo in form.photos %}
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 text-center justify-content-center">
+                <img class="img-thumbnail" alt="{{ photo.vars.value.fileName }}" src="{{ asset('upload/photos/' ~ photo.vars.value.fileName) }}">
+                <input type="hidden" id="{{ photo.vars.id }}" name="{{ photo.vars.full_name }}[fileName]" value="{{ photo.vars.value.fileName }}">
+                <button class="btn btn-danger my-1" onclick="photo_remove(event)">Remove</button>
+            </div>
+            {% do photo.setRendered() %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+
+    <script>
+        function photo_remove(e) {
+            e.preventDefault()
+            let wrapper = e.target.parentNode
+            wrapper.parentElement.removeChild(wrapper)
+        }
+    </script>
+{% endblock %}

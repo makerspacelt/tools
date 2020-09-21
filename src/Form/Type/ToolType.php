@@ -66,7 +66,7 @@ class ToolType extends AbstractType
                 ]
             )
             ->add(
-                'photos',
+                'new_photos',
                 FileType::class,
                 [
                     'mapped'      => false,

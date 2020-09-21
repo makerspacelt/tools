@@ -31,5 +31,4 @@ class TagType extends AbstractType
                 ]
             );
     }
-
 }

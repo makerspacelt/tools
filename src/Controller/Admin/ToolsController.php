@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\ToolPhoto;
 use App\Entity\Tool;
 use App\Form\Type\ToolType;
+use App\Form\Type\ToolUpdateType;
 use App\Repository\ToolsRepository;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +55,7 @@ class ToolsController extends AbstractController
             return $this->render('admin/tools/add_tool.html.twig', ['form' => $form->createView()]);
         }
 
-        $this->processUploadedPhotos($tool, $form->get('photos')->getData());
+        $this->processUploadedPhotos($tool, $form->get('new_photos')->getData());
 
         try {
             $this->toolsRepository->save($tool);
@@ -81,10 +82,12 @@ class ToolsController extends AbstractController
      */
     public function editTool(Request $request, Tool $tool): Response
     {
-        $form = $this->createForm(ToolType::class, $tool)->handleRequest($request);
+        $form = $this->createForm(ToolUpdateType::class, $tool)->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
         }
+
+        $this->processUploadedPhotos($tool, $form->get('new_photos')->getData());
 
         try {
             $this->toolsRepository->update($tool);

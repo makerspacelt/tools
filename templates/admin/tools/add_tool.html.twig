@@ -55,7 +55,10 @@
                             Tool photos
                         </h5>
                         <div class="col-md-7">
-                            {{ form_widget(form.photos) }}
+                            {% block photos %}
+                                {{ form_label(form.new_photos) }}
+                                {{ form_widget(form.new_photos) }}
+                            {% endblock %}
                         </div>
                     </div>
                 </div>

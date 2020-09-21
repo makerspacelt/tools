@@ -37,5 +37,4 @@ class ParamType extends AbstractType
             ]
         );
     }
-
 }
