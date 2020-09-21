@@ -60,7 +60,6 @@ class ToolsRepository extends ServiceEntityRepository
     {
         $em = $this->getEntityManager();
 
-        // TODO: Check if can be covered with 'orphanRemoval=true'
         foreach ($tool->getTags() as $tag) {
             if ($tag->getTools()->count() <= 1) {
                 $em->remove($tag);
