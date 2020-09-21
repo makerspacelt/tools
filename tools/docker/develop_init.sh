@@ -20,6 +20,8 @@ setPerms "${PROJECT_ROOT}/var/cache"
 setPerms "${PROJECT_ROOT}/var/logs"
 setPerms "${PROJECT_ROOT}/var/sessions"
 setPerms "${PROJECT_ROOT}/vendor"
+setPerms "${PROJECT_ROOT}/public/upload/photos"
+
 
 # Github token can be provided in vm.cfg
 composer --no-interaction -q config -g github-oauth.github.com d5d9879b14a2c066e08c3fa8dfba19aa31658d49
