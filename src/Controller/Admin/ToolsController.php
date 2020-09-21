@@ -4,9 +4,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\ToolPhoto;
 use App\Entity\Tool;
-use App\Entity\ToolTag;
 use App\Form\Type\ToolType;
 use App\Repository\ToolsRepository;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -55,10 +55,20 @@ class ToolsController extends AbstractController
         }
 
         $this->processUploadedPhotos($tool, $form->get('photos')->getData());
-        $manager = $this->getDoctrine()->getManager();
-        $manager->persist($tool);
-        $manager->flush();
-        $this->addFlash('success', 'Tool saved!');
+
+        try {
+            $this->toolsRepository->save($tool);
+            $this->addFlash(
+                'success',
+                sprintf('Tool "%s" saved!', $tool->getName() . ' ' . $tool->getModel())
+            );
+        } catch (ORMException $e) {
+            $this->addFlash(
+                'danger',
+                sprintf('Failed to save tool "%s"!', $tool->getName() . ' ' . $tool->getModel())
+            );
+            $this->get('logger')->log('error', $e->getMessage());
+        }
 
         return $this->redirectToRoute('admin_tools');
     }
@@ -71,52 +81,24 @@ class ToolsController extends AbstractController
      */
     public function editTool(Request $request, Tool $tool): Response
     {
-        $currentTags = $tool->getTags()->toArray();
         $form = $this->createForm(ToolType::class, $tool)->handleRequest($request);
-
         if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
         }
 
-        // TODO: make a copy of old value and do updating in clearer way
-
-        $manager = $this->getDoctrine()->getManager();
-
-        //----------------- tag block ------------------
-        $submittedTags = [];
-        if ($tool->getTags()) {
-            $submittedTags = $tool->getTags()->toArray();
+        try {
+            $this->toolsRepository->update($tool);
+            $this->addFlash(
+                'success',
+                sprintf('Tool "%s" updated!', $tool->getName() . ' ' . $tool->getModel())
+            );
+        } catch (ORMException $e) {
+            $this->addFlash(
+                'danger',
+                sprintf('Failed to update tool "%s"!', $tool->getName() . ' ' . $tool->getModel())
+            );
+            $this->get('logger')->log('error', $e->getMessage());
         }
-
-        $removedTags = $this->diffTagSets($currentTags, $submittedTags);
-        $addedTags = $this->diffTagSets($submittedTags, $currentTags);
-
-        foreach ($removedTags as $tag) {
-            $tag->removeTool($tool);
-            if ($tag->getTools()->count() == 0) {
-                $manager->remove($tag);
-            }
-        }
-
-        foreach ($addedTags as $tag) {
-            $tag->addTool($tool);
-        }
-
-        //----------------- log block ------------------
-        // reikia panaikinti tuščią įvedimo lauką jeigu forma buvo siųsta nieko nekeitus log'uose
-        // TODO ^
-        foreach ($tool->getLogs() as $log) {
-            if (!$log->getLog()) {
-                $tool->removeLog($log);
-            }
-        }
-
-        //----------------- param block ----------------
-        // TODO
-        //----------------------------------------------
-
-        $manager->flush();
-        $this->addFlash('success', 'Tool updated!');
 
         return $this->redirectToRoute('admin_tools');
     }
@@ -128,37 +110,21 @@ class ToolsController extends AbstractController
      */
     public function deleteTool(Tool $tool): Response
     {
-        $manager = $this->getDoctrine()->getManager();
-
-        // TODO: move to repository
-        // Remove tags from database only if they have no reference to other tools
-        foreach ($tool->getTags() as $tag) {
-            if ($tag->getTools()->count() <= 1) {
-                $manager->remove($tag);
-            }
+        try {
+            $this->toolsRepository->remove($tool);
+            $this->addFlash(
+                'success',
+                sprintf('Tool "%s" removed!', $tool->getName() . ' ' . $tool->getModel())
+            );
+        } catch (ORMException $e) {
+            $this->addFlash(
+                'danger',
+                sprintf('Failed to remove tool "%s"!', $tool->getName() . ' ' . $tool->getModel())
+            );
+            $this->get('logger')->log('error', $e->getMessage());
         }
 
-        $manager->remove($tool);
-        $manager->flush();
-        $this->addFlash('success', sprintf('Tool "%s" removed!', $tool->getName() . ' ' . $tool->getModel()));
-
         return $this->redirectToRoute('admin_tools');
-    }
-
-    /**
-     * @param ToolTag[] $set1
-     * @param ToolTag[] $set2
-     * @return ToolTag[]
-     */
-    private function diffTagSets(array $set1, array $set2): array
-    {
-        return array_udiff(
-            $set1,
-            $set2,
-            function (ToolTag $arr1, ToolTag $arr2) {
-                return $arr1->getId() - $arr2->getId();
-            }
-        );
     }
 
     /**

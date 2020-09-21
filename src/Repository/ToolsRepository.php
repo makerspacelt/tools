@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Tool;
+use App\Entity\ToolTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * @method Tool|null find($id, $lockMode = null, $lockVersion = null)
@@ -37,14 +40,111 @@ class ToolsRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('t');
         return $qb
-            ->where($qb->expr()->orX(
-                $qb->expr()->like('t.name', ':query'),
-                $qb->expr()->like('t.model', ':query'),
-                $qb->expr()->like('t.code', ':query')
-            ))
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->like('t.name', ':query'),
+                    $qb->expr()->like('t.model', ':query'),
+                    $qb->expr()->like('t.code', ':query')
+                )
+            )
             ->setParameter('query', '%' . strtolower($q) . '%')
             ->getQuery()
             ->getResult();
     }
 
+    /**
+     * @param Tool $tool
+     * @throws ORMException
+     */
+    public function remove(Tool $tool)
+    {
+        $em = $this->getEntityManager();
+
+        // TODO: Check if can be covered with 'orphanRemoval=true'
+        foreach ($tool->getTags() as $tag) {
+            if ($tag->getTools()->count() <= 1) {
+                $em->remove($tag);
+            }
+        }
+
+        $em->remove($tool);
+        $em->flush();
+    }
+
+    /**
+     * @param Tool $tool
+     * @throws ORMException
+     */
+    public function save(Tool $tool)
+    {
+        $em = $this->getEntityManager();
+        $em->persist($tool);
+        $em->flush();
+    }
+
+    /**
+     * @param Tool $tool
+     * @throws ORMException
+     */
+    public function update(Tool $tool)
+    {
+        $em = $this->getEntityManager();
+        $originalData = $em->getUnitOfWork()->getOriginalEntityData($tool);
+        $originalTags = [];
+        if (isset($originalData['tags']) && $originalData['tags'] instanceof PersistentCollection) {
+            $originalTags = $originalData['tags']->toArray();
+        }
+
+        //----------------- Tags ------------------
+        $submittedTags = [];
+        if ($tool->getTags()) {
+            $submittedTags = $tool->getTags()->toArray();
+        }
+
+        $removedTags = $this->diffTagSets($originalTags, $submittedTags);
+        $addedTags = $this->diffTagSets($submittedTags, $originalTags);
+
+        foreach ($removedTags as $tag) {
+            $tag->removeTool($tool);
+            if ($tag->getTools()->count() == 0) {
+                $em->remove($tag);
+            }
+        }
+
+        foreach ($addedTags as $tag) {
+            $tag->addTool($tool);
+        }
+
+        //----------------- Logs ------------------
+        // reikia panaikinti tuščią įvedimo lauką jeigu forma buvo siųsta nieko nekeitus log'uose
+        // TODO ^
+        foreach ($tool->getLogs() as $log) {
+            if (!$log->getLog()) {
+                $tool->removeLog($log);
+            }
+        }
+
+        //----------------- Params ----------------
+        // TODO
+        //----------------------------------------------
+
+        $em->persist($tool);
+        $em->flush();
+    }
+
+    /**
+     * @param ToolTag[] $set1
+     * @param ToolTag[] $set2
+     * @return ToolTag[]
+     */
+    private function diffTagSets(array $set1, array $set2): array
+    {
+        return array_udiff(
+            $set1,
+            $set2,
+            function (ToolTag $arr1, ToolTag $arr2) {
+                return $arr1->getId() - $arr2->getId();
+            }
+        );
+    }
 }
