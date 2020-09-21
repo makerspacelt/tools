@@ -27,7 +27,7 @@ composer --no-interaction config -g optimize-autoloader true
 
 time composer --no-interaction install
 time yarn install --frozen-lock
-grunt
+time grunt
 
 # init database
 bin/console doctrine:schema:update --force
