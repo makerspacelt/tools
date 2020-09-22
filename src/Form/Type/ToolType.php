@@ -77,7 +77,6 @@ class ToolType extends AbstractType
                             [
                                 new File(
                                     [
-                                        'maxSize'   => '2m',
                                         'mimeTypes' => [
                                             'image/bmp',
                                             'image/jpeg',
