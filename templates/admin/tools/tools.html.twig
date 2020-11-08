@@ -37,7 +37,18 @@
                     <tbody>
                     {% for tool in tools %}
                         <tr>
-                            <td><img src="https://via.placeholder.com/50x50" alt="placeholder"></td>
+                            <td>
+                                {% set photoFile = 'img/default-tool-pic-listing.png' %}
+                                {% set photoAlt = 'tool_pic' %}
+
+                                {% if tool.photos is not empty %}
+                                    {% set photo = tool.photos|first %}
+                                    {% set photoFile = 'upload/photos/' ~ photo.fileName %}
+                                    {% set photoAlt = photo.fileName %}
+                                {% endif %}
+
+                                <img class="img-fluid" src="{{ asset(photoFile) }}" alt="{{ photoAlt }}">
+                            </td>
                             <td>{{ tool.name }} {{ tool.model }}</td>
                             <td>{{ tool.code }}</td>
                             <td>
