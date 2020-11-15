@@ -66,6 +66,24 @@ class ToolType extends AbstractType
                 ]
             )
             ->add(
+                'instructionsPdf',
+                FileType::class,
+                [
+                    'mapped' => false,
+                    'multiple' => false,
+                    'required' => false,
+                    'constraints' => [
+                        new File(
+                            [
+                                'mimeTypes' => [
+                                    'application/pdf',
+                                ],
+                            ]
+                        ),
+                    ]
+                ]
+            )
+            ->add(
                 'new_photos',
                 FileType::class,
                 [

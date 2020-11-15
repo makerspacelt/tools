@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | {{ tool.getName() }} {{ tool.getModel() }}{% endblock %}
+{% block title %}{{ parent() }} | {{ tool.name }} {{ tool.model }}{% endblock %}
 
 {% block main_block %}
     <div class="card" id="content">
@@ -37,11 +37,11 @@
             </div>
         {% endif %}
         <div class="card-body">
-            <h3 class="card-title">{{ tool.getName() }} {{ tool.getModel() }}</h3>
-            <h5 class="card-subtitle mb-3 text-muted" id="tool-code">{{ tool.getCode() }}</h5>
-            <p class="card-text">{{ tool.getDescription() }}</p>
+            <h3 class="card-title">{{ tool.name }} {{ tool.model }}</h3>
+            <h5 class="card-subtitle mb-3 text-muted" id="tool-code">{{ tool.code }}</h5>
+            <p class="card-text">{{ tool.description }}</p>
 
-            {% if tool.getShopLinks() is not empty %}
+            {% if tool.shopLinks is not empty %}
                 <div class="card-text">
                     <b>Kur galima įsigyti?</b><br/>
                     <p class="tool-links">
@@ -51,17 +51,20 @@
             {% endif %}
 
             <p class="card-text">
-                {% if tool.getOriginalPrice() is not empty %}
-                    Originali kaina: {{ tool.getOriginalPrice() }} &euro;<br/>
+                {% if tool.originalPrice is not empty %}
+                    Originali kaina: {{ tool.originalPrice }} &euro;<br/>
                 {% endif %}
-                {% if tool.getAcquisitionDate() is not empty %}
-                    Įsigyta: {{ tool.getAcquisitionDateString() }}
+                {% if tool.acquisitionDate is not empty %}
+                    Įsigyta: {{ tool.acquisitionDateString }}
+                {% endif %}
+                {% if tool.instructionsPdf is not empty %}
+                    <a href="{{ asset('upload/instructions/' ~ tool.instructionsPdf) }}" target="_blank">Naudojimo instrukcija</a>
                 {% endif %}
             </p>
         </div>
         <div class="card-footer">
-            {% for tag in tool.getTags() %}
-                <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}"><small class="text-muted">#{{ tag.getTag() }}</small></a>
+            {% for tag in tool.tags %}
+                <a href="{{ path('filter_by_single_tag', {'tag': tag.tag}) }}"><small class="text-muted">#{{ tag.tag }}</small></a>
             {% endfor %}
         </div>
     </div>
@@ -73,7 +76,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
-                        <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.getCode()}) }}" alt="label-preview">
+                        <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.code}) }}" alt="label-preview">
                     </div>
                     <div class="col-md-6 mt-3">
                         <button class="btn btn-info" type="button" data-toggle="modal" data-target="#label-preview-modal">Peržiūrėti</button>
@@ -97,7 +100,7 @@
                     </button>
                 </div>
                 <div class="modal-body" style="display: block; margin: auto">
-                    <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.getCode()}) }}" alt="label-preview">
+                    <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.code}) }}" alt="label-preview">
                 </div>
             </div>
         </div>
@@ -129,7 +132,7 @@
     <div class="card mt-4">
         <div class="card-header">Parametrai</div>
         <div class="card-body">
-            {% if tool.getParams() is not empty %}
+            {% if tool.params is not empty %}
                 <table class="table" style="margin-bottom: 0;">
                     <thead>
                     <tr>
@@ -138,10 +141,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for param in tool.getParams() %}
+                    {% for param in tool.params %}
                         <tr>
-                            <td>{{ param.getName() }}</td>
-                            <td>{{ param.getValue() }}</td>
+                            <td>{{ param.name }}</td>
+                            <td>{{ param.value }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -155,9 +158,9 @@
     <div class="card mt-4">
         <div class="card-header">Atlikti priežiūros darbai</div>
         <div class="card-body">
-            {% if tool.getLogs() is not empty  %}
-                {% for log in tool.getLogs() %}
-                    <p class="pl-3 pr-3">{{ log.getLog() }}</p>
+            {% if tool.logs is not empty  %}
+                {% for log in tool.logs %}
+                    <p class="pl-3 pr-3">{{ log.log }}</p>
                     {% if not loop.last %}<hr>{% endif %}
                 {% endfor %}
             {% else %}
