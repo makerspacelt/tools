@@ -25,6 +25,12 @@ img.tool-def-img {
     margin: 0 0 30px 20px;
 }
 
+.carousel-fixed-height-image {
+    height: 400px;
+    width: 100%;
+    object-fit: contain;
+}
+
 /* Spinner'is */
 .lds-dual-ring {
     display: none;
@@ -39,7 +45,7 @@ img.tool-def-img {
     height: 30px;
     margin: 1px;
     border-radius: 50%;
-    border: 5px solid #000000;
+    border: 5px solid;
     border-color: #000000 transparent #000000 transparent;
     animation: lds-dual-ring 1.2s linear infinite;
 }
