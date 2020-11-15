@@ -26,10 +26,8 @@ class ToolImagesDeleteSubscriber implements EventSubscriber
     {
         $entity = $args->getObject();
 
-        if (!$entity instanceof ToolPhoto) {
-            return;
+        if ($entity instanceof ToolPhoto) {
+            unlink($this->imagesDir . DIRECTORY_SEPARATOR . $entity->getFileName());
         }
-
-        unlink($this->imagesDir . DIRECTORY_SEPARATOR . $entity->getFileName());
     }
 }

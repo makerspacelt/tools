@@ -59,12 +59,17 @@ class Tool
      *     message = "Only valid price format is permitted"
      * )
      */
-    private $originalprice;
+    private $originalPrice;
 
     /**
      * @ORM\Column(name="acquisition_date", nullable=true, type="date")
      */
     private $acquisitionDate;
+
+    /**
+     * @ORM\Column(name="instructions_pdf", nullable=true)
+     */
+    private $instructionsPdf;
 
     /**
      * @ORM\ManyToMany(targetEntity="ToolTag", mappedBy="tool", cascade={"persist"})
@@ -154,7 +159,7 @@ class Tool
      */
     public function getOriginalPrice()
     {
-        return $this->originalprice;
+        return $this->originalPrice;
     }
 
     /**
@@ -168,6 +173,11 @@ class Tool
     public function getAcquisitionDateString()
     {
         return $this->acquisitionDate->format('Y-m-d');
+    }
+
+    public function getInstructionsPdf()
+    {
+        return $this->instructionsPdf;
     }
 
     /**
@@ -257,11 +267,11 @@ class Tool
     }
 
     /**
-     * @param mixed $originalprice
+     * @param mixed $originalPrice
      */
-    public function setOriginalPrice($originalprice)
+    public function setOriginalPrice($originalPrice)
     {
-        $this->originalprice = $originalprice;
+        $this->originalPrice = $originalPrice;
     }
 
     /**
@@ -270,6 +280,11 @@ class Tool
     public function setAcquisitionDate($acquisitionDate)
     {
         $this->acquisitionDate = $acquisitionDate;
+    }
+
+    public function setInstructionsPdf($instructionsPdf)
+    {
+        $this->instructionsPdf = $instructionsPdf;
     }
 
     /**

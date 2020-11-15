@@ -56,6 +56,7 @@ class ToolsController extends AbstractController
         }
 
         $this->processUploadedPhotos($tool, $form->get('new_photos')->getData());
+        $this->processUploadedInstruction($tool, $form->get('instructionsPdf')->getData());
 
         try {
             $this->toolsRepository->save($tool);
@@ -88,6 +89,7 @@ class ToolsController extends AbstractController
         }
 
         $this->processUploadedPhotos($tool, $form->get('new_photos')->getData());
+        $this->processUploadedInstruction($tool, $form->get('instructionsPdf')->getData());
 
         try {
             $this->toolsRepository->update($tool);
@@ -131,21 +133,14 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * @param UploadedFile[] $files
      * @param Tool           $tool
+     * @param UploadedFile[] $files
      */
     private function processUploadedPhotos(Tool $tool, array $files): void
     {
         foreach ($files as $file) {
-            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            // this is needed to safely include the file name as part of the URL
-            $safeFilename = transliterator_transliterate(
-                'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
-                $originalFilename
-            );
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+            $newFilename = $this->generateFileName($file);
 
-            // Move the file to the directory where brochures are stored
             try {
                 $file->move(
                     $this->getParameter('images_directory'),
@@ -169,6 +164,36 @@ class ToolsController extends AbstractController
         }
     }
 
+    private function processUploadedInstruction(Tool $tool, ?UploadedFile $file): void
+    {
+        if (is_null($file)) {
+            return;
+        }
+
+        $newFilename = $this->generateFileName($file);
+        $instructionsDir = $this->getParameter('instructions_directory');
+
+        try {
+            $file->move($instructionsDir, $newFilename);
+
+            if (!is_null($tool->getInstructionsPdf())) {
+                // Delete old instructions
+                unlink($instructionsDir . DIRECTORY_SEPARATOR . $tool->getInstructionsPdf());
+            }
+
+            $tool->setInstructionsPdf($newFilename);
+        } catch (FileException $e) {
+            $this->addFlash(
+                'danger',
+                sprintf(
+                    'Failed to upload instruction "%s": %s',
+                    $file->getClientOriginalName(),
+                    $e->getMessage()
+                )
+            );
+        }
+    }
+
     /**
      * Generate unique, random code of 6 digits
      */
@@ -180,5 +205,21 @@ class ToolsController extends AbstractController
         } while ($this->toolsRepository->findOneBy(['code' => $code]));
 
         return $code;
+    }
+
+    /**
+     * @param UploadedFile $file
+     * @return string
+     */
+    private function generateFileName(UploadedFile $file): string
+    {
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+        $safeFilename = transliterator_transliterate(
+            'Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()',
+            $originalFilename
+        );
+
+        return $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
     }
 }
