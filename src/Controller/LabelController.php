@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Makerspacelt\EsimLabelGernerator\EsimPrint;
 
 class LabelController extends AbstractController
@@ -19,10 +22,14 @@ class LabelController extends AbstractController
     /** @var ToolsRepository */
     private $toolsRepo;
 
-    public function __construct(LabelGenerator $generator, ToolsRepository $toolsRepo)
+    /** @var HttpClientInterface */
+    private $httpClientInterface;
+
+    public function __construct(LabelGenerator $generator, ToolsRepository $toolsRepo, HttpClientInterface $client)
     {
         $this->generator = $generator;
         $this->toolsRepo = $toolsRepo;
+        $this->httpClientInterface = $client;
     }
 
     /**
@@ -79,23 +86,21 @@ class LabelController extends AbstractController
 
         // TODO: perkelti hostname'ą ir port'ą į admin panelės overview/config langą
         try {
-            $fp = fsockopen('print-label.lan', 80, $errno, $errstr, 5);
-        } catch (\Exception $e) {
+            $formFields = [
+                'bin' => new DataPart($labelData, "bin"),
+                'copies' => '1',
+            ];
+            $formData = new FormDataPart($formFields);
+            $response = $this->httpClientInterface->request('POST', 'http://print-label.lan', [
+                'headers' => $formData->getPreparedHeaders()->toArray(),
+                'body' => $formData->bodyToIterable(),
+            ]);
+        } catch (\Throwable $th) {
             return new JsonResponse([
-                'response'  => false,
-                'error_msg' => $this->combineExceptionMessage($e),
+                'response' => false,
+                'error_msg' => $this->combineExceptionMessage($th),
             ]);
         }
-        if (!$fp) {
-            return new JsonResponse([
-                'response'  => false,
-                'error_msg' => sprintf("ERROR: %d - %s", $errno, $errstr),
-            ]);
-        }
-
-        fwrite($fp, $labelData);
-        fread($fp, 26);
-        fclose($fp);
 
         return new JsonResponse(['response' => true]);
     }
