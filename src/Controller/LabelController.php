@@ -88,7 +88,6 @@ class LabelController extends AbstractController
         try {
             $formFields = [
                 'bin' => new DataPart($labelData, "bin"),
-                'copies' => '1',
             ];
             $formData = new FormDataPart($formFields);
             $response = $this->httpClientInterface->request('POST', 'http://print-label.lan', [
