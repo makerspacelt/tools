@@ -78,7 +78,9 @@ class LabelGenerator
         try {
             $barcode = imagecreatefromstring($generator->getBarcode(
                 $tool->getCode(),
-                BarcodeGeneratorPNG::TYPE_INTERLEAVED_2_5_CHECKSUM
+                BarcodeGeneratorPNG::TYPE_CODE_128,
+                3,
+                65
             ));
         } catch (BarcodeException $e) {
             throw new LabelGeneratorException("failed to generate barcode", 0, $e);
