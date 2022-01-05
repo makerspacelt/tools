@@ -20,4 +20,25 @@
     $(document).on('click', '#print-btn', sendPrintReq);
     //========================== /print button ==========================
 
+    $(function() {
+        $(window).keypress(function(e) {
+            if(!$('#search').isInViewport){
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#search").offset().top - 70
+                }, 500);
+            }
+            $('#search').focus();
+        });
+     });
+
+     $.fn.isInViewport = function() {
+        var elementTop = $(this).offset().top;
+        var elementBottom = elementTop + $(this).outerHeight();
+    
+        var viewportTop = $(window).scrollTop();
+        var viewportBottom = viewportTop + $(window).height();
+    
+        return elementBottom > viewportTop && elementTop < viewportBottom;
+    };
+
 })(jQuery); // End of use strict

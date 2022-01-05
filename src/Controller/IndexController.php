@@ -85,35 +85,38 @@ class IndexController extends AbstractController
             return $this->redirectToRoute('index_page');
         }
 
-        $searchStr = trim($request->request->get('search_str', ''));
-        // pirma patikrinam ar ieškoma pagal įrankio kodą
-        if (is_numeric($searchStr) && (mb_strlen($searchStr) == 6)) {
-            $tool = $this->toolsRepo->findOneBy(['code' => $searchStr]);
-            if ($tool) {
-                return $this->render('tool.html.twig',
-                    [
-                        'tool'       => $tool,
-                        'search_str' => $searchStr,
-                    ]
-                );
-            }
+        $code = trim($request->request->get('search_str', ''));
+        // check if search string is more or equal to 6 and if its code
+        $endcode = substr($code, -6, 6);
+        $startcode = substr($code, 0, 6);
+        if (mb_strlen($code) >= 6 && (is_numeric($endcode) || is_numeric($startcode))) {
+            $tool = $this->toolsRepo->findOneBy(['code' => $startcode]);
+            if($tool)
+                return $this->render('tool.html.twig',[
+                    'tool' => $tool
+                ]);
+            $tool = $this->toolsRepo->findOneBy(['code' => $endcode]); 
+            if ($tool) 
+                return $this->render('tool.html.twig',[
+                    'tool' => $tool
+                ]);
         }
 
         // tada patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
-        $tag = $this->tagsRepo->findOneBy(['tag' => $searchStr]);
+        $tag = $this->tagsRepo->findOneBy(['tag' => $code]);
         if ($tag && ($tag->countTools() > 0)) {
             return $this->render('index.html.twig',
                 [
                     'tools'      => $tag->getTools(),
-                    'search_str' => $searchStr,
+                     'search_str' => $code,
                 ]
             );
         }
 
         return $this->render('index.html.twig',
             [
-                'tools'      => $this->toolsRepo->searchTools($searchStr),
-                'search_str' => $searchStr,
+                'tools'      => $this->toolsRepo->searchTools($code),
+                'search_str' => $code,
             ]
         );
     }
