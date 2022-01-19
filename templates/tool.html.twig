@@ -28,11 +28,11 @@
                 </ol>
                 <a class="carousel-control-prev" href="#photosCarousel" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
+                    <span class="sr-only">{% trans %} Previous {% endtrans %}</span>
                 </a>
                 <a class="carousel-control-next" href="#photosCarousel" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
+                    <span class="sr-only">{% trans %} Next {% endtrans %}</span>
                 </a>
             </div>
         {% endif %}
@@ -43,7 +43,7 @@
 
             {% if tool.shopLinks is not empty %}
                 <div class="card-text">
-                    <b>Kur galima įsigyti?</b><br/>
+                    <b>{% trans %}  Where to buy? {% endtrans %}</b><br/>
                     <p class="tool-links">
                         {{ tool.getShopLinks(true) | raw | nl2br }}
                     </p>
@@ -52,13 +52,13 @@
 
             <p class="card-text">
                 {% if tool.originalPrice is not empty %}
-                    Originali kaina: {{ tool.originalPrice }} &euro;<br/>
+                    {% trans %} Original price {% endtrans %}: {{ tool.originalPrice }} &euro;<br/>
                 {% endif %}
                 {% if tool.acquisitionDate is not empty %}
-                    Įsigyta: {{ tool.acquisitionDateString }}
+                    {% trans %} Bought at {% endtrans %}: {{ tool.acquisitionDateString }}
                 {% endif %}
                 {% if tool.instructionsPdf is not empty %}
-                    <a href="{{ asset('upload/instructions/' ~ tool.instructionsPdf) }}" target="_blank">Naudojimo instrukcija</a>
+                    <a href="{{ asset('upload/instructions/' ~ tool.instructionsPdf) }}" target="_blank">{% trans %} User guide {% endtrans %}</a>
                 {% endif %}
             </p>
         </div>
@@ -71,7 +71,7 @@
 
     {% if app.user %}
     <div class="card mt-4">
-        <div class="card-header">Lipdukas</div>
+        <div class="card-header">{% trans %} Sticker {% endtrans %}</div>
         <div class="card-body">
             <div class="container">
                 <div class="row">
@@ -79,8 +79,8 @@
                         <img class="img-fluid" src="{{ path('tool_label_generator', {'code': tool.code}) }}" alt="label-preview">
                     </div>
                     <div class="col-md-6 mt-3">
-                        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#label-preview-modal">Peržiūrėti</button>
-                        <a href="{{ path('tool_label_printer', { 'code': tool.code }) }}" class="btn btn-danger" id="print-btn">Spausdinti</a>
+                        <button class="btn btn-info" type="button" data-toggle="modal" data-target="#label-preview-modal">{% trans %} View {% endtrans %}</button>
+                        <a href="{{ path('tool_label_printer', { 'code': tool.code }) }}" class="btn btn-danger" id="print-btn">{% trans %} Print {% endtrans %}</a>
                         {# TODO: kažkodėl atsirandant spinner'iui paslenkama yra mygtukai žemyn, jam išnykus jie vėl pakyla #}
                         <div class="lds-dual-ring" id="print-spinner"></div>
                     </div>
@@ -94,7 +94,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="label-preview-modal-label">Lipduko peržiūra</h5>
+                    <h5 class="modal-title" id="label-preview-modal-label">{% trans %} Sticker preview {% endtrans %}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -121,7 +121,7 @@
                         <p id="error-msg"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans %} Close {% endtrans %}</button>
                     </div>
                 </div>
             </div>
@@ -130,14 +130,14 @@
     {% endif %}
 
     <div class="card mt-4">
-        <div class="card-header">Parametrai</div>
+        <div class="card-header">{% trans %} Parameters {% endtrans %}</div>
         <div class="card-body">
             {% if tool.params is not empty %}
                 <table class="table" style="margin-bottom: 0;">
                     <thead>
                     <tr>
-                        <th>Parametras</th>
-                        <th>Reikšmė</th>
+                        <th>{% trans %} Parameter {% endtrans %}</th>
+                        <th>{% trans %} Value {% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -150,13 +150,13 @@
                     </tbody>
                 </table>
             {% else %}
-                Parametrų nėra
+                {% trans %} No parameters set {% endtrans %}
             {% endif %}
         </div>
     </div>
 
     <div class="card mt-4">
-        <div class="card-header">Atlikti priežiūros darbai</div>
+        <div class="card-header">{% trans %} Repair log {% endtrans %}</div>
         <div class="card-body">
             {% if tool.logs is not empty  %}
                 {% for log in tool.logs %}
@@ -164,7 +164,7 @@
                     {% if not loop.last %}<hr>{% endif %}
                 {% endfor %}
             {% else %}
-                Įrašų nėra
+                {% trans %} No records {% endtrans %}
             {% endif %}
         </div>
     </div>

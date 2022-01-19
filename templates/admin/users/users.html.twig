@@ -1,6 +1,6 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ parent() }} - Users{% endblock %}
+{% block title %}{{ parent() }} - {% trans %} Users {% endtrans %}{% endblock %}
 
 {% block page_content %}
     {% if app.session.flashBag.has('success') %}
@@ -18,18 +18,18 @@
         <div class="card-body">
             <div class="row">
                 <div class="col">
-                    <a href="{{ path('admin_add_user') }}" class="btn btn-primary mb-2 mr-2">Add user</a>
+                    <a href="{{ path('admin_add_user') }}" class="btn btn-primary mb-2 mr-2">{% trans %} Add user {% endtrans %}</a>
                 </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th class="col-2">Role</th>
-                        <th class="col-1">Action</th>
+                        <th>{% trans %} Name {% endtrans %}</th>
+                        <th>{% trans %} Username {% endtrans %}</th>
+                        <th>{% trans %} Email {% endtrans %}</th>
+                        <th class="col-2">{% trans %} Role {% endtrans %}</th>
+                        <th class="col-1">{% trans %} Action {% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,12 +43,12 @@
                                 <div class="btn-group" role="group">
                                     <form action="{{ path('admin_del_user') }}" method="post">
                                         <input type="hidden" name="userid" value="{{ user.id }}">
-                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete"
-                                               onclick="return confirm('Are you sure to delete \'{{ user.username }}\'?')"
+                                        <input type="submit" class="btn btn-danger btn-sm" value="{% trans %} Delete {% endtrans %}"
+                                               onclick="return confirm('{% trans with { '%user%': user.username } %} Are you sure to delete %user% ? {% endtrans %}')"
                                                {% if user.username == app.user.username %}disabled{% endif %}>
                                     </form>
                                     <form action="{{ path('admin_edit_user', {id: user.id}) }}" method="get">
-                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="{% trans %} Edit {% endtrans %}">
                                     </form>
                                 </div>
                             </td>

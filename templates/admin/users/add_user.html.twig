@@ -1,6 +1,6 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ parent() }} - {% block section_title %}Add user{% endblock %}{% endblock %}
+{% block title %}{{ parent() }} - {% block section_title %}{% trans %} Add user {% endtrans %}{% endblock %}{% endblock %}
 
 {% block page_content %}
     {% for msg in app.session.flashBag.get('error') %}
@@ -11,7 +11,7 @@
     <div class="card mb-3">
         <div class="card-header">
             <i class="fas {% block icon %}fa-user-plus{% endblock %}"></i>
-            {% block card_title %}Add new user{% endblock %}
+            {% block card_title %}{% trans %} Add new user {% endtrans %}{% endblock %}
         </div>
         <div class="card-body">
             {{ form(form) }}

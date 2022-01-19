@@ -1,6 +1,6 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ parent() }} - Tools{% endblock %}
+{% block title %}{{ parent() }} - {% trans %} Tools {% endtrans %}{% endblock %}
 
 {% block page_content %}
     {% for msg in app.session.flashBag.get('success') %}
@@ -21,17 +21,17 @@
         <div class="card-body">
             <div class="row">
                 <div class="col">
-                    <a href="{{ path('admin_add_tool') }}" class="btn btn-primary mb-2 mr-2">Add tool</a>
+                    <a href="{{ path('admin_add_tool') }}" class="btn btn-primary mb-2 mr-2">{% trans %} Add tool {% endtrans %}</a>
                 </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered display" id="toolsDataTable">
                     <thead>
                     <tr>
-                        <th style="width: 10%">Image</th>
-                        <th>Name and Model</th>
-                        <th>Code</th>
-                        <th style="width: 15%">Action</th>
+                        <th style="width: 10%">{% trans %} Image {% endtrans %}</th>
+                        <th>{% trans %} Name and Model {% endtrans %}</th>
+                        <th>{% trans %} Code {% endtrans %}</th>
+                        <th style="width: 15%">{% trans %} Action {% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -54,11 +54,11 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <form action="{{ path('admin_del_tool', {id: tool.id}) }}" method="post">
-                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete"
-                                               onclick="return confirm('Are you sure to delete \'{{ tool.name }} {{ tool.model }}\'?')">
+                                        <input type="submit" class="btn btn-danger btn-sm" value="{% trans %} Delete {% endtrans %}"
+                                               onclick="return confirm('{% trans with { '%toolname%': tool.name, '%toolmodel%': tool.model } %} Are you sure to delete %toolname% %toolmodel% ? {% endtrans %}')">
                                     </form>
                                     <form action="{{ path('admin_edit_tool', {id: tool.id}) }}" method="get">
-                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="{% trans %} Edit {% endtrans %}">
                                     </form>
                                 </div>
                             </td>
