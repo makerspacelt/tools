@@ -6880,7 +6880,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-gd": "*",
-        "ext-json": "^1.6"
+        "ext-json": "*"
     },
     "platform-dev": []
 }

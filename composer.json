@@ -6,7 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-gd": "*",
-        "ext-json": "^1.6",
+        "ext-json": "*",
         "makerspacelt/esim-label-generator": "dev-master",
         "picqer/php-barcode-generator": "^0.2.2",
         "sensio/framework-extra-bundle": "^5.1",
