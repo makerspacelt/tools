@@ -37,6 +37,8 @@ time grunt
 bin/console doctrine:schema:update --force
 bin/console doctrine:fixtures:load -n
 
+xdebug-config dev
+
 
 # reminder to edit this file
 cowsay -f sheep "Please change develop_init.sh script"
