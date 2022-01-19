@@ -4,6 +4,7 @@ app:
 
 app_admin:
     resource: '../src/Controller/Admin/'
+    type: annotation
     prefix: '/admin'
 
 logout:
