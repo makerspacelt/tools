@@ -1,6 +1,6 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ parent() }} - {% block section_title %}Add tool{% endblock %}{% endblock %}
+{% block title %}{{ parent() }} - {% block section_title %}{% trans %} Add tool {% endtrans %}{% endblock %}{% endblock %}
 
 {% block style_links %}
     {{ parent() }}
@@ -18,14 +18,14 @@
         <div class="card-header">
             <i class="fas fa-toolbox"></i>
             <i class="far {% block icon %}fa-plus-square{% endblock %}"></i>
-            {% block card_title %}Add new tool{% endblock %}
+            {% block card_title %}{% trans %} Add new tool {% endtrans %}{% endblock %}
         </div>
         <div class="card-body">
             {{ form_start(form) }}
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            Main information
+                            {% trans %} Main information {% endtrans %}
                         </h5>
                         <div class="col-md-7">
                             <div class="row">
@@ -52,7 +52,7 @@
                 <div class="card mt-4">
                     <div class="card-body">
                         <h5 class="card-title">
-                            Tool photos
+                            {% trans %} Tool photos {% endtrans %}
                         </h5>
                         <div class="col-md-7">
                             {% block photos %}
@@ -66,7 +66,7 @@
                 <div class="card mt-4">
                     <div class="card-body">
                         <h5 class="card-title">
-                            Additional information
+                            {% trans %} Additional information {% endtrans %}
                         </h5>
                         <div class="col-md-7">
                             {{ form_label(form.shoplinks) }}
@@ -95,15 +95,15 @@
                 <div class="card mt-4">
                     <div class="card-body">
                         <h5 class="card-title">
-                            Tool parameters
+                            {% trans %} Parameters {% endtrans %}
                         </h5>
                         <div class="col-md-7">
                             {% set n = 0 %}
                             {% for param in form.params %}
                                 <div class="input-group form-group tool_param_group">
                                     {% block text_widget %}
-                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[name]" value="{{ param.vars.value.getName() }}" placeholder="Parameter">
-                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[value]" value="{{ param.vars.value.getValue() }}" placeholder="Value">
+                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[name]" value="{{ param.vars.value.getName() }}" placeholder="{% trans %} Parameter {% endtrans %}">
+                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[value]" value="{{ param.vars.value.getValue() }}" placeholder="{% trans %} Value {% endtrans %}">
                                         {% do param.setRendered() %}
                                     {% endblock %}
                                     <div class="input-group-append">
@@ -114,8 +114,8 @@
                             {% endfor %}
 
                             <div class="input-group form-group tool_param_group">
-                                <input type="text" class="form-control" id="param_name" name="tool[params][{{ n }}][name]" placeholder="Parameter">
-                                <input type="text" class="form-control" id="param_value" name="tool[params][{{ n }}][value]" placeholder="Value">
+                                <input type="text" class="form-control" id="param_name" name="tool[params][{{ n }}][name]" placeholder="{% trans %} Parameter {% endtrans %}">
+                                <input type="text" class="form-control" id="param_value" name="tool[params][{{ n }}][value]" placeholder="{% trans %} Value {% endtrans %}">
                                 <div class="input-group-append">
                                     <button class="btn btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
                                 </div>
@@ -127,13 +127,13 @@
                 <div class="card mt-4">
                     <div class="card-body">
                         <h5 class="card-title">
-                            Repair log
+                            {% trans %} Repair log {% endtrans %}
                         </h5>
                         <div class="col-md-7">
                             {% for log in form.logs %}
                                 <div class="input-group form-group tool_log">
                                     {% block textarea_widget %}
-                                        <textarea id="{{ log.vars.id }}" name="{{ log.vars.full_name }}[log]" class="form-control" placeholder="Tool repair log">{{ log.vars.value.getLog() }}</textarea>
+                                        <textarea id="{{ log.vars.id }}" name="{{ log.vars.full_name }}[log]" class="form-control" placeholder="{% trans %} Tool repair log {% endtrans %}">{{ log.vars.value.getLog() }}</textarea>
                                         {% do log.setRendered() %}
                                     {% endblock %}
 
@@ -143,7 +143,7 @@
                                 </div>
                             {% endfor %}
                             <div class="input-group form-group tool_log">
-                                <textarea name="tool[logs][][log]" class="form-control" placeholder="Tool repair log"></textarea>
+                                <textarea name="tool[logs][][log]" class="form-control" placeholder="{% trans %} Tool repair log {% endtrans %}"></textarea>
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-success btn-add-log"><i class="fas fa-plus"></i></button>
                                 </div>
@@ -154,7 +154,7 @@
 
                 <div class="row">
                     <div class="col mt-2">
-                        <a href="{{ path('admin_tools') }}" class="btn btn-secondary">Back</a>
+                        <a href="{{ path('admin_tools') }}" class="btn btn-secondary">{% trans %} Back {% endtrans %}</a>
                         {{ form_widget(form.save) }}
                     </div>
                 </div>

@@ -23,16 +23,25 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languagedropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% trans %} Language {% endtrans %}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="languagedropdown">
+                            <a class="dropdown-item" href="{{ path('change_lang', {'locale': 'en'}) }}">{% trans %} English {% endtrans %}</a>
+                            <a class="dropdown-item" href="{{ path('change_lang', {'locale': 'lt'}) }}">{% trans %} Lithuanian {% endtrans %}</a>
+                        </div>
+                    </li>
                     <li class="nav-item">
                         {% if app.user %}
-                            <a class="nav-link" href="{{ url('admin_homepage') }}">Admin panelė</a>
+                            <a class="nav-link" href="{{ url('admin_homepage') }}">{% trans %} Admin panel {% endtrans %}</a>
                         {% elseif not app.user %}
-                            <a class="nav-link" href="{{ path('login') }}">Prisijungti</a>
+                            <a class="nav-link" href="{{ path('login') }}">{% trans %} Login {% endtrans %}</a>
                         {% endif %}
                     </li>
                     {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('logout') }}">Atsijungti</a>
+                        <a class="nav-link" href="{{ url('logout') }}">{% trans %} Logout {% endtrans %}</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -44,16 +53,15 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-3">
-
                 <!-- Paieška -->
                 <div class="card my-4">
-                    <h5 class="card-header">Paieška</h5>
+                    <h5 class="card-header">{% trans %} Search {% endtrans %}</h5>
                     <div class="card-body">
                         <form method="post" action="{{ path('search_tools') }}">
                             <div class="input-group">
-                                <input id="search" type="text" name="search_str" class="form-control" placeholder="Ieškoti ko..." value="{{ search_str | default('') }}" autofocus>
+                                <input id="search" type="text" name="search_str" class="form-control" placeholder="{% trans %} Looking for.. {% endtrans %}" value="{{ search_str | default('') }}" autofocus>
                                 <div class="input-group-append">
-                                    <input type="submit" value="Ieškoti" class="btn btn-secondary" />
+                                    <input type="submit" value="{% trans %} Search {% endtrans %}" class="btn btn-secondary" />
                                 </div>
                             </div>
                         </form>

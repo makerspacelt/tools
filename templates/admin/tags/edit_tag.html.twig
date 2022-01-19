@@ -1,13 +1,13 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ parent() }} - Edit tag{% endblock %}
+{% block title %}{{ parent() }} - {% trans %} Edit tag {% endtrans %}{% endblock %}
 
 {% block page_content %}
 <div class="card mb-3">
     <div class="card-header">
         <i class="fas fa-tag"></i>
         <i class="far fa-edit"></i>
-        {% block card_title %}Edit tag{% endblock %}
+        {% block card_title %}{% trans %} Edit tag {% endtrans %}{% endblock %}
     </div>
     <div class="card-body">
         <div class="col-md-5">

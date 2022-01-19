@@ -1,6 +1,6 @@
 {% extends 'admin/base_panel.html.twig' %}
 
-{% block title %}{{ parent() }} - Tags{% endblock %}
+{% block title %}{{ parent() }} - {% trans %} Tags {% endtrans %}{% endblock %}
 
 {% block page_content %}
     {% for msg in app.session.flashBag.get('success') %}
@@ -11,16 +11,16 @@
     <div class="card mb-3">
         <div class="card-header">
             <i class="fas fa-tags"></i>
-            Tags
+            {% trans %} Tags {% endtrans %}
         </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered display" id="tagsDataTable">
                     <thead>
                     <tr>
-                        <th>Tag name</th>
-                        <th># of times used</th>
-                        <th style="width: 15%">Action</th>
+                        <th>{% trans %} Tag name {% endtrans %}</th>
+                        <th>{% trans %} # of times used< {% endtrans %}/th>
+                        <th style="width: 15%">{% trans %} Action {% endtrans %}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -32,10 +32,10 @@
                                 <div class="btn-group" role="group">
                                     <form action="{{ path('admin_delete_tag') }}" method="post">
                                         <input type="hidden" name="tag_id" value="{{ tag.id }}">
-                                        <input type="submit" class="btn btn-danger btn-sm" value="Delete" onclick="return confirm('Are you sure to delete \'{{ tag.tag }}\'?')">
+                                        <input type="submit" class="btn btn-danger btn-sm" value="{% trans %} Delete {% endtrans %}" onclick="return confirm('{% trans with { '%tag%': tag.tag } %} Are you sure to delete %tag% ? {% endtrans %}')">
                                     </form>
                                     <form action="{{ path('admin_edit_tag', {id: tag.id}) }}" method="get">
-                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="Edit">
+                                        <input type="submit" class="btn btn-warning btn-sm ml-2" value="{% trans %} Edit {% endtrans %}">
                                     </form>
                                 </div>
                             </td>

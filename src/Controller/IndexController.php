@@ -26,12 +26,13 @@ class IndexController extends AbstractController
     /**
      * @Route("/", name="index_page")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         return $this->render(
             'index.html.twig',
             [
                 'tools' => $this->toolsRepo->findAll(),
+                'locale' => $request->getLocale()
             ]
         );
     }
@@ -74,6 +75,20 @@ class IndexController extends AbstractController
         );
     }
 
+    /**
+     * @Route("/changelang/{locale}", name="change_lang", methods={"GET"})
+     * @return Response
+     */
+    public function lang(Request $request, ?string $locale = null): Response
+    {
+		$referer = $request->headers->get('referer');
+        if (!$locale) {
+            return $this->redirect($referer);
+        }
+
+        $request->getSession()->set('_locale', $locale);
+        return $this->redirect($referer);
+    }
     /**
      * @Route("/search", name="search_tools")
      * @param Request $request

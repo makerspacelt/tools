@@ -26,7 +26,7 @@
                                     <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}"><small class="text-muted">#{{ tag.getTag() }}</small></a>
                                 {% endfor %}
                             {% else %}
-                                <small class="text-muted">Etiketės nepriskirtos</small>
+                                <small class="text-muted">{% trans %} No tags for tool {% endtrans %}</small>
                             {% endif %}
                         </div>
                     </div>
@@ -34,7 +34,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <h2><b>Jokių įrankių nerasta :(</b></h2>
+        <h2><b>{% trans %} No tools found {% endtrans %}</b></h2>
     {% endif %}
 
 {% endblock %}
