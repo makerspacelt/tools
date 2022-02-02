@@ -9,11 +9,18 @@ use App\Form\Type\ToolUpdateType;
 use App\Repository\ToolsRepository;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 
 /**
  * @Route("/tools")
@@ -52,6 +59,9 @@ class ToolsController extends AbstractController
         $tool->setCode($this->generateToolCode());
         $form = $this->createForm(ToolType::class, $tool)->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
+            foreach ($form->getErrors() as $key => $value) {
+                $this->addFlash('danger', $value->getMessage());
+            }
             return $this->render('admin/tools/add_tool.html.twig', ['form' => $form->createView()]);
         }
 
@@ -85,6 +95,9 @@ class ToolsController extends AbstractController
     {
         $form = $this->createForm(ToolUpdateType::class, $tool)->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
+            foreach ($form->getErrors() as $key => $value) {
+                $this->addFlash('danger', $value->getMessage());
+            }
             return $this->render('admin/tools/edit_tool.html.twig', ['form' => $form->createView()]);
         }
 

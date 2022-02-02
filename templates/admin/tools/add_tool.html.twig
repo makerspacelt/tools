@@ -14,6 +14,16 @@
 {% endblock %}
 
 {% block page_content %}
+    {% for msg in app.session.flashBag.get('success') %}
+        <div class="alert alert-success py-2" role="alert">
+            {{ msg }}
+        </div>
+    {% endfor %}
+    {% for msg in app.session.flashBag.get('danger') %}
+        <div class="alert alert-danger py-2" role="alert">
+            {{ msg }}
+        </div>
+    {% endfor %}
     <div class="card mb-3">
         <div class="card-header">
             <i class="fas fa-toolbox"></i>
@@ -95,31 +105,25 @@
                 <div class="card mt-4">
                     <div class="card-body">
                         <h5 class="card-title">
-                            {% trans %} Parameters {% endtrans %}
+                            {% trans %} Parameters {% endtrans %} <button class="btn btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
                         </h5>
-                        <div class="col-md-7">
-                            {% set n = 0 %}
+                        <div class="col-md-7" id="tool_params_list"
+                            data-prototype="<div class='col-md-5'>{{form_widget(form.params.vars.prototype.name)|e}}</div><div class='col-md-6'>{{form_widget(form.params.vars.prototype.value)|e}}</div><div class='col-md-1'><button class='btn btn-danger btn-remove-param' type='button'><i class='fas fa-minus'></i></button></div>"
+                            data-widget-tags="{{ '<div class="row mt-2 tool_param_group"></div>'|e }}"
+                            data-widget-counter="{{ form.params|length }}">
                             {% for param in form.params %}
-                                <div class="input-group form-group tool_param_group">
-                                    {% block text_widget %}
-                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[name]" value="{{ param.vars.value.getName() }}" placeholder="{% trans %} Parameter {% endtrans %}">
-                                        <input type="text" class="form-control" id="{{ param.vars.id }}" name="{{ param.vars.full_name }}[value]" value="{{ param.vars.value.getValue() }}" placeholder="{% trans %} Value {% endtrans %}">
-                                        {% do param.setRendered() %}
-                                    {% endblock %}
-                                    <div class="input-group-append">
-                                        <button class="btn btn-danger btn-remove-param" type="button"><i class="fas fa-minus"></i></button>
-                                    </div>
+                            <div class="row mt-2 tool_param_group">
+                                <div class="col-md-5">
+                                    {{ form_widget(param.name) }}
                                 </div>
-                                {% set n = n + 1 %}
-                            {% endfor %}
-
-                            <div class="input-group form-group tool_param_group">
-                                <input type="text" class="form-control" id="param_name" name="tool[params][{{ n }}][name]" placeholder="{% trans %} Parameter {% endtrans %}">
-                                <input type="text" class="form-control" id="param_value" name="tool[params][{{ n }}][value]" placeholder="{% trans %} Value {% endtrans %}">
-                                <div class="input-group-append">
-                                    <button class="btn btn-success btn-add-param" type="button"><i class="fas fa-plus"></i></button>
+                                <div class="col-md-6">
+                                    {{ form_widget(param.value) }}
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger btn-remove-param"><i class="fas fa-minus"></i></button>
                                 </div>
                             </div>
+                        {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -127,27 +131,25 @@
                 <div class="card mt-4">
                     <div class="card-body">
                         <h5 class="card-title">
-                            {% trans %} Repair log {% endtrans %}
+                            {% trans %} Repair log {% endtrans %} <button type="button" class="btn btn-success btn-add-log"><i class="fas fa-plus"></i></button>
                         </h5>
-                        <div class="col-md-7">
-                            {% for log in form.logs %}
-                                <div class="input-group form-group tool_log">
-                                    {% block textarea_widget %}
-                                        <textarea id="{{ log.vars.id }}" name="{{ log.vars.full_name }}[log]" class="form-control" placeholder="{% trans %} Tool repair log {% endtrans %}">{{ log.vars.value.getLog() }}</textarea>
-                                        {% do log.setRendered() %}
-                                    {% endblock %}
-
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>
-                                    </div>
+                        <div class="col-md-7" id="tool_log_list"
+                            data-prototype="<div class='col-md-8'>{{form_widget(form.logs.vars.prototype.log)|e}}</div><div class='col-md-3'>{{form_widget(form.logs.vars.prototype.type)|e}}</div><div class='col-md-1'><button class='btn btn-danger btn-remove-log' type='button'><i class='fas fa-minus'></i></button></div>"
+                            data-widget-tags="{{ '<div class="row mt-2 tool_log_group"></div>'|e }}"
+                            data-widget-counter="{{ form.logs|length }}">
+                        {% for log in form.logs %}
+                            <div class="row mt-2 tool_log_group">
+                                <div class="col-md-8">
+                                    {{ form_widget(log.log) }}
                                 </div>
-                            {% endfor %}
-                            <div class="input-group form-group tool_log">
-                                <textarea name="tool[logs][][log]" class="form-control" placeholder="{% trans %} Tool repair log {% endtrans %}"></textarea>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-success btn-add-log"><i class="fas fa-plus"></i></button>
+                                <div class="col-md-3">
+                                    {{ form_widget(log.type) }}
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger btn-remove-log"><i class="fas fa-minus"></i></button>
                                 </div>
                             </div>
+                        {% endfor %}
                         </div>
                     </div>
                 </div>

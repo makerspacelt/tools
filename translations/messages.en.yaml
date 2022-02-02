@@ -1,0 +1,4 @@
+LOG_TYPE_FIXED : 'Fixed'
+LOG_TYPE_BROKEN : 'Broken'
+LOG_TYPE_INPROGRESS : 'In Progress'
+Status : 'Status: '

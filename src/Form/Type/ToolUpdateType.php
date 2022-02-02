@@ -23,6 +23,30 @@ class ToolUpdateType extends ToolType
                     'label'        => false,
                     'by_reference' => false,
                 ]
+            )
+            ->add(
+                'params',
+                CollectionType::class,
+                [
+                    'required'     => false,
+                    'entry_type'   => ParamType::class,
+                    'allow_add'    => true,
+                    'allow_delete' => true,
+                    'label'        => false,
+                    'by_reference' => false,
+                ]
+            )
+            ->add(
+                'logs',
+                CollectionType::class,
+                [
+                    'required'     => false,
+                    'entry_type'   => LogType::class,
+                    'allow_add'    => true,
+                    'allow_delete' => true,
+                    'label'        => false,
+                    'by_reference' => false,
+                ]
             );
     }
 }

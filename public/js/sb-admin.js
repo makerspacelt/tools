@@ -75,17 +75,14 @@
 
     //======================= dynamic tool params =======================
     var addParamGroup = function (event) {
-        event.preventDefault();
-        var $formGroup = $(this).closest('.tool_param_group');
-        var $formGroupClone = $formGroup.clone();
-        $(this)
-            .toggleClass('btn-success btn-add-param btn-danger btn-remove-param')
-            .html('<i class="fas fa-minus"></i>');
-        $formGroupClone.find('input').val('');
-        var $n = $('div.tool_param_group').length;
-        $formGroupClone.find('#param_name').attr('name', 'tool[params][' + $n + '][name]');
-        $formGroupClone.find('#param_value').attr('name', 'tool[params][' + $n + '][value]');
-        $formGroupClone.insertAfter($formGroup);
+        var list = jQuery('#tool_params_list');
+        var counter = list.data('widget-counter') || list.children().length;
+        var newWidget = list.attr('data-prototype');
+        newWidget = newWidget.replace(/_newparameteritem_/g, counter);
+        counter++;
+        list.data('widget-counter', counter);
+        var newElem = jQuery(list.attr('data-widget-tags')).html(newWidget);
+        newElem.appendTo(list);
     };
 
     var removeParamGroup = function (event) {
@@ -101,18 +98,19 @@
     //======================= dynamic tool logs =========================
     var addLog = function (event) {
         event.preventDefault();
-        var $formGroup = $(this).closest('.tool_log');
-        var $formGroupClone = $formGroup.clone();
-        $(this)
-            .toggleClass('btn-success btn-add-log btn-danger btn-remove-log')
-            .html('<i class="fas fa-minus"></i>');
-        $formGroupClone.find('textarea').val('');
-        $formGroupClone.insertAfter($formGroup);
+        var list = jQuery('#tool_log_list');
+        var counter = list.data('widget-counter') || list.children().length;
+        var newWidget = list.attr('data-prototype');
+        newWidget = newWidget.replace(/_newlogitem_/g, counter);
+        counter++;
+        list.data('widget-counter', counter);
+        var newElem = jQuery(list.attr('data-widget-tags')).html(newWidget);
+        newElem.appendTo(list);
     };
 
     var removeLog = function (event) {
         event.preventDefault();
-        var $formGroup = $(this).closest('.tool_log');
+        var $formGroup = $(this).closest('.tool_log_group');
         $formGroup.remove();
     };
 

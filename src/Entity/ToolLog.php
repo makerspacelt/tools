@@ -28,6 +28,11 @@ class ToolLog
      * @ORM\Column
      */
     private $log;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $type;
     #=====================================================
 
     /**
@@ -65,6 +70,16 @@ class ToolLog
     public function getTool()
     {
         return $this->tool;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type)
+    {
+        $this->type = $type;
     }
 }
 

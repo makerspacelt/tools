@@ -18,6 +18,7 @@ class ParamType extends AbstractType
                 TextType::class,
                 [
                     'label' => false,
+                    'row_attr' => ['class' => 'col-md-6']
                 ]
             )
             ->add(
@@ -25,6 +26,7 @@ class ParamType extends AbstractType
                 TextType::class,
                 [
                     'label' => false,
+                    'row_attr' => ['class' => 'col-md-6']
                 ]
             );
     }
