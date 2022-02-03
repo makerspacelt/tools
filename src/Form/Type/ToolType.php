@@ -15,6 +15,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\File;
+use App\Entity\ToolLog;
+use App\Entity\ToolParameter;
 
 class ToolType extends AbstractType
 {
@@ -51,6 +53,9 @@ class ToolType extends AbstractType
                     'allow_delete' => true,
                     'label'        => false,
                     'by_reference' => false,
+                    'prototype' => true,
+                    'prototype_data' => new ToolParameter(),
+                    'prototype_name' => '_newparameteritem_'
                 ]
             )
             ->add(
@@ -63,6 +68,9 @@ class ToolType extends AbstractType
                     'allow_delete' => true,
                     'label'        => false,
                     'by_reference' => false,
+                    'prototype' => true,
+                    'prototype_data' => new ToolLog(),
+                    'prototype_name' => '_newlogitem_'
                 ]
             )
             ->add(

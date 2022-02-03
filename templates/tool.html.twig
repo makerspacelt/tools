@@ -161,6 +161,7 @@
             {% if tool.logs is not empty  %}
                 {% for log in tool.logs %}
                     <p class="pl-3 pr-3">{{ log.log }}</p>
+                    <p class="pl-3 text-muted"> {% trans %} Status {% endtrans %} {{ attribute(log, 'type')|raw|trans }}</p>
                     {% if not loop.last %}<hr>{% endif %}
                 {% endfor %}
             {% else %}
