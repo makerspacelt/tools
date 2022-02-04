@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\ToolTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -32,4 +33,25 @@ class TagsRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @param ToolTag $tag
+     * @throws ORMException
+     */
+    public function remove(ToolTag $tag): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($tag);
+        $em->flush();
+    }
+
+    /**
+     * @param ToolTag $tag
+     * @throws ORMException
+     */
+    public function save(ToolTag $tag): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($tag);
+        $em->flush();
+    }
 }

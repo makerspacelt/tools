@@ -9,8 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class TagType extends AbstractType
 {
-    /** @var TagTransformer */
-    private $tagTransformer;
+    private TagTransformer $tagTransformer;
 
     public function __construct(TagTransformer $tagTransformer)
     {

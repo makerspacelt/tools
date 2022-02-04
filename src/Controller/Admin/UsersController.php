@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -12,24 +13,21 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/users")
  */
 class UsersController extends AbstractController
 {
-    /** @var UserPasswordEncoderInterface */
-    private $encoder;
+    private UserPasswordHasherInterface $hasher;
+    private UserRepository $userRepository;
 
-    /** @var UserRepository */
-    private $userRepository;
-
-    public function __construct(UserPasswordEncoderInterface $encoder, UserRepository $userRepository)
+    public function __construct(UserPasswordHasherInterface $hasher, UserRepository $userRepository)
     {
-        $this->encoder = $encoder;
+        $this->hasher = $hasher;
         $this->userRepository = $userRepository;
     }
 
@@ -49,15 +47,27 @@ class UsersController extends AbstractController
     private function generateForm(User $user): FormInterface
     {
         return $this->createFormBuilder($user)
-            ->add('fullname', TextType::class,
-                ['required' => true, 'label' => 'Full name', 'attr' => ['class' => 'mb-3']])
-            ->add('username', TextType::class,
-                ['required' => true, 'disabled' => ($user->getUsername() != ''), 'attr' => ['class' => 'mb-3']])
-            ->add('password', PasswordType::class,
-                ['required' => ($user->getPassword() == ''), 'attr' => ['class' => 'mb-3']])
+            ->add(
+                'fullname',
+                TextType::class,
+                ['required' => true, 'label' => 'Full name', 'attr' => ['class' => 'mb-3']]
+            )
+            ->add(
+                'username',
+                TextType::class,
+                ['required' => true, 'disabled' => (!empty($user->getUsername())), 'attr' => ['class' => 'mb-3']]
+            )
+            ->add(
+                'password',
+                PasswordType::class,
+                ['required' => (empty($user->getPassword())), 'attr' => ['class' => 'mb-3']]
+            )
             ->add('email', EmailType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
-            ->add('roles', ChoiceType::class,
-                ['multiple' => true, 'choices' => ['Super admin' => 'ROLE_SUPERADMIN'], 'attr' => ['class' => 'mb-3']])
+            ->add(
+                'roles',
+                ChoiceType::class,
+                ['multiple' => true, 'choices' => ['Super admin' => 'ROLE_SUPERADMIN'], 'attr' => ['class' => 'mb-3']]
+            )
             ->add('save', SubmitType::class, ['label' => 'Submit'])
             ->getForm();
     }
@@ -66,6 +76,7 @@ class UsersController extends AbstractController
      * @Route("/addUser", name="admin_add_user")
      * @param Request $request
      * @return Response
+     * @throws ORMException
      */
     public function addUser(Request $request): Response
     {
@@ -75,9 +86,7 @@ class UsersController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formUser = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($formUser);
-            $em->flush();
+            $this->userRepository->save($formUser);
             $this->addFlash('success', 'User created!');
             return $this->redirectToRoute('admin_users');
         }
@@ -95,6 +104,7 @@ class UsersController extends AbstractController
      * @param Request $request
      * @param User    $user
      * @return Response
+     * @throws ORMException
      */
     public function editUser(Request $request, User $user): Response
     {
@@ -105,14 +115,12 @@ class UsersController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formUser = $form->getData();
-            if ($formUser->getPassword() != null) {
-                $formUser->setPassword($this->encoder->encodePassword($user, $formUser->getPassword()));
+            if ($formUser->getPassword() !== null) {
+                $formUser->setPassword($this->hasher->hashPassword($user, $formUser->getPassword()));
             } else { // jei naujas neįvestas, tai nustatom seną...
                 $formUser->setPassword($oldPasswd);
             }
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($formUser);
-            $em->flush();
+            $this->userRepository->save($formUser);
             $this->addFlash('success', 'User modified!');
 
             return $this->redirectToRoute('admin_users');
@@ -130,18 +138,17 @@ class UsersController extends AbstractController
      * @Route("/delUser", name="admin_del_user")
      * @param Request $request
      * @return Response
+     * @throws ORMException
      */
     public function deleteUser(Request $request): Response
     {
-        if ($request->request->has('userid')) {
-            $user = $this->userRepository->find($request->request->get('userid'));
+        if ($userId = $request->request->has('userid')) {
+            $user = $this->userRepository->find($userId);
             if ($user) {
-                $manager = $this->getDoctrine()->getManager();
-                $manager->remove($user);
-                $manager->flush();
+                $this->userRepository->remove($user);
                 $this->addFlash('success', sprintf('User "%s" removed!', $user->getUsername()));
             } else {
-                $this->addFlash('error', sprintf('User "%s" not found.', $user->getUsername()));
+                $this->addFlash('error', sprintf('User "%s" not found.', $userId));
             }
         } else {
             $this->addFlash('error', "User is was not sent with request.");

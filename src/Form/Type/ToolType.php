@@ -3,7 +3,6 @@
 namespace App\Form\Type;
 
 use App\Entity\Tool;
-use App\Repository\ToolsRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -20,15 +19,7 @@ use App\Entity\ToolParameter;
 
 class ToolType extends AbstractType
 {
-    /** @var ToolsRepository */
-    private $toolsRepository;
-
-    public function __construct(ToolsRepository $toolsRepository)
-    {
-        $this->toolsRepository = $toolsRepository;
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class, ['required' => true, 'attr' => ['class' => 'mb-3']])
@@ -125,7 +116,7 @@ class ToolType extends AbstractType
             ->add('save', SubmitType::class, ['label' => 'Submit']);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
             [

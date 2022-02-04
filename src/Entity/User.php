@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields = {"username"}, message="This username is taken")
  * @UniqueEntity(fields = {"email"}, message="This email is taken")
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serializable
 {
 
     #=====================================================
@@ -61,13 +62,13 @@ class User implements UserInterface, \Serializable
     public function serialize()
     {
         return serialize([
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->roles,
-            $this->fullname,
-            $this->email,
-        ]);
+                             $this->id,
+                             $this->username,
+                             $this->password,
+                             $this->roles,
+                             $this->fullname,
+                             $this->email,
+                         ]);
     }
 
     /**
@@ -122,7 +123,7 @@ class User implements UserInterface, \Serializable
      *
      * @return string The password
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }

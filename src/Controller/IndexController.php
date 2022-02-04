@@ -11,13 +11,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    /** @var ToolsRepository */
-    private $toolsRepo;
+    private ToolsRepository $toolsRepo;
+    private TagsRepository $tagsRepo;
 
-    /** @var TagsRepository */
-    private $tagsRepo;
-
-    function __construct(ToolsRepository $toolsRepo, TagsRepository $tagsRepo)
+    public function __construct(ToolsRepository $toolsRepo, TagsRepository $tagsRepo)
     {
         $this->toolsRepo = $toolsRepo;
         $this->tagsRepo = $tagsRepo;
@@ -31,8 +28,8 @@ class IndexController extends AbstractController
         return $this->render(
             'index.html.twig',
             [
-                'tools' => $this->toolsRepo->findAll(),
-                'locale' => $request->getLocale()
+                'tools'  => $this->toolsRepo->findAll(),
+                'locale' => $request->getLocale(),
             ]
         );
     }
@@ -61,7 +58,7 @@ class IndexController extends AbstractController
      * @param string|null $tag
      * @return Response
      */
-    public function filterBySingleTag($tag = null): Response
+    public function filterBySingleTag(?string $tag = null): Response
     {
         if (is_null($tag)) {
             return $this->redirectToRoute('index_page');
@@ -77,11 +74,13 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/changelang/{locale}", name="change_lang", methods={"GET"})
+     * @param Request     $request
+     * @param string|null $locale
      * @return Response
      */
     public function lang(Request $request, ?string $locale = null): Response
     {
-		$referer = $request->headers->get('referer');
+        $referer = $request->headers->get('referer');
         if (!$locale) {
             return $this->redirect($referer);
         }
@@ -89,6 +88,7 @@ class IndexController extends AbstractController
         $request->getSession()->set('_locale', $locale);
         return $this->redirect($referer);
     }
+
     /**
      * @Route("/search", name="search_tools")
      * @param Request $request
@@ -106,29 +106,33 @@ class IndexController extends AbstractController
         $startcode = substr($code, 0, 6);
         if (mb_strlen($code) >= 6 && (is_numeric($endcode) || is_numeric($startcode))) {
             $tool = $this->toolsRepo->findOneBy(['code' => $startcode]);
-            if($tool)
-                return $this->render('tool.html.twig',[
-                    'tool' => $tool
+            if ($tool) {
+                return $this->render('tool.html.twig', [
+                    'tool' => $tool,
                 ]);
-            $tool = $this->toolsRepo->findOneBy(['code' => $endcode]); 
-            if ($tool) 
-                return $this->render('tool.html.twig',[
-                    'tool' => $tool
+            }
+            $tool = $this->toolsRepo->findOneBy(['code' => $endcode]);
+            if ($tool) {
+                return $this->render('tool.html.twig', [
+                    'tool' => $tool,
                 ]);
+            }
         }
 
         // tada patikrinam ar yra toks tag'as ir jei taip gaunam susijusius įrankius
         $tag = $this->tagsRepo->findOneBy(['tag' => $code]);
         if ($tag && ($tag->countTools() > 0)) {
-            return $this->render('index.html.twig',
+            return $this->render(
+                'index.html.twig',
                 [
                     'tools'      => $tag->getTools(),
-                     'search_str' => $code,
+                    'search_str' => $code,
                 ]
             );
         }
 
-        return $this->render('index.html.twig',
+        return $this->render(
+            'index.html.twig',
             [
                 'tools'      => $this->toolsRepo->searchTools($code),
                 'search_str' => $code,

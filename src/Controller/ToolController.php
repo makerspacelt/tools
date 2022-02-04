@@ -9,8 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ToolController extends AbstractController
 {
-    /** @var ToolsRepository */
-    private $toolsRepo;
+    private ToolsRepository $toolsRepo;
 
     public function __construct(ToolsRepository $toolsRepo)
     {

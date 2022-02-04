@@ -18,23 +18,33 @@ class ToolFixture extends Fixture implements DependentFixtureInterface
         $tags = $manager->getRepository(ToolTag::class)->findAll();
         for ($j = 0; $j < 5; $j++) {
             $tool = new Tool();
-            $tool->setName(substr(md5(microtime()), rand(0, 26), 6));
-            $tool->setModel(substr(md5(microtime()), rand(0, 26), 4));
-            $tool->setCode(rand(100000, 999999));
-            $tool->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+            $tool->setName(substr(md5(microtime()), random_int(0, 26), 6));
+            $tool->setModel(substr(md5(microtime()), random_int(0, 26), 4));
+            $tool->setCode(random_int(100000, 999999));
+            $tool->setDescription(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+            );
             $tool->setShopLinks("http://9v.lt\nhttps://google.com\nir senukai ar kažkur");
-            $tool->setOriginalPrice(rand(1, 100));
+            $tool->setOriginalPrice(random_int(1, 100));
             try {
-                $tool->setAcquisitionDate(new \DateTime('2018-' . str_pad(rand(1, 12), 2, '0',
-                        STR_PAD_LEFT) . '-' . str_pad(rand(1, 30), 2, '0', STR_PAD_LEFT)));
+                $tool->setAcquisitionDate(
+                    new \DateTime(
+                        '2018-' . str_pad(
+                            random_int(1, 12),
+                            2,
+                            '0',
+                            STR_PAD_LEFT
+                        ) . '-' . str_pad(random_int(1, 30), 2, '0', STR_PAD_LEFT)
+                    )
+                );
             } catch (Exception $e) {
                 continue;
             }
 
             $usedTags = [];
-            for ($i = 0; $i < rand(3, 8); $i++) {
+            for ($i = 0; $i < random_int(3, 8); $i++) {
                 do {
-                    $tag = $tags[rand(0, count($tags) - 1)];
+                    $tag = $tags[random_int(0, count($tags) - 1)];
                 } while (in_array($tag->getTag(), $usedTags));
                 $usedTags[] = $tag->getTag();
                 $tool->addTag($tag);
@@ -42,8 +52,8 @@ class ToolFixture extends Fixture implements DependentFixtureInterface
 
             for ($i = 0; $i < 3; $i++) {
                 $param = new ToolParameter();
-                $param->setName(substr(md5(microtime()), rand(0, 26), 7));
-                $param->setValue(substr(md5(microtime()), rand(0, 26), 8));
+                $param->setName(substr(md5(microtime()), random_int(0, 26), 7));
+                $param->setValue(substr(md5(microtime()), random_int(0, 26), 8));
                 $tool->addParam($param);
                 $manager->persist($param);
             }
@@ -56,12 +66,12 @@ class ToolFixture extends Fixture implements DependentFixtureInterface
             $logTypeArr = [
                 'LOG_TYPE_BROKEN',
                 'LOG_TYPE_FIXED',
-                'LOG_TYPE_INPROGRESS'
+                'LOG_TYPE_INPROGRESS',
             ];
             for ($i = 0; $i < 3; $i++) {
                 $log = new ToolLog();
                 $log->setLog($logArr[$i]);
-				$log->setType($logTypeArr[$i]);
+                $log->setType($logTypeArr[$i]);
                 $tool->addLog($log);
                 $manager->persist($log);
             }
@@ -78,7 +88,7 @@ class ToolFixture extends Fixture implements DependentFixtureInterface
      *
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [TagFixture::class];
     }

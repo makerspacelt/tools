@@ -4,6 +4,7 @@ namespace App\Label;
 
 use App\Entity\Tool;
 use App\Label\Exception\LabelGeneratorException;
+use Picqer\Barcode\BarcodeGenerator;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\Exceptions\BarcodeException;
 use QR_Code\Types\QR_Url;
@@ -12,13 +13,12 @@ use Symfony\Component\Routing\RouterInterface;
 
 class LabelGenerator
 {
-    const FONT_FILE = __DIR__ . '/font/FreeMonoBold.ttf';
-    const MARGIN = 10;
-    const TITLE_LEN = 14;
-    const MODEL_LEN = 24;
+    private const FONT_FILE = __DIR__ . '/font/FreeMonoBold.ttf';
+    private const MARGIN = 10;
+    private const TITLE_LEN = 14;
+    private const MODEL_LEN = 24;
 
-    /** @var RouterInterface */
-    private $router;
+    private RouterInterface $router;
 
     public function __construct(RouterInterface $router)
     {
@@ -78,7 +78,7 @@ class LabelGenerator
         try {
             $barcode = imagecreatefromstring($generator->getBarcode(
                 $tool->getCode(),
-                BarcodeGeneratorPNG::TYPE_CODE_128,
+                BarcodeGenerator::TYPE_CODE_128,
                 3,
                 65
             ));

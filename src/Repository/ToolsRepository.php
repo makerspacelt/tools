@@ -56,7 +56,7 @@ class ToolsRepository extends ServiceEntityRepository
      * @param Tool $tool
      * @throws ORMException
      */
-    public function remove(Tool $tool)
+    public function remove(Tool $tool): void
     {
         $em = $this->getEntityManager();
 
@@ -74,7 +74,7 @@ class ToolsRepository extends ServiceEntityRepository
      * @param Tool $tool
      * @throws ORMException
      */
-    public function save(Tool $tool)
+    public function save(Tool $tool): void
     {
         $em = $this->getEntityManager();
         $em->persist($tool);
@@ -85,7 +85,7 @@ class ToolsRepository extends ServiceEntityRepository
      * @param Tool $tool
      * @throws ORMException
      */
-    public function update(Tool $tool)
+    public function update(Tool $tool): void
     {
         $em = $this->getEntityManager();
         $originalData = $em->getUnitOfWork()->getOriginalEntityData($tool);
@@ -105,7 +105,7 @@ class ToolsRepository extends ServiceEntityRepository
 
         foreach ($removedTags as $tag) {
             $tag->removeTool($tool);
-            if ($tag->getTools()->count() == 0) {
+            if ($tag->getTools()->count() === 0) {
                 $em->remove($tag);
             }
         }
@@ -141,7 +141,7 @@ class ToolsRepository extends ServiceEntityRepository
         return array_udiff(
             $set1,
             $set2,
-            function (ToolTag $arr1, ToolTag $arr2) {
+            static function (ToolTag $arr1, ToolTag $arr2) {
                 return $arr1->getId() - $arr2->getId();
             }
         );

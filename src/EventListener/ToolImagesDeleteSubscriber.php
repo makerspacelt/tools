@@ -9,20 +9,19 @@ use Doctrine\ORM\Events;
 
 class ToolImagesDeleteSubscriber implements EventSubscriber
 {
-    /** @var string */
-    private $imagesDir;
+    private string $imagesDir;
 
     public function __construct(string $imagesDir)
     {
         $this->imagesDir = $imagesDir;
     }
 
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [Events::postRemove];
     }
 
-    public function postRemove(LifecycleEventArgs $args)
+    public function postRemove(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 

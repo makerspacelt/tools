@@ -16,14 +16,9 @@ use Makerspacelt\EsimLabelGernerator\EsimPrint;
 
 class LabelController extends AbstractController
 {
-    /** @var LabelGenerator */
-    private $generator;
-
-    /** @var ToolsRepository */
-    private $toolsRepo;
-
-    /** @var HttpClientInterface */
-    private $httpClientInterface;
+    private LabelGenerator $generator;
+    private ToolsRepository $toolsRepo;
+    private HttpClientInterface $httpClientInterface;
 
     public function __construct(LabelGenerator $generator, ToolsRepository $toolsRepo, HttpClientInterface $client)
     {
@@ -37,7 +32,7 @@ class LabelController extends AbstractController
      * @param string $code
      * @return Response
      */
-    public function generateLabel(string $code)
+    public function generateLabel(string $code): Response
     {
         $tool = $this->toolsRepo->findOneBy(['code' => $code]);
         if (!$tool) {
@@ -62,7 +57,7 @@ class LabelController extends AbstractController
     /**
      * @Route("/print/{code}", name="tool_label_printer")
      */
-    public function printLabel(string $code)
+    public function printLabel(string $code): JsonResponse
     {
         $tool = $this->toolsRepo->findOneBy(['code' => $code]);
         if (!$tool) {
@@ -90,7 +85,7 @@ class LabelController extends AbstractController
                 'bin' => new DataPart($labelData, "bin"),
             ];
             $formData = new FormDataPart($formFields);
-            $response = $this->httpClientInterface->request('POST', 'http://print-label.lan', [
+            $this->httpClientInterface->request('POST', 'http://print-label.lan', [
                 'headers' => $formData->getPreparedHeaders()->toArray(),
                 'body' => $formData->bodyToIterable(),
             ]);
@@ -104,7 +99,7 @@ class LabelController extends AbstractController
         return new JsonResponse(['response' => true]);
     }
 
-    private function combineExceptionMessage(\Exception $e): string
+    private function combineExceptionMessage(\Throwable $e): string
     {
         $messages = [];
         while (!is_null($e)) {

@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\ToolTag;
 use App\Repository\TagsRepository;
+use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,8 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TagsController extends AbstractController
 {
-    /** @var TagsRepository */
-    private $tagsRepository;
+    private TagsRepository $tagsRepository;
 
     public function __construct(TagsRepository $tagsRepository)
     {
@@ -73,6 +73,7 @@ class TagsController extends AbstractController
      * @param Request $request
      * @param ToolTag $toolTag
      * @return Response
+     * @throws ORMException
      */
     public function editTag(Request $request, ToolTag $toolTag): Response
     {
@@ -85,9 +86,7 @@ class TagsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formToolTag = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($formToolTag);
-            $em->flush();
+            $this->tagsRepository->save($formToolTag);
             $this->addFlash('success', 'Tag edited!');
             return $this->redirectToRoute('admin_tags');
         }
@@ -99,18 +98,17 @@ class TagsController extends AbstractController
      * @Route("/deleteTag", name="admin_delete_tag")
      * @param Request $request
      * @return Response
+     * @throws ORMException
      */
     public function deleteTag(Request $request): Response
     {
-        if ($request->request->has('tag_id')) {
-            $tag = $this->tagsRepository->find($request->request->get('tag_id'));
+        if ($tagId = $request->request->has('tag_id')) {
+            $tag = $this->tagsRepository->find($tagId);
             if ($tag) {
-                $manager = $this->getDoctrine()->getManager();
-                $manager->remove($tag);
-                $manager->flush();
+                $this->tagsRepository->remove($tag);
                 $this->addFlash('success', 'Tag removed!');
             } else {
-                $this->addFlash('error', sprintf("Tag '%s' not found.", $tag));
+                $this->addFlash('error', sprintf("Tag '%s' not found.", $tagId));
             }
         } else {
             $this->addFlash('error', 'No tag_id in request.');

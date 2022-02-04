@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TagsController extends AbstractController
 {
-    /** @var TagsRepository */
-    private $tagsRepo;
+    private TagsRepository $tagsRepo;
 
     public function __construct(TagsRepository $tagsRepo)
     {

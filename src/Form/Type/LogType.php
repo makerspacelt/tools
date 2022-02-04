@@ -14,16 +14,23 @@ class LogType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add(
-            'log',
-            TextareaType::class,
-            [
-                'label' => false,
-            ]
-        )
-        ->add('type', ChoiceType::class,
-            ['choices' => ['Fixed' => 'LOG_TYPE_FIXED', 'Broken' => 'LOG_TYPE_BROKEN', 'In progress' => 'LOG_TYPE_INPROGRESS'], 'attr' => ['class' => 'mb-3']]
-        );;
+            ->add(
+                'log',
+                TextareaType::class,
+                [
+                    'label' => false,
+                ]
+            )
+            ->add('type', ChoiceType::class,
+                  [
+                      'choices' => [
+                          'Fixed'       => 'LOG_TYPE_FIXED',
+                          'Broken'      => 'LOG_TYPE_BROKEN',
+                          'In progress' => 'LOG_TYPE_INPROGRESS',
+                      ],
+                      'attr'    => ['class' => 'mb-3'],
+                  ]
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -9,15 +9,14 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 class TagTransformer implements DataTransformerInterface
 {
-    /** @var TagsRepository */
-    private $tagsRepository;
+    private TagsRepository $tagsRepository;
 
     public function __construct(TagsRepository $tagsRepository)
     {
         $this->tagsRepository = $tagsRepository;
     }
 
-    public function transform($value)
+    public function transform($value): array
     {
         $tagStr = [];
         foreach ($value->toArray() as $tag) {
@@ -26,7 +25,7 @@ class TagTransformer implements DataTransformerInterface
         return ['tags' => implode(',', $tagStr)];
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): ?ArrayCollection
     {
         if (!$value['tags']) {
             return null;
@@ -34,7 +33,7 @@ class TagTransformer implements DataTransformerInterface
 
         $tagEntities = new ArrayCollection();
         foreach (explode(',', $value['tags']) as $tag) {
-            $tag = trim(strtolower($tag));
+            $tag = strtolower(trim($tag));
             $tagObj = $this->tagsRepository->findOneBy(['tag' => $tag]);
             if (!$tagObj) {
                 $tagObj = new ToolTag();

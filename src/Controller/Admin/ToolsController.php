@@ -8,31 +8,26 @@ use App\Form\Type\ToolType;
 use App\Form\Type\ToolUpdateType;
 use App\Repository\ToolsRepository;
 use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
 
 /**
  * @Route("/tools")
  */
 class ToolsController extends AbstractController
 {
-    /** @var ToolsRepository */
-    private $toolsRepository;
+    private ToolsRepository $toolsRepository;
+    private LoggerInterface $logger;
 
-    public function __construct(ToolsRepository $toolsRepository)
+    public function __construct(ToolsRepository $toolsRepository, LoggerInterface $logger)
     {
         $this->toolsRepository = $toolsRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -79,7 +74,7 @@ class ToolsController extends AbstractController
                 'danger',
                 sprintf('Failed to save tool "%s"!', $tool->getName() . ' ' . $tool->getModel())
             );
-            $this->get('logger')->log('error', $e->getMessage());
+            $this->logger->log('error', $e->getMessage());
         }
 
         return $this->redirectToRoute('admin_tools');
@@ -115,7 +110,7 @@ class ToolsController extends AbstractController
                 'danger',
                 sprintf('Failed to update tool "%s"!', $tool->getName() . ' ' . $tool->getModel())
             );
-            $this->get('logger')->log('error', $e->getMessage());
+            $this->logger->log('error', $e->getMessage());
         }
 
         return $this->redirectToRoute('admin_tools');
@@ -139,14 +134,14 @@ class ToolsController extends AbstractController
                 'danger',
                 sprintf('Failed to remove tool "%s"!', $tool->getName() . ' ' . $tool->getModel())
             );
-            $this->get('logger')->log('error', $e->getMessage());
+            $this->logger->log('error', $e->getMessage());
         }
 
         return $this->redirectToRoute('admin_tools');
     }
 
     /**
-     * @param Tool           $tool
+     * @param Tool $tool
      * @param UploadedFile[] $files
      */
     private function processUploadedPhotos(Tool $tool, array $files): void
@@ -214,7 +209,7 @@ class ToolsController extends AbstractController
     {
         // TODO: find out if it really needs to be random. Maybe padded row id from db can be used.
         do {
-            $code = str_pad(intval(rand(1, 999999)), '6', '0', STR_PAD_LEFT);
+            $code = str_pad(random_int(1, 999999), '6', '0', STR_PAD_LEFT);
         } while ($this->toolsRepository->findOneBy(['code' => $code]));
 
         return $code;
@@ -233,6 +228,6 @@ class ToolsController extends AbstractController
             $originalFilename
         );
 
-        return $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+        return $safeFilename . '-' . uniqid('', true) . '.' . $file->guessExtension();
     }
 }
