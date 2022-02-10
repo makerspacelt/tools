@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Tool;
+use App\Entity\ToolLog;
 use App\Entity\ToolTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -77,6 +78,7 @@ class ToolsRepository extends ServiceEntityRepository
     public function save(Tool $tool): void
     {
         $em = $this->getEntityManager();
+        $this->setToolStatus($tool);
         $em->persist($tool);
         $em->flush();
     }
@@ -126,7 +128,23 @@ class ToolsRepository extends ServiceEntityRepository
         //----------------- Params ----------------
         // TODO
         //----------------------------------------------
-
+        $this->setToolStatus($tool);
+        $em->persist($tool);
+        $em->flush();
+    }
+    private function setToolStatus(Tool $tool)
+    {
+        $tool->setStatus($tool->getLogs()->last()->getType());
+    }
+    /**
+     * @param Tool $tool
+     * @param ToolLog $log 
+     */
+    public function addToolLog(Tool $tool, ToolLog $log) : void
+    {
+        $em = $this->getEntityManager();
+        $tool->addLog($log);
+        $this->setToolStatus($tool);
         $em->persist($tool);
         $em->flush();
     }

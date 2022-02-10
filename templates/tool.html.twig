@@ -2,6 +2,15 @@
 
 {% block title %}{{ parent() }} | {{ tool.name }} {{ tool.model }}{% endblock %}
 
+{% block functions %}
+    <div class="card mt-4">
+        <div class="card-header">{% trans %} Functions {% endtrans %}</div>
+        <div class="card-body">
+            <button class="btn btn-info" type="button" data-toggle="modal" data-target="#status-change-modal">{% trans %} Add status change{% endtrans %}</button>
+        </div>
+    </div>
+{% endblock %}
+
 {% block main_block %}
     <div class="card" id="content">
         {% if tool.photos is empty %}
@@ -38,7 +47,7 @@
         {% endif %}
         <div class="card-body">
             <h3 class="card-title">{{ tool.name }} {{ tool.model }}</h3>
-            <h5 class="card-subtitle mb-3 text-muted" id="tool-code">{{ tool.code }}</h5>
+            <h5 class="card-subtitle mb-3 text-muted" id="tool-code">{{ tool.code }} <i class="{{ tool.getStatusIcon() }}"></i></h5>
             <p class="card-text">{{ tool.description }}</p>
 
             {% if tool.shopLinks is not empty %}
@@ -89,6 +98,24 @@
         </div>
     </div>
 
+    <!-- modal langas statuso pakeitimui -->
+    <div class="modal fade" id="status-change-modal" tabindex="-1" role="dialog" aria-labelledby="status-change-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="status-change-modal-label">{% trans %} Change status {% endtrans %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: block; margin: auto">
+                    {{ form(logform) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /modal langas lipduko peržūrai -->
+    
     <!-- modal langas lipduko peržiūrai -->
     <div class="modal fade" id="label-preview-modal" tabindex="-1" role="dialog" aria-labelledby="label-preview-modal-label" aria-hidden="true">
         <div class="modal-dialog" role="document">

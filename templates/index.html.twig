@@ -16,7 +16,7 @@
                             <h4 class="card-title">
                                 <a href="{{ path('tool_page', {'code': tool.getCode()}) }}">{{ tool.getName() }} {{ tool.getModel() }}</a>
                             </h4>
-                            <h5 class="text-muted">{{ tool.getCode() }}</h5>
+                            <h5 class="text-muted">{{ tool.getCode() }} <i class="{{ tool.getStatusIcon() }}"></i></h5>
                             <p class="card-text">{{ tool.getDescription() }}</p>
                         </div>
                         <div class="card-footer">

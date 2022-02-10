@@ -75,7 +75,7 @@ class ToolFixture extends Fixture implements DependentFixtureInterface
                 $tool->addLog($log);
                 $manager->persist($log);
             }
-
+            $tool->setStatus($tool->getLogs()->last()->getType());
             $manager->persist($tool);
         }
 

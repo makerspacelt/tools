@@ -6,6 +6,10 @@
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    
+    <!-- Custom font for this template-->
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+
 </head>
 
 <body>
@@ -70,6 +74,8 @@
 
                 {% block tags %}
                     {{ render(controller('App\\Controller\\TagsController::tagsList')) }}
+                {% endblock %}
+                {% block functions %}
                 {% endblock %}
             </div>
             <!-- /.col-lg-3 -->
