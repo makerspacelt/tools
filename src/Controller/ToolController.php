@@ -31,19 +31,17 @@ class ToolController extends AbstractController
             $tool = $this->toolsRepo->findOneBy(['code' => $code]);
             if ($tool) {
                 $form = $this->createToolLogForm()->handleRequest($request);
-                if(!$form->isSubmitted() || !$form->isValid())
+                if($form->isSubmitted() && $form->isValid())
                 {
-                    return $this->render(
-                        'tool.html.twig',
-                        [
-                            'tool' => $tool,
-                            'logform' => $form->createView()
-                        ]
-                    );
-                }else{
                     $this->toolsRepo->addToolLog($tool, $form->getData());
-                    return $this->redirectToRoute('tool_page', ['code' => $tool->getCode()]) ;
                 }
+                return $this->render(
+                    'tool.html.twig',
+                    [
+                        'tool' => $tool,
+                        'logform' => $this->createToolLogForm()->createView()
+                    ]
+                );
             }
         }
 
