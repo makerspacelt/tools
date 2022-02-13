@@ -53,7 +53,7 @@
                             <td>{{ tool.code }}</td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <form action="{{ path('admin_del_tool', {id: tool.id}) }}" method="post">
+                                    <form action="{{ path('admin_del_tool', {id: tool.id, returnTo: 'admin_tools'}) }}" method="post">
                                         <input type="submit" class="btn btn-danger btn-sm" value="{% trans %} Delete {% endtrans %}"
                                                onclick="return confirm('{% trans with { '%toolname%': tool.name, '%toolmodel%': tool.model } %} Are you sure to delete %toolname% %toolmodel% ? {% endtrans %}')">
                                     </form>

@@ -117,11 +117,12 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * @Route("/delete/{id}", name="admin_del_tool", methods={"POST"})
+     * @Route("/delete/{id}/{returnTo}", name="admin_del_tool", methods={"POST", "GET"})
      * @param Tool $tool
+     * @param string $returnTo
      * @return Response
      */
-    public function deleteTool(Tool $tool): Response
+    public function deleteTool(Tool $tool, string $returnTo): Response
     {
         try {
             $this->toolsRepository->remove($tool);
@@ -136,8 +137,8 @@ class ToolsController extends AbstractController
             );
             $this->logger->log('error', $e->getMessage());
         }
-
-        return $this->redirectToRoute('admin_tools');
+        
+        return $this->redirectToRoute($returnTo);
     }
 
     /**

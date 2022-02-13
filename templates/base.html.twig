@@ -83,6 +83,13 @@
             <!-- /.col-lg-3 -->
 
             <div class="col-lg-9 my-4">
+                {% if app.user and 'ROLE_SUPERADMIN' in app.user.roles %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            {% block admin_panel %}{% endblock %}
+                        </div>
+                    </div>
+                {% endif %}
                 {% block main_block %}{% endblock %}
                 <!-- /.row -->
             </div>

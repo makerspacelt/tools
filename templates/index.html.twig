@@ -1,5 +1,10 @@
 {% extends 'base.html.twig' %}
 
+{% block admin_panel %}
+    <a href="{{ path('admin_add_tool') }}" class="btn btn-primary">{% trans %}Add tool{% endtrans %}</a>
+    <a href="{{ path('admin_add_user') }}" class="btn btn-primary">{% trans %}Add user{% endtrans %}</a>
+{% endblock %}
+
 {% block main_block %}
     {% if tools is not empty %}
         <div class="row" id="content">

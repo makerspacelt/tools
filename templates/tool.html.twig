@@ -2,6 +2,7 @@
 
 {% block title %}{{ parent() }} | {{ tool.name }} {{ tool.model }}{% endblock %}
 
+
 {% block functions %}
     <div class="card mt-4">
         <div class="card-header">{% trans %} Functions {% endtrans %}</div>
@@ -9,6 +10,11 @@
             <button class="btn btn-info" type="button" data-toggle="modal" data-target="#status-change-modal">{% trans %} Add status change{% endtrans %}</button>
         </div>
     </div>
+{% endblock %}
+
+{% block admin_panel %}
+    <a href="{{ path('admin_edit_tool', {id: tool.id}) }}" class="btn btn-warning">{% trans %} Edit {% endtrans %}</a>
+    <a href="{{ path('admin_del_tool', {id: tool.id, returnTo: 'index_page'}) }}" class="btn btn-danger ml-2" onclick="return confirm('{% trans with { '%toolname%': tool.name, '%toolmodel%': tool.model } %} Are you sure to delete %toolname% %toolmodel% ? {% endtrans %}')">{% trans %} Delete {% endtrans %}</a>
 {% endblock %}
 
 {% block main_block %}
