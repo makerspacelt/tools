@@ -91,6 +91,11 @@ class Tool
      */
     public $photos;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $status;
+
     #=====================================================
     public function __construct()
     {
@@ -341,5 +346,30 @@ class Tool
         $photoEntry->removeTool();
     }
     #=====================================================
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status)
+    {
+        $this->status = $status;
+    }
+
+    public function getStatusIcon() : ?string
+    {
+        switch ($this->getStatus()) {
+            case 'LOG_TYPE_BROKEN':
+                return "fas fa-times";
+            case 'LOG_TYPE_FIXED':
+                return "fas fa-check";
+            case 'LOG_TYPE_INPROGRESS':
+                return "fas fa-spinner";
+            default:
+                return "";
+                break;
+        }
+    }
 }
 

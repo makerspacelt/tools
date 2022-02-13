@@ -22,12 +22,14 @@
 
     $(function() {
         $(window).keypress(function(e) {
-            if(!$('#search').isInViewport){
-                $([document.documentElement, document.body]).animate({
-                    scrollTop: $("#search").offset().top - 70
-                }, 500);
+            if(!$('#status-change-modal').hasClass('show')){
+                if(!$('#search').isInViewport){
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#search").offset().top - 70
+                    }, 500);
+                }
+                $('#search').focus();
             }
-            $('#search').focus();
         });
      });
 
