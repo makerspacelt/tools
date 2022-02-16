@@ -134,7 +134,8 @@ class ToolsRepository extends ServiceEntityRepository
     }
     private function setToolStatus(Tool $tool)
     {
-        $tool->setStatus($tool->getLogs()->last()->getType());
+        if($tool->getLogs()->last())
+            $tool->setStatus($tool->getLogs()->last()->getType());
     }
     /**
      * @param Tool $tool
