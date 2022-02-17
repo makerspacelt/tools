@@ -20,20 +20,26 @@ setPerms "${PROJECT_ROOT}/var/cache"
 setPerms "${PROJECT_ROOT}/var/log"
 setPerms "${PROJECT_ROOT}/var/sessions"
 setPerms "${PROJECT_ROOT}/vendor"
-setPerms "${PROJECT_ROOT}/public/upload/photos"
-setPerms "${PROJECT_ROOT}/public/upload/instructions"
 setPerms "${PROJECT_ROOT}/public/vendor"
 
+setPerms "${PROJECT_ROOT}/../public/upload/photos"
+setPerms "${PROJECT_ROOT}/../public/upload/instructions"
+
+cp -f ../.env.prod .env.prod
+
+set +x
 t1=$(date +%s)
 t2=0
-until mysql -h mysql -u root -prootpassword </dev/null; do
+echo -n "Waiting for mysql to get up ... "
+until mysql -h mysql -u project -pproject -e 'SELECT (true)'; do
 	t2=$(date +%s)
-	if [ $(($t2-$t1)) -ge 10 ]; then
-		error 'MySQL creation timeout' >&2
+	if [ $(($t2-$t1)) -ge 100 ]; then
+	echo 'MySQL init timeout' >&2
 		exit
 	fi
 	sleep 1
 done
+set -x
 
 # Github token can be provided in vm.cfg
 composer --no-interaction -q config -g github-oauth.github.com d5d9879b14a2c066e08c3fa8dfba19aa31658d49
