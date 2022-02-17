@@ -25,6 +25,7 @@ setPerms "${PROJECT_ROOT}/public/vendor"
 setPerms "${PROJECT_ROOT}/../public/upload/photos"
 setPerms "${PROJECT_ROOT}/../public/upload/instructions"
 
+sed -i 's/APP_ENV=dev/APP_ENV=prod/' .env
 cp -f ../.env.prod .env.prod
 
 set +x
