@@ -25,6 +25,7 @@ setPerms "${PROJECT_ROOT}/public/vendor"
 setPerms "${PROJECT_ROOT}/../public/upload/photos"
 setPerms "${PROJECT_ROOT}/../public/upload/instructions"
 
+sed -i 's/APP_ENV=dev/APP_ENV=prod/' .env
 cp -f ../.env.prod .env.prod
 
 set +x
@@ -44,11 +45,12 @@ set -x
 # Github token can be provided in vm.cfg
 composer --no-interaction -q config -g github-oauth.github.com d5d9879b14a2c066e08c3fa8dfba19aa31658d49
 composer --no-interaction config -g optimize-autoloader true
-composer dump-env prod
 
 time composer --no-interaction install --no-dev --optimize-autoloader
 time yarn install --frozen-lock
 time grunt
+
+composer dump-env prod
 
 # init database
 bin/console doctrine:database:create --if-not-exists
