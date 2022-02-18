@@ -22,6 +22,7 @@
                         <label for="inputPassword">{% trans %} Password {% endtrans %}</label>
                     </div>
                 </div>
+                <input type="hidden" name="_target_path" value="{{ path('admin') }}"/>
                 <button type="submit" class="btn btn-primary btn-block">{% trans %} Login {% endtrans %}</button>
             </form>
             <div class="text-center my-3">

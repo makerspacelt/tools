@@ -9,3 +9,6 @@ app_admin:
 
 logout:
     path: '/admin/logout'
+
+admin:
+    path: '/admin'

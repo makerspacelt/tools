@@ -38,14 +38,14 @@
                     </li>
                     <li class="nav-item">
                         {% if app.user %}
-                            <a class="nav-link" href="{{ url('admin_homepage') }}">{% trans %} Admin panel {% endtrans %}</a>
+                            <a class="nav-link" href="{{ path('admin_homepage') }}">{% trans %} Admin panel {% endtrans %}</a>
                         {% elseif not app.user %}
                             <a class="nav-link" href="{{ path('login') }}">{% trans %} Login {% endtrans %}</a>
                         {% endif %}
                     </li>
                     {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('logout') }}">{% trans %} Logout {% endtrans %}</a>
+                        <a class="nav-link" href="{{ path('logout') }}">{% trans %} Logout {% endtrans %}</a>
                     </li>
                     {% endif %}
                 </ul>

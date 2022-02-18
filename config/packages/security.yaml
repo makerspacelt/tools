@@ -23,7 +23,6 @@ security:
             anonymous: ~
             provider: tools_db_provider
             form_login:
-                default_target_path: /admin/
                 login_path: login
                 check_path: login
             logout:
