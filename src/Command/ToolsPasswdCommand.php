@@ -29,7 +29,7 @@ class ToolsPasswdCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('pass', InputArgument::OPTIONAL, 'New admin password');
+            ->addArgument('pass', InputArgument::REQUIRED, 'New admin password');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -39,14 +39,11 @@ class ToolsPasswdCommand extends Command
 
         try
         {    
-            if ($password) 
+            $adminUser = $this->usrRepo->findOneBy(['username' => 'admin']);
+            if($adminUser)
             {
-                $adminUser = $this->usrRepo->findOneBy(['username' => 'admin']);
-                if($adminUser)
-                {
-                    $adminUser->setPassword($this->hasher->hashPassword($adminUser, $password));
-                    $this->usrRepo->save($adminUser);
-                }
+                $adminUser->setPassword($this->hasher->hashPassword($adminUser, $password));
+                $this->usrRepo->save($adminUser);
             }
             $io->success('Password was changed.');
         }
