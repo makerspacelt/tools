@@ -55,6 +55,7 @@ composer dump-env prod
 # init database
 bin/console doctrine:database:create --if-not-exists
 bin/console doctrine:schema:update --force
+bin/console doctrine:migrations:migrate -n
 
 # reminder to edit this file
 cowsay -f sheep "Please change develop_init.sh script"
