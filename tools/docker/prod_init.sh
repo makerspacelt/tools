@@ -22,8 +22,8 @@ setPerms "${PROJECT_ROOT}/var/sessions"
 setPerms "${PROJECT_ROOT}/vendor"
 setPerms "${PROJECT_ROOT}/public/vendor"
 
-setPerms "${PROJECT_ROOT}/../public/upload/photos"
-setPerms "${PROJECT_ROOT}/../public/upload/instructions"
+setPerms "${PROJECT_ROOT}/../upload/photos"
+setPerms "${PROJECT_ROOT}/../upload/instructions"
 
 sed -i 's/APP_ENV=dev/APP_ENV=prod/' .env
 cp -f ../.env.prod .env.prod
