@@ -4,8 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    images_directory: '%kernel.project_dir%/public/upload/photos'
-    instructions_directory: '%kernel.project_dir%/public/upload/instructions'
+    images_directory: '%kernel.build_dir%/%env(UPLOAD_DIR)%/upload/photos'
+    instructions_directory: '%kernel.project_dir%/%env(UPLOAD_DIR)%/upload/instructions'
 
 services:
     # default configuration for services in *this* file
