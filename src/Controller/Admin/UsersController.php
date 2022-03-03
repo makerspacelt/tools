@@ -86,6 +86,7 @@ class UsersController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formUser = $form->getData();
+            $formUser->setPassword($this->hasher->hashPassword($formUser, $formUser->getPassword()));
             $this->userRepository->save($formUser);
             $this->addFlash('success', 'User created!');
             return $this->redirectToRoute('admin_users');
