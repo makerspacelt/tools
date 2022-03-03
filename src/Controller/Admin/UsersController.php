@@ -143,7 +143,7 @@ class UsersController extends AbstractController
      */
     public function deleteUser(Request $request): Response
     {
-        if ($userId = $request->request->has('userid')) {
+        if ($userId = $request->request->get('userid')) {
             $user = $this->userRepository->find($userId);
             if ($user) {
                 $this->userRepository->remove($user);
