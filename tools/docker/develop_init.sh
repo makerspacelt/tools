@@ -35,7 +35,7 @@ time grunt
 
 # init database
 bin/console doctrine:schema:update --force
-bin/console doctrine:fixtures:load -n
+bin/console doctrine:fixtures:load -n --purge-exclusions=tools_users --purge-exclusions=migration_versions
 bin/console doctrine:migrations:migrate -n
 
 xdebug-config dev
