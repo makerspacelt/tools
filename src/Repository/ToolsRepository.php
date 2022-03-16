@@ -9,6 +9,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @method Tool|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,6 +26,30 @@ class ToolsRepository extends ServiceEntityRepository
         parent::__construct($registry, Tool::class);
     }
 
+    public function paginate(string $searchParam = null) : array {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery(
+            'SELECT t 
+            FROM App\Entity\Tool t
+            WHERE 
+            t.name LIKE :searchParam 
+            OR t.model LIKE :searchParam 
+            OR t.code LIKE :searchParam
+            OR t.id IN (SELECT tool.id FROM App\Entity\Tool tool JOIN tool.tags tag WHERE tag.tag = :exactTag )'
+        )->setParameter('searchParam', '%'.strtolower($searchParam).'%')
+        ->setParameter('exactTag', strtolower($searchParam));
+
+        $results = $query->getArrayResult();
+        foreach ($results as $key => $value) {
+            $tool = $this->findOneBy(['code' => $value['code']]);
+            $photo = $tool->getPhotos()[0];
+            $results[$key]['tags'] = $tool->getTagsArray();
+            if($photo != null)
+                $results[$key]['photo'] = $photo->getFileName();
+        }
+        return $results;
+
+    }
     /**
      * @param string[] $tags
      * @return Tool[]
