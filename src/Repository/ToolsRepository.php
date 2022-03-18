@@ -79,6 +79,10 @@ class ToolsRepository extends ServiceEntityRepository
     {
         $em = $this->getEntityManager();
         $this->setToolStatus($tool);
+        $tags = $tool->getTags();
+        foreach ($tags as $key => $value) {
+            $value->addTool($tool);
+        }
         $em->persist($tool);
         $em->flush();
     }
