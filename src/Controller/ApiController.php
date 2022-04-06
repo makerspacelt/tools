@@ -22,15 +22,6 @@ class ApiController extends AbstractController
         $this->logger = $logger;
     }
     /**
-     * @Route("/", name="api_index")
-     */
-    public function index(): Response
-    {
-        return $this->render('api/index.html.twig', [
-            'controller_name' => 'ApiController',
-        ]);
-    }
-    /**
      * @Route("/tools/{query}", name="api_tools")
      * @param string|null $query
      */

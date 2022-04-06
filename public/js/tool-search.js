@@ -5,6 +5,8 @@
     var container = null
     var tag_links = null
     var clear_search = null
+    var pause_interval = 1000
+    var last_call = 0
 
     window.onload = function () {
         searchString = document.getElementById('tools_search');
@@ -30,6 +32,7 @@
 
 
     async function searchTools(){
+        if(new Date().getTime() - last_call < pause_interval && searchString.value !== "") return
         var response = await fetch("/api/tools/" + searchString.value);
         var tools = await response.json();
         container.innerHTML = ""
@@ -37,7 +40,7 @@
             var element = createCard(element)
             container.appendChild(element)
         });
-
+        last_call = new Date().getTime()
     }
 
     function createCard(tool){
