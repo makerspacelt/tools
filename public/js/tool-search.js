@@ -5,8 +5,7 @@
     var container = null
     var tag_links = null
     var clear_search = null
-    var pause_interval = 1000
-    var last_call = 0
+    var pause_interval = 300
 
     window.onload = function () {
         searchString = document.getElementById('tools_search');
@@ -29,10 +28,17 @@
         searchTools();
     }
 
+    function debounce(func){
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => { func.apply(this, args); }, pause_interval);
+        };
+      }
 
+    const searchTools = debounce(() => apiSearch())
 
-    async function searchTools(){
-        if(new Date().getTime() - last_call < pause_interval && searchString.value !== "") return
+    async function apiSearch(){
         var response = await fetch("/api/tools/" + searchString.value);
         var tools = await response.json();
         container.innerHTML = ""
@@ -40,7 +46,6 @@
             var element = createCard(element)
             container.appendChild(element)
         });
-        last_call = new Date().getTime()
     }
 
     function createCard(tool){
