@@ -57,21 +57,6 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-3">
-                <!-- Paieška -->
-                <div class="card my-4">
-                    <h5 class="card-header">{% trans %} Search {% endtrans %}</h5>
-                    <div class="card-body">
-                        <form method="post" action="{{ path('search_tools') }}">
-                            <div class="input-group">
-                                <input id="search" type="text" name="search_str" class="form-control" placeholder="{% trans %} Looking for.. {% endtrans %}" value="{{ search_str | default('') }}" autofocus>
-                                <div class="input-group-append">
-                                    <input type="submit" value="{% trans %} Search {% endtrans %}" class="btn btn-secondary" />
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
                 {% block tags %}
                     {{ render(controller('App\\Controller\\TagsController::tagsList')) }}
                 {% endblock %}

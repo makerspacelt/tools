@@ -6,40 +6,17 @@
 {% endblock %}
 
 {% block main_block %}
-    {% if tools is not empty %}
-        <div class="row" id="content">
-            {% for tool in tools %}
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100">
-                        {% if tool.photos is empty %}
-                            <img class="card-img-top tool-def-img" src="{{ asset('img/default-tool-pic-listing.png') }}" alt="tool_pic">
-                        {% else %}
-                            {% set photo = tool.photos|first %}
-                            <img class="card-img-top tool-def-img" src="{{ asset('upload/photos/' ~ photo.fileName) }}" alt="{{ photo.fileName }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="{{ path('tool_page', {'code': tool.getCode()}) }}">{{ tool.getName() }} {{ tool.getModel() }}</a>
-                            </h4>
-                            <h5 class="text-muted">{{ tool.getCode() }} <i class="{{ tool.getStatusIcon() }}"></i></h5>
-                            <p class="card-text">{{ tool.getDescription() }}</p>
-                        </div>
-                        <div class="card-footer">
-                            {% set toolTags = tool.getTags() %}
-                            {% if toolTags is not empty %}
-                                {% for tag in toolTags %}
-                                    <a href="{{ path('filter_by_single_tag', {'tag': tag.getTag()}) }}"><small class="text-muted">#{{ tag.getTag() }}</small></a>
-                                {% endfor %}
-                            {% else %}
-                                <small class="text-muted">{% trans %} No tags for tool {% endtrans %}</small>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+        <div class="row mb-2">
+            <div class="input-group col-lg-12">
+                <input type="text"  id="tools_search" name="search" class="form-control" placeholder="{% trans %}Search..{% endtrans %}">
+                <button type="button" id="clear_search" class="btn bg-transparent" style="margin-left: -37px; z-index: 100;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
         </div>
-    {% else %}
-        <h2><b>{% trans %} No tools found {% endtrans %}</b></h2>
-    {% endif %}
+        <div class="row" id="content">
+         
+        </div>
 
+        <script src="{{ asset('js/tool-search.js') }}"></script>
 {% endblock %}
