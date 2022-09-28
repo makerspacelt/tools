@@ -1,0 +1,2 @@
+14 3 * * * project cd src && tools/cron.scripts/mysql_backup.sh 2>&1 | logger -t 'mysql_backup.cron'
+

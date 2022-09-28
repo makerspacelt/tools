@@ -19,6 +19,7 @@ echo -e '\n## Setting up permissions ... '
 setPerms "${PROJECT_ROOT}/var/cache"
 setPerms "${PROJECT_ROOT}/var/logs"
 setPerms "${PROJECT_ROOT}/var/sessions"
+setPerms "${PROJECT_ROOT}/var/backups"
 setPerms "${PROJECT_ROOT}/vendor"
 setPerms "${PROJECT_ROOT}/public/upload/photos"
 setPerms "${PROJECT_ROOT}/public/upload/instructions"

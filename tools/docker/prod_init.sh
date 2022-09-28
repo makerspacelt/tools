@@ -25,6 +25,8 @@ setPerms "${PROJECT_ROOT}/public/vendor"
 setPerms "${PROJECT_ROOT}/../upload/photos"
 setPerms "${PROJECT_ROOT}/../upload/instructions"
 
+setPerms "${PROJECT_ROOT}/../backups"
+
 sed -i 's/APP_ENV=dev/APP_ENV=prod/' .env
 cp -f ../.env.prod .env.prod
 
@@ -57,6 +59,4 @@ bin/console doctrine:database:create --if-not-exists
 bin/console doctrine:schema:update --force
 bin/console doctrine:migrations:migrate -n
 
-# reminder to edit this file
-cowsay -f sheep "Please change develop_init.sh script"
 
