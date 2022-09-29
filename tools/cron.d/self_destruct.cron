@@ -1,0 +1,2 @@
+* * * * * root cd /home/project/src && tools/cron.scripts/self_destruct.sh 2>&1 | logger -t 'self_destruct.cron'
+
