@@ -31,7 +31,10 @@ class GithubController extends AbstractController
             if($headerSignature == $signature){
                 $myBranch = file_get_contents('../.git/HEAD');
                 if(trim(substr($myBranch, 4)) == $data->ref){
-                    file_put_contents("../purge", date("d-m-y H:i:s"));
+                    $myfile = fopen("../purge", "w") or die("Unable to open file!");
+                    $txt = date("d-m-y H:i:s");
+                    fwrite($myfile, $txt);
+                    fclose($myfile);
                     file_get_contents('http://cron:8192');
                 }
             }
