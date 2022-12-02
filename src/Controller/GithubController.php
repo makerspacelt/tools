@@ -35,6 +35,7 @@ class GithubController extends AbstractController
                 $myBranch = file_get_contents('../.git/HEAD');
                 if(trim(substr($myBranch, 4)) == $data->ref){
                     file_put_contents("../purge", date("d-m-y H:i:s"));
+                    echo "Calling cron for suicide";
                     file_get_contents('http://cron:8192');
                 }else{
                     echo "Push was to different branch";
@@ -44,7 +45,7 @@ class GithubController extends AbstractController
             }
         }
         catch(Exception $ex){
-            echo $ex;
+            throw $ex;
         }finally{
             return new Response();
         }
