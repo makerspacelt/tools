@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use PhpParser\Node\Stmt\Catch_;
+use SebastianBergmann\Environment\Console;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Exception;
 
 class GithubController extends AbstractController
 {
@@ -33,8 +36,15 @@ class GithubController extends AbstractController
                 if(trim(substr($myBranch, 4)) == $data->ref){
                     file_put_contents("../purge", date("d-m-y H:i:s"));
                     file_get_contents('http://cron:8192');
+                }else{
+                    echo "Push was to different branch";
                 }
+            }else{
+                echo "Header signature does not match";
             }
+        }
+        catch(Exception $ex){
+            echo $ex;
         }finally{
             return new Response();
         }
