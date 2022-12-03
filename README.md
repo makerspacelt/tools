@@ -2,6 +2,7 @@
 Used to mark:
 - existing inventory of Makerspace workshop
 - tools instructions
+- places to restock
 
 Future plans:
 - Inventory maintenance log
