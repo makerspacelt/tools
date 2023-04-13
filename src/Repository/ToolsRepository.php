@@ -26,7 +26,8 @@ class ToolsRepository extends ServiceEntityRepository
         parent::__construct($registry, Tool::class);
     }
 
-    public function paginate(string $searchParam = null) : array {
+    public function paginate(string $searchParam = null): array
+    {
         $em = $this->getEntityManager();
         $query = $em->createQuery(
             'SELECT t 
@@ -36,19 +37,18 @@ class ToolsRepository extends ServiceEntityRepository
             OR t.model LIKE :searchParam 
             OR t.code LIKE :searchParam
             OR t.id IN (SELECT tool.id FROM App\Entity\Tool tool JOIN tool.tags tag WHERE tag.tag = :exactTag )'
-        )->setParameter('searchParam', '%'.strtolower($searchParam).'%')
-        ->setParameter('exactTag', strtolower($searchParam));
+        )->setParameter('searchParam', '%' . strtolower($searchParam) . '%')
+            ->setParameter('exactTag', strtolower($searchParam));
 
         $results = $query->getArrayResult();
         foreach ($results as $key => $value) {
             $tool = $this->findOneBy(['code' => $value['code']]);
             $photo = $tool->getPhotos()[0];
             $results[$key]['tags'] = $tool->getTagsArray();
-            if($photo != null)
+            if ($photo != null)
                 $results[$key]['photo'] = $photo->getFileName();
         }
         return $results;
-
     }
     /**
      * @param string[] $tags
@@ -87,8 +87,8 @@ class ToolsRepository extends ServiceEntityRepository
     public function remove(Tool $tool): void
     {
         $em = $this->getEntityManager();
-
-        foreach ($tool->getTags() as $tag) {
+        $tags = $tool->getTags() ?? [];
+        foreach ($tags as $tag) {
             if ($tag->getTools()->count() <= 1) {
                 $em->remove($tag);
             }
@@ -106,7 +106,7 @@ class ToolsRepository extends ServiceEntityRepository
     {
         $em = $this->getEntityManager();
         $this->setToolStatus($tool);
-        $tags = $tool->getTags();
+        $tags = $tool->getTags() ?? [];
         foreach ($tags as $key => $value) {
             $value->addTool($tool);
         }
@@ -165,14 +165,14 @@ class ToolsRepository extends ServiceEntityRepository
     }
     private function setToolStatus(Tool $tool)
     {
-        if($tool->getLogs()->last())
+        if ($tool->getLogs()->last())
             $tool->setStatus($tool->getLogs()->last()->getType());
     }
     /**
      * @param Tool $tool
      * @param ToolLog $log 
      */
-    public function addToolLog(Tool $tool, ToolLog $log) : void
+    public function addToolLog(Tool $tool, ToolLog $log): void
     {
         $em = $this->getEntityManager();
         $tool->addLog($log);

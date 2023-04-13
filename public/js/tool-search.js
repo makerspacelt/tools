@@ -70,7 +70,7 @@
             img.src = '/img/default-tool-pic-listing.png'
             img.alt = "tool_pic"
         }else{
-            img.src = "/upload/photos/" + tool.photo
+            img.src = "/upload/photos/thumbnails/" + tool.photo
             img.alt = tool.photo
         }
         return img

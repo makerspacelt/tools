@@ -10,10 +10,14 @@ use Doctrine\ORM\Events;
 class ToolImagesDeleteSubscriber implements EventSubscriber
 {
     private string $imagesDir;
+    private string $imagesThumbnailsDir;
+    private string $imagesPreviewDir;
 
-    public function __construct(string $imagesDir)
+    public function __construct(string $imagesDir, string $imagesThumbnailsDir, string $imagesPreviewDir)
     {
         $this->imagesDir = $imagesDir;
+        $this->imagesThumbnailsDir = $imagesThumbnailsDir;
+        $this->imagesPreviewDir = $imagesPreviewDir;
     }
 
     public function getSubscribedEvents(): array
@@ -25,8 +29,12 @@ class ToolImagesDeleteSubscriber implements EventSubscriber
     {
         $entity = $args->getObject();
 
+        // TODO: manage these from single place
+
         if ($entity instanceof ToolPhoto) {
             unlink($this->imagesDir . DIRECTORY_SEPARATOR . $entity->getFileName());
+            unlink($this->imagesThumbnailsDir . DIRECTORY_SEPARATOR . $entity->getFileName());
+            unlink($this->imagesPreviewDir . DIRECTORY_SEPARATOR . $entity->getFileName());
         }
     }
 }

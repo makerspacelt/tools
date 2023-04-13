@@ -15,6 +15,10 @@ function setPerms {
 	sudo setfacl -dR -m m:rwx -m u:33:rwX -m u:1000:rwX $1
 }
 
+echo -e '\n## Making sure directories for images exists ... '
+mkdir -p "${PROJECT_ROOT}/../upload/photos/thumbnails"
+mkdir -p "${PROJECT_ROOT}/../upload/photos/preview"
+
 echo -e '\n## Setting up permissions ... '
 setPerms "${PROJECT_ROOT}/var/cache"
 setPerms "${PROJECT_ROOT}/var/log"
@@ -23,6 +27,8 @@ setPerms "${PROJECT_ROOT}/vendor"
 setPerms "${PROJECT_ROOT}/public/vendor"
 
 setPerms "${PROJECT_ROOT}/../upload/photos"
+setPerms "${PROJECT_ROOT}/../upload/photos/thumbnails"
+setPerms "${PROJECT_ROOT}/../upload/photos/preview"
 setPerms "${PROJECT_ROOT}/../upload/instructions"
 
 setPerms "${PROJECT_ROOT}/../backups"
