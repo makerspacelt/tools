@@ -36,6 +36,8 @@ services:
     App\EventListener\ToolImagesDeleteSubscriber:
         arguments:
             - '%images_directory%'
+            - '%images_thumbnails_directory%'
+            - '%images_preview_directory%'
         tags:
             - { name: 'doctrine.event_subscriber' }
     

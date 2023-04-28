@@ -2,6 +2,9 @@
 
 namespace App\Image;
 
+use Exception;
+use GdImage;
+
 class SizeManager
 {
     private string $imagesDir;
@@ -36,12 +39,58 @@ class SizeManager
             $height = $width / $ratio;
         }
 
-        // TODO: make it work with other formats, not opnly jpeg
+        [$source, $type] = self::openImage($sourceFile);
 
-        $source = imagecreatefromjpeg($sourceFile);
         $dst = imagecreatetruecolor($width, $height);
         imagecopyresampled($dst, $source, 0, 0, 0, 0, $width, $height, $iwidth, $iheight);
-        imagejpeg($dst, $dstFile);
+
+        self::saveImage($type, $dst, $dstFile);
+    }
+
+    /**
+     * @return mixed[] array{GdImage|resource, int}
+     */
+    private static function openImage(string $path): array
+    {
+        $exifImageType = exif_imagetype($path);
+
+        switch ($exifImageType) {
+            case IMAGETYPE_JPEG:
+                $image = imagecreatefromjpeg($path);
+                break;
+            case IMAGETYPE_PNG:
+                $image = imagecreatefrompng($path);
+                break;
+            case IMAGETYPE_BMP:
+                $image = imagecreatefrombmp($path);
+                break;
+            default:
+                throw new Exception(sprintf("unsupported image type %d", $exifImageType));
+        }
+
+        return [$image, $exifImageType];
+    }
+
+    /**
+     * @param int $exifImageType
+     * @param resource|GdImage $image
+     * @param string $path
+     */
+    private static function saveImage(int $exifImageType, $image, string $path): void
+    {
+        switch ($exifImageType) {
+            case IMAGETYPE_JPEG:
+                imagejpeg($image, $path);
+                break;
+            case IMAGETYPE_BMP:
+                imagebmp($image, $path);
+                break;
+            case IMAGETYPE_PNG:
+                imagepng($image, $path);
+                break;
+            default:
+                throw new Exception(sprintf("unsupported image type %d", $exifImageType));
+        }
     }
 
     private static function buildPath(string $dir, string $fileName): string
