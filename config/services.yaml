@@ -35,13 +35,11 @@ services:
     # please note that last definitions always *replace* previous ones
     App\EventListener\ToolImagesDeleteSubscriber:
         arguments:
-            - '%images_directory%'
-            - '%images_thumbnails_directory%'
-            - '%images_preview_directory%'
+            - '@App\Image\PathManager'
         tags:
             - { name: 'doctrine.event_subscriber' }
     
-    App\Image\SizeManager:
+    App\Image\PathManager:
         arguments:
             - '%images_directory%'
             - '%images_thumbnails_directory%'

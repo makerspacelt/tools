@@ -6,18 +6,15 @@ use App\Entity\ToolPhoto;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use App\Image\PathManager;
 
 class ToolImagesDeleteSubscriber implements EventSubscriber
 {
-    private string $imagesDir;
-    private string $imagesThumbnailsDir;
-    private string $imagesPreviewDir;
+    private PathManager $pathManager;
 
-    public function __construct(string $imagesDir, string $imagesThumbnailsDir, string $imagesPreviewDir)
+    public function __construct(PathManager $pathManager)
     {
-        $this->imagesDir = $imagesDir;
-        $this->imagesThumbnailsDir = $imagesThumbnailsDir;
-        $this->imagesPreviewDir = $imagesPreviewDir;
+        $this->pathManager = $pathManager;
     }
 
     public function getSubscribedEvents(): array
@@ -29,12 +26,10 @@ class ToolImagesDeleteSubscriber implements EventSubscriber
     {
         $entity = $args->getObject();
 
-        // TODO: manage these from single place
-
         if ($entity instanceof ToolPhoto) {
-            unlink($this->imagesDir . DIRECTORY_SEPARATOR . $entity->getFileName());
-            unlink($this->imagesThumbnailsDir . DIRECTORY_SEPARATOR . $entity->getFileName());
-            unlink($this->imagesPreviewDir . DIRECTORY_SEPARATOR . $entity->getFileName());
+            unlink($this->pathManager->getPathToOriginalImage($entity->getFileName()));
+            unlink($this->pathManager->getPathToThumbnail($entity->getFileName()));
+            unlink($this->pathManager->getPathToPreviewImage($entity->getFileName()));
         }
     }
 }

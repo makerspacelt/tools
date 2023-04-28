@@ -7,26 +7,22 @@ use GdImage;
 
 class SizeManager
 {
-    private string $imagesDir;
-    private string $imagesThumbnailsDir;
-    private string $imagesPreviewDir;
+    private PathManager $pathManager;
 
-    public function __construct(string $imagesDir, string $imagesThumbnailsDir, string $imagesPreviewDir)
+    public function __construct(PathManager $pathManager)
     {
-        $this->imagesDir = $imagesDir;
-        $this->imagesThumbnailsDir = $imagesThumbnailsDir;
-        $this->imagesPreviewDir = $imagesPreviewDir;
+        $this->pathManager = $pathManager;
     }
 
     public function ensureSizes(string $imageFileName): void
     {
-        $originalImagePath = static::buildPath($this->imagesDir, $imageFileName);
+        $originalImagePath = $this->pathManager->getPathToOriginalImage($imageFileName);
         if (!file_exists($originalImagePath)) {
             throw new \RuntimeException(sprintf('original image file not found in "%s"', $originalImagePath));
         }
 
-        static::resize($originalImagePath, static::buildPath($this->imagesThumbnailsDir, $imageFileName), 250, 250);
-        static::resize($originalImagePath, static::buildPath($this->imagesPreviewDir, $imageFileName), 1500, 1500);
+        static::resize($originalImagePath, $this->pathManager->getPathToThumbnail($imageFileName), 250, 250);
+        static::resize($originalImagePath, $this->pathManager->getPathToPreviewImage($imageFileName), 1500, 1500);
     }
 
     private static function resize($sourceFile, $dstFile, $width, $height): void
@@ -91,10 +87,5 @@ class SizeManager
             default:
                 throw new Exception(sprintf("unsupported image type %d", $exifImageType));
         }
-    }
-
-    private static function buildPath(string $dir, string $fileName): string
-    {
-        return rtrim($dir, '/\\') . DIRECTORY_SEPARATOR . $fileName;
     }
 }
