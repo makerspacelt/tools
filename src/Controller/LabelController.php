@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
-use Makerspacelt\EsimLabelGernerator\EsimPrint;
 
 class LabelController extends AbstractController
 {
@@ -76,18 +75,15 @@ class LabelController extends AbstractController
             ]);
         }
 
-        $esimPrint = new EsimPrint();
-        $labelData = $esimPrint->printGd($image);
+        ob_start();
+        imagepng($image);
+        $pngData = ob_get_contents();
+        ob_end_clean();
 
         // TODO: perkelti hostname'ą ir port'ą į admin panelės overview/config langą
         try {
-            $formFields = [
-                'bin' => new DataPart($labelData, "bin"),
-            ];
-            $formData = new FormDataPart($formFields);
             $this->httpClientInterface->request('POST', $this->getParameter('label_printer_address'), [
-                'headers' => $formData->getPreparedHeaders()->toArray(),
-                'body' => $formData->bodyToIterable(),
+                'body' => $pngData,
             ]);
         } catch (\Throwable $th) {
             return new JsonResponse([
