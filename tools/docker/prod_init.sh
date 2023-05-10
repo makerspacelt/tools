@@ -25,6 +25,7 @@ setPerms "${PROJECT_ROOT}/var/log"
 setPerms "${PROJECT_ROOT}/var/sessions"
 setPerms "${PROJECT_ROOT}/vendor"
 setPerms "${PROJECT_ROOT}/public/vendor"
+setPerms "${PROJECT_ROOT}/actions"
 
 setPerms "${PROJECT_ROOT}/../upload/photos"
 setPerms "${PROJECT_ROOT}/../upload/photos/thumbnails"
