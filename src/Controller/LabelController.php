@@ -85,7 +85,7 @@ class LabelController extends AbstractController
                 'bin' => new DataPart($labelData, "bin"),
             ];
             $formData = new FormDataPart($formFields);
-            $this->httpClientInterface->request('POST', 'http://print-label.lan', [
+            $this->httpClientInterface->request('POST', $this->getParameter('label_printer_address'), [
                 'headers' => $formData->getPreparedHeaders()->toArray(),
                 'body' => $formData->bodyToIterable(),
             ]);
