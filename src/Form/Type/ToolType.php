@@ -96,6 +96,9 @@ class ToolType extends AbstractType
                                     [
                                         'mimeTypes' => [
                                             'image/bmp',
+                                            'image/x-ms-bmp',
+                                            'image/jpe',
+                                            'image/jpg',
                                             'image/jpeg',
                                             'image/png',
                                         ],

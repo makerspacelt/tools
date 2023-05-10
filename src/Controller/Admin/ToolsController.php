@@ -6,8 +6,9 @@ use App\Entity\ToolPhoto;
 use App\Entity\Tool;
 use App\Form\Type\ToolType;
 use App\Form\Type\ToolUpdateType;
+use App\Image\SizeManager;
 use App\Repository\ToolsRepository;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -23,11 +24,13 @@ class ToolsController extends AbstractController
 {
     private ToolsRepository $toolsRepository;
     private LoggerInterface $logger;
+    private SizeManager $sizeManager;
 
-    public function __construct(ToolsRepository $toolsRepository, LoggerInterface $logger)
+    public function __construct(ToolsRepository $toolsRepository, LoggerInterface $logger, SizeManager $sizeManager)
     {
         $this->toolsRepository = $toolsRepository;
         $this->logger = $logger;
+        $this->sizeManager = $sizeManager;
     }
 
     /**
@@ -155,6 +158,8 @@ class ToolsController extends AbstractController
                     $this->getParameter('images_directory'),
                     $newFilename
                 );
+
+                $this->sizeManager->ensureSizes($newFilename);
 
                 $photo = new ToolPhoto();
                 $photo->setFileName($newFilename);

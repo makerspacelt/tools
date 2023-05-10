@@ -11,7 +11,7 @@
     <div class="row align-items-end">
         {% for photo in form.photos %}
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 text-center justify-content-center">
-                <img class="img-thumbnail" alt="{{ photo.vars.value.fileName }}" src="{{ asset('upload/photos/' ~ photo.vars.value.fileName) }}">
+                <img class="img-thumbnail" alt="{{ photo.vars.value.fileName }}" src="{{ asset('upload/photos/thumbnails/' ~ photo.vars.value.fileName) }}">
                 <input type="hidden" id="{{ photo.vars.id }}" name="{{ photo.vars.full_name }}[fileName]" value="{{ photo.vars.value.fileName }}">
                 <button class="btn btn-danger my-1" onclick="photo_remove(event)">{% trans %} Remove {% endtrans %}</button>
             </div>

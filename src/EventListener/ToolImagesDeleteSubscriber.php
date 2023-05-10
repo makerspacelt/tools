@@ -6,14 +6,15 @@ use App\Entity\ToolPhoto;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use App\Image\PathManager;
 
 class ToolImagesDeleteSubscriber implements EventSubscriber
 {
-    private string $imagesDir;
+    private PathManager $pathManager;
 
-    public function __construct(string $imagesDir)
+    public function __construct(PathManager $pathManager)
     {
-        $this->imagesDir = $imagesDir;
+        $this->pathManager = $pathManager;
     }
 
     public function getSubscribedEvents(): array
@@ -26,7 +27,9 @@ class ToolImagesDeleteSubscriber implements EventSubscriber
         $entity = $args->getObject();
 
         if ($entity instanceof ToolPhoto) {
-            unlink($this->imagesDir . DIRECTORY_SEPARATOR . $entity->getFileName());
+            unlink($this->pathManager->getPathToOriginalImage($entity->getFileName()));
+            unlink($this->pathManager->getPathToThumbnail($entity->getFileName()));
+            unlink($this->pathManager->getPathToPreviewImage($entity->getFileName()));
         }
     }
 }
