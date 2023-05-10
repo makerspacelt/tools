@@ -4,8 +4,15 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    images_directory: '%kernel.project_dir%/%env(UPLOAD_DIR)%/upload/photos'
     instructions_directory: '%kernel.project_dir%/%env(UPLOAD_DIR)%/upload/instructions'
+    label_printer_address: '%env(LABEL_PRINTER_ADDRESS)'
+
+    # images_directory - original images
+    # images_thumbnails_directory - images in thumbnail size
+    # images_preview_directory - images in preview size (galery, etc.)
+    images_directory: '%kernel.project_dir%/%env(UPLOAD_DIR)%/upload/photos'
+    images_thumbnails_directory: '%images_directory%/thumbnails'
+    images_preview_directory: '%images_directory%/preview'
 
 services:
     # default configuration for services in *this* file
@@ -29,9 +36,15 @@ services:
     # please note that last definitions always *replace* previous ones
     App\EventListener\ToolImagesDeleteSubscriber:
         arguments:
-            - '%images_directory%'
+            - '@App\Image\PathManager'
         tags:
             - { name: 'doctrine.event_subscriber' }
+    
+    App\Image\PathManager:
+        arguments:
+            - '%images_directory%'
+            - '%images_thumbnails_directory%'
+            - '%images_preview_directory%'
 
     App\EventListener\LocaleSubscriber:
         arguments: ['%kernel.default_locale%']

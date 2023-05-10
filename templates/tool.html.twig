@@ -28,7 +28,7 @@
                     {% for photo in tool.photos %}
                         <div class="carousel-item {% if i == 0 %}active{% endif %}">
                             <a href="{{ asset('upload/photos/' ~ photo.fileName) }}" target="_blank">
-                                <img class="d-block carousel-fixed-height-image" src="{{ asset('upload/photos/' ~ photo.fileName) }}" alt="{{ photo.fileName }}">
+                                <img class="d-block carousel-fixed-height-image" src="{{ asset('upload/photos/preview/' ~ photo.fileName) }}" alt="{{ photo.fileName }}">
                             </a>
                         </div>
                         {% set i=i+1 %}

@@ -43,7 +43,7 @@
 
                                 {% if tool.photos is not empty %}
                                     {% set photo = tool.photos|first %}
-                                    {% set photoFile = 'upload/photos/' ~ photo.fileName %}
+                                    {% set photoFile = 'upload/photos/thumbnails/' ~ photo.fileName %}
                                     {% set photoAlt = photo.fileName %}
                                 {% endif %}
 

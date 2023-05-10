@@ -3,10 +3,8 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ToolsRepository;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -15,17 +13,18 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class ApiController extends AbstractController
 {
     private ToolsRepository $toolsRepository;
-    private LoggerInterface $logger;
 
-    public function __construct(ToolsRepository $toolsRepo, LoggerInterface $logger){
+    public function __construct(ToolsRepository $toolsRepo)
+    {
         $this->toolsRepository = $toolsRepo;
-        $this->logger = $logger;
     }
+
     /**
      * @Route("/tools/{query}", name="api_tools")
      * @param string|null $query
      */
-    public function tools($query = null) : JsonResponse{
-        return $this->json($this->toolsRepository->paginate($query)); // new Response(json_encode($this->toolsRepository->paginate("")));
+    public function tools($query = null): JsonResponse
+    {
+        return $this->json($this->toolsRepository->paginate($query));
     }
 }
