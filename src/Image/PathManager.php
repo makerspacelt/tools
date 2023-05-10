@@ -15,6 +15,11 @@ class PathManager
         $this->imagesPreviewDir = $imagesPreviewDir;
     }
 
+    public function getOriginalImagesDir(): string
+    {
+        return $this->imagesDir;
+    }
+
     public function getPathToOriginalImage($imageFileName): string
     {
         return self::buildPath($this->imagesDir, $imageFileName);

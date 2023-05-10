@@ -65,4 +65,5 @@ bin/console doctrine:database:create --if-not-exists
 bin/console doctrine:schema:update --force
 bin/console doctrine:migrations:migrate -n
 
-
+# tidy up images - create missing sizes
+bin/console tools:image:tidy-up
